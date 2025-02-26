@@ -1,0 +1,68 @@
+
+    <main>        
+        
+        <section class="content-main mt-80 mb-80">
+            <div class="card mx-auto card-login">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Sign in</h4>                    
+                    {{#if message}}
+                    <div class="alert alert-danger mt-3 alert-dismissible fade show" role="alert">
+                    {{message}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {{/if}}
+                    <form method="post" action="/admin/login">
+                        <div class="mb-3">
+                            <input class="form-control" 
+                            name = "email"
+                            placeholder="Username or email" type="text" required>
+                        </div>
+                        <div class="mb-3">
+                            <input class="form-control" 
+                            id="password"
+                            name = "password"
+                            placeholder="Password" 
+                            type="password"required>
+                        </div> 
+                        <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="showPassword">
+                        <label class="form-check-label" for="showPassword">Show Password</label>
+                        <a href="#" class="float-end font-sm text-muted">Forgot password?</a>
+                        </div>
+
+                        {{!-- <div class="mb-3">
+                            
+                            <label class="form-check">
+                                <input type="checkbox" class="form-check-input" checked="">
+                                <span class="form-check-label">Remember</span>
+                            </label>
+                        </div>  --}}
+                        <div class="mb-4">
+                            <button type="submit" class="btn btn-primary w-100"> Login </button>
+                        </div> 
+                    </form>
+                    
+                    
+                </div>
+            </div>
+        </section>
+        <footer class="main-footer text-center">
+            <p class="font-xs">
+                <script>
+                document.write(new Date().getFullYear())
+                </script> ©, MobileBazaar .
+            </p>
+            <p class="font-xs mb-30">All rights reserved</p>
+        </footer>
+    </main>
+    
+
+
+    <script>
+        document.getElementById('showPassword').addEventListener('change', function() {
+        const passwordInput = document.getElementById('password');
+        passwordInput.type = this.checked ? 'text' : 'password';});
+    </script>
+
+
+

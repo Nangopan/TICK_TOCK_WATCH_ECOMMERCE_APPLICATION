@@ -1,0 +1,100 @@
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html" rel="nofollow">Home</a>
+                <span></span> Account
+                <span></span> My Address
+            </div>
+        </div>
+    </div>
+    <section class="pt-50 pb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 m-auto">
+                    <div class="row">
+                        {{> profileHeader}}
+                        <div class="col-md-9">
+                            <div class="tab-content dashboard-content">
+                                <div class="tab-pane fade show active" id="address" role="tabpanel" aria-labelledby="address-tab">
+                                   <div class="row">
+                                    {{#if userAddress.length}}
+                                    {{#each userAddress}}
+                                    <div class="col-lg-6 mb-3">
+                                    <div class="card mb-3 mb-lg-0">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Address {{increment @index}}</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <address>{{this.name}}<br> {{this.mobile}}<br>
+                                                {{this.addressLine1}}<br> {{this.city}},
+                                                {{this.state}} <br> {{this.pin}} </address>
+                                            <div class="d-inline-flex mr-5 bd-highlight">
+                                                <a href="/edit_address/{{this._id}}" class="btn btn-primary">Edit</a>
+                                            </div>
+                                            {{!-- <div class="d-inline-flex ml-5  bd-highlight" >
+                                                <a href="/delete_address/{{this._id}}" onclick="return confirm ('Are you sure want to delete?')" class="btn btn-primary">Delete</a>
+                                            </div> --}}
+                                            <div class="d-inline-flex ml-5 bd-highlight">
+    <a href="#" class="btn btn-primary delete-address" data-id="{{this._id}}">Delete</a>
+</div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                {{/each}}
+                            {{else}}
+                            <div class="col-lg-12 mb-3">
+                <div class="alert alert-info">
+                    You have no addresses added yet. Please add a new address.
+                </div>
+            </div>
+        {{/if}}
+                            </div>
+                            <div>
+                                <a href="/add_address" class="btn btn-primary"><i
+                                        class="text-muted material-icons md-post_add"></i>Add New Address</a>
+                            </div>
+                                </div> 
+                             
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+$(document).ready(function () {
+    $('.delete-address').on('click', function (e) {
+        e.preventDefault(); // Prevent the default anchor action
+        const addressId = $(this).data('id'); // Get the address ID from data attribute
+        
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to delete",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If confirmed, proceed with deletion
+                window.location.href = '/delete_address/' + addressId; // Redirect to delete address
+            }
+        });
+    });
+});
+
+</script>

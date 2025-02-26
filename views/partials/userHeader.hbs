@@ -1,0 +1,121 @@
+<header
+  class="header-area header-style-1 header-height-2"
+  style="background-color: #D3D3D3;">
+
+<div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+  <div class="container">
+    <div class="header-wrap d-flex justify-content-between align-items-center">
+      <div class="logo logo-width-1">
+        <a href="/"><img src="/assets/logo.png" alt="logo" /></a>
+      </div>
+      <div class="header-right d-flex align-items-center">
+        <div class="search-style-2 me-3">
+          <input type="text"  onkeyup="searchProducts()" id="searchInput" name="search"
+            class="form-control" placeholder="Search for items..." style="border: 2px solid #B0C4DE; border-radius: 5px; padding: 5px; outline: none; background-color: white;">
+          
+        </div>
+      <div class="header-action-right d-flex align-items-center">
+        <div class="header-action-2">
+          <div class="header-action-icon-2">
+            <a href="/wishlist">
+              <img class="svgInject" alt="Evara" src="/assets/imgs/theme/icons/wishlist3.png" />
+                  {{! <span class="pro-count blue">0</span> }}
+            </a>
+          </div>
+          <div class="header-action-icon-2">
+            <a class="mini-cart-icon" href="/cart">
+              <img alt="Evara" src="/assets/imgs/theme/icons/cart1.png"/>
+                  {{! <span class="pro-count blue">0</span> }}
+            </a>
+          </div>
+          {{#if userData}}
+          <div class="header-action-icon-2">
+            <div class="dropdown nav-item">
+              <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false">
+                  <img class="img-xs rounded-circle mr-2" style="width: 40px;" src="/images/users/UserImage.png" alt="UserPhoto">
+              </a>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount" style="font-family: 'Times New Roman', Times, serif;">
+                <ul class="dropdown-item-list">
+                  <li><a class="dropdown-item" href="/profile">Account</a></li>
+                  <li><a class="dropdown-item" href="/myOrders"> Orders</a></li>
+                  <li><a class="dropdown-item" href="/wallet"> Wallet</a></li>                                      
+                  <li><a class="dropdown-item" href="#">Address</a></li>
+                  <div class="dropdown-divider"></div>
+                  <li><a class="dropdown-item text-danger"  id="logoutbtn" href="/logout">Logout</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          {{else}}
+          <div style="margin-left: 10px;">
+            <div class="btn p-2.2 "> 
+              <i class="fi-rs-user"></i><a href="/login" style="color: white;"> Sign in </a>
+            </div>
+          </div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+  <div class="header-bottom header-bottom-bg-color sticky-bar">
+    <div class="container">
+      <div
+        class="header-wrap header-space-between position-relative d-flex justify-content-between align-items-center"
+      >
+
+        <div
+          class="header-nav d-none d-lg-flex flex-grow-1 justify-content-center"
+        >
+          <div class="main-menu main-menu-padding-1 main-menu-lh-2">
+            <nav>
+              <ul class="d-flex justify-content-center">
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop">Shop</a></li>
+                <li><a href="/">About</a></li> 
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</header>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+<script>
+
+    // Logout Button
+    
+    $(document).ready(function () {
+        $('#logoutbtn').click(function (e) {
+            e.preventDefault();
+
+
+            Swal.fire({
+                title: "LOGOUT?",
+                text: "Do you want to logout?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#088178",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/logout";
+
+                }
+            });
+
+
+        });
+    });
+</script>

@@ -1,0 +1,193 @@
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html" rel="nofollow">Home</a>
+                <span></span> Account
+                <span></span> My Address
+            </div>
+        </div>
+    </div>
+    <section class="pt-50 pb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 m-auto">
+                    <div class="row">
+                        {{> profileHeader}}
+                        <div class="col-md-9">
+                            <div class="tab-content dashboard-content">
+
+
+
+                                <div class="tab-pane fade show active" id="address" role="tabpanel"
+                                    aria-labelledby="address-tab">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <form action="/add_address" method="post">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="row gx-3">
+                                                            <div class="col-12 mb-3">
+                                                                <label class="form-label">Name</label>
+                                                                <input class="form-control" type="text"
+                                                                    placeholder="Enter your name" name="name" id="name">
+                                                                <p id="nameError" style="color: red;"></p>
+                                                            </div>
+                                                            <div class="col-lg-12 mb-3">
+                                                                <label class="form-label">Phone</label>
+                                                                <input class="form-control" type="tel"
+                                                                    placeholder="Enter your phone number" name="mobile"
+                                                                    id="mobile">
+                                                                <p id="mobileError" style="color: red;"></p>
+                                                            </div>
+                                                            <div class="col-lg-12 mb-3">
+                                                                <label class="form-label">Address line 1</label>
+                                                                <input class="form-control" type="text"
+                                                                    placeholder="Enter your address" name="address1"
+                                                                    id="address1">
+                                                                <p id="address1Error" style="color: red;"></p>
+                                                            </div>
+                                                            <div class="col-lg-12 mb-3">
+                                                                <label class="form-label">City</label>
+                                                                <input class="form-control" type="text"
+                                                                    placeholder="Enter your City" name="city" id="city">
+                                                                <p id="cityError" style="color: red;"></p>
+                                                                <div class="col-lg-12 mb-3">
+                                                                    <label class="form-label">State</label>
+                                                                    <input class="form-control" type="text"
+                                                                        placeholder="Enter your State" name="state"
+                                                                        id="state">
+                                                                    <p id="stateError" style="color: red;"></p>
+                                                                </div>
+                                                                <div class="col-lg-12 mb-3">
+                                                                    <label class="form-label">Pincode</label>
+                                                                    <input class="form-control" type="tel"
+                                                                        placeholder="Enter your Pincode" name="pin"
+                                                                        id="pincode">
+                                                                    <p id="pincodeError" style="color: red;"></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <div>
+                                                        <span>
+                                                            <button class="btn btn-primary btn-sm" type="submit"
+                                                        id="submitButton">Save Address</button>
+                                                        </span>
+                                                        <span>
+                                                            {{!-- <button type="button" class="btn btn-primary btn-sm"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#coupon" href="/addresses">Close</button> --}}
+                                                        <button type="button" class="btn btn-primary btn-sm" id="closeButton">Close</button>
+                                                        </span>
+
+                                                    </div>
+                                                    <div>
+                                                        
+
+                                                    </div>
+                                                    
+                                                    
+                                            </form>
+                                        </div>
+
+
+                                    </div>
+                                   
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form[action="/add_address"]');
+        const submitButton = document.getElementById('submitButton');
+        const nameField = document.getElementById('name');
+        const mobileField = document.getElementById('mobile');
+        const address1Field = document.getElementById('address1');
+        const address2Field = document.getElementById('address2');
+        const cityField = document.getElementById('city');
+        const stateField = document.getElementById('state');
+        const pincodeField = document.getElementById('pincode');
+        const nameError = document.getElementById('nameError');
+        const mobileError = document.getElementById('mobileError');
+        const address1Error = document.getElementById('address1Error');
+        const cityError = document.getElementById('cityError');
+        const stateError = document.getElementById('stateError');
+        const pincodeError = document.getElementById('pincodeError');
+        const closeButton = document.getElementById('closeButton');
+        closeButton.addEventListener('click', function() {
+        window.location.href = '/addresses';
+
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Clear previous error messages
+            clearErrors();
+
+            if (nameField.value.trim() === '') {
+                isValid = false;
+                showError(nameError, 'Name is required.');
+            }
+
+            if (mobileField.value.trim() === '') {
+                isValid = false;
+                showError(mobileError, 'Phone number is required.');
+            } else if (!/^\d{10}$/.test(mobileField.value.trim())) {
+                isValid = false;
+                showError(mobileError, 'Phone number must be 10 digits.');
+            }
+
+            if (address1Field.value.trim() === '') {
+                isValid = false;
+                showError(address1Error, 'Address line 1 is required.');
+            }
+
+            if (cityField.value.trim() === '') {
+                isValid = false;
+                showError(cityError, 'City is required.');
+            }
+
+            if (stateField.value.trim() === '') {
+                isValid = false;
+                showError(stateError, 'State is required.');
+            }
+
+            if (pincodeField.value.trim() === '') {
+                isValid = false;
+                showError(pincodeError, 'Pincode is required.');
+            } else if (!/^\d{6}$/.test(pincodeField.value.trim())) {
+                isValid = false;
+                showError(pincodeError, 'Pincode must be 6 digits.');
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+            }
+            
+
+    
+        });
+
+        function showError(element, message) {
+            element.innerText = message;
+            element.style.color = 'red';
+        }
+
+        function clearErrors() {
+            nameError.innerText = '';
+            mobileError.innerText = '';
+            address1Error.innerText = '';
+            cityError.innerText = '';
+            stateError.innerText = '';
+            pincodeError.innerText = '';
+        }
+    });
+</script>
