@@ -117,51 +117,10 @@ const searchAndSort = async (req, res) => {
     },
     {
       $unwind: {
-        path: "$category",
-        preserveNullAndEmptyArrays: true, // Ensure products without categories are still included
+        path: "$category"
       },
     },
-    {
-      $lookup: {
-        from: "productoffers",  // Lookup with productoffers collection
-        localField: "_id",  // Product's ID field
-        foreignField: "productId",  // Field in productoffers referencing Product
-        as: "productOffer",
-      },
-    },
-    {
-      $unwind: {
-        path: "$productOffer",
-        preserveNullAndEmptyArrays: true, // Ensure products without offers are still included
-      },
-    },
-    {
-      $project: {
-        _id: 1,
-        name: 1,
-        price: 1,
-        description: 1,
-        stock: 1,
-        popularity: 1,
-        bestSelling: 1,
-        imageUrl: 1,
-        category: {
-          _id: 1,
-          category: 1,
-          imageUrl: 1,
-          isListed: 1,
-          bestSelling: 1,
-        },
-        productOffer: 1,  // Include all fields from the productOffer
-        discountPrice: {
-          $cond: {
-            if: { $eq: ["$productOffer.currentStatus", true] },  // If currentStatus is true
-            then: "$productOffer.discountPrice",  // Show discountPrice if offer is active
-            else: "$price",  // Otherwise, show price as discountPrice
-          },
-        },
-      },
-    },
+
     sortStage, // Sorting stage
     skipStage, // Skipping stage for pagination
     limitStage, // Limit stage for pagination

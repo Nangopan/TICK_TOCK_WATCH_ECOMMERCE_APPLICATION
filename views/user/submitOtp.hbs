@@ -476,7 +476,7 @@
 </script> --}}
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('otp-form');
   const timerElement = document.getElementById('timer');
   const resendButton = document.getElementById('resendButton');
@@ -485,10 +485,10 @@
   const inputs = document.querySelectorAll(".otp-field > input");
   const submitButton = document.querySelector(".btn");
 
-  let countdown = 10;
+  let countdown;
   let countdownInterval;
 
-  // Start countdown when the page loads
+  // Start countdown on page load
   startCountdown();
 
   // Form submission event
@@ -521,7 +521,7 @@
     countdown = 10;
     timerElement.textContent = countdown;
     timerText.style.display = 'block';
-    disableResendButton(); // Disable the resend button
+    disableResendButton();
 
     countdownInterval = setInterval(function () {
       countdown--;
@@ -531,33 +531,46 @@
         clearInterval(countdownInterval);
         timerElement.textContent = '';
         timerText.style.display = 'none';
-        enableResendButton(); // Enable resend button
+        enableResendButton();
       }
     }, 1000);
   }
 
-  // Resend OTP
+  // Resend OTP functionality
   function resendOTP() {
     console.log('Resend OTP clicked');
     clearInterval(countdownInterval); // Clear previous countdown
     startCountdown(); // Restart the countdown
+
+    // Simulate OTP resend request (uncomment this if you have an API for OTP resend)
+    /*
+    fetch('/resend_otp', { method: 'POST' })
+      .then(response => response.json())
+      .then(data => console.log('OTP Resent:', data))
+      .catch(error => console.error('Resend Error:', error));
+    */
+
+    disableResendButton(); // Disable again after resending
   }
 
   // Disable the resend button
   function disableResendButton() {
     resendButton.disabled = true;
     resendButton.style.cursor = 'not-allowed';
+    resendLink.style.pointerEvents = 'none';
     resendLink.style.cursor = 'not-allowed';
-    resendLink.style.pointerEvents = 'none'; // Disable click on the link
   }
 
   // Enable the resend button
   function enableResendButton() {
     resendButton.disabled = false;
     resendButton.style.cursor = 'pointer';
+    resendLink.style.pointerEvents = 'auto';
     resendLink.style.cursor = 'pointer';
-    resendLink.style.pointerEvents = 'auto'; // Allow click on the link
   }
+
+  // Attach the resendOTP function to the button click event
+  resendButton.addEventListener('click', resendOTP);
 
   // Input field behavior: focus on next input automatically
   inputs.forEach((input, index) => {
@@ -593,5 +606,6 @@
   // Focus on the first input on load
   window.addEventListener('load', () => inputs[0].focus());
 });
+
 
 </script>

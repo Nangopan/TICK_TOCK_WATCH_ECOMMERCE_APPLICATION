@@ -1,4 +1,4 @@
-
+require("dotenv").config()
 // Get Login Page
 
 const getLogin = async (req, res) => {
@@ -22,12 +22,14 @@ const getLogin = async (req, res) => {
   
       let adminMail = req.body.email;
       let adminPass = req.body.password;
+
+  
       if (admin.mail === adminMail && admin.password === adminPass) {
         req.session.admin = admin;
         console.log(req.session)
         res.redirect("/admin/home");
       } else {
-        res.render("admin/login", {
+        res.redirect("/admin/login", {
           layout: "adminLayout",
           message: "Invalid Credential",
           isLoginPage: true,
@@ -40,6 +42,15 @@ const getLogin = async (req, res) => {
   
   
   // Logout
+
+
+  const getDashboard = async(req, res)=>{
+    try {
+      res.render('admin/home', {layout: 'adminLayout'})
+    } catch (error) {
+      
+    }
+  }
   
   const doLogout = async (req, res) => {
     try {
@@ -53,5 +64,6 @@ const getLogin = async (req, res) => {
   module.exports = {
     getLogin,  
     doLogin,
-    doLogout
+    doLogout,
+    getDashboard
   };

@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { getLogin, doLogin, doLogout } = require("../controllers/adminController/adminController")
+const { getLogin, doLogin, doLogout, getDashboard } = require("../controllers/adminController/adminController")
 const { showProduct, addProductPage, addProduct, blockProduct, showeditProduct, updateProduct, deleteProdImage } = require('../controllers/adminController/productManagement');
 const { addCategoryPage, addNewCategory, showCategoryPage, unListCategory, showEditCategory, updateCategory } = require('../controllers/adminController/categoryManagement');
 const { usersPage, blockUser } = require('../controllers/adminController/UserManagement');
@@ -10,7 +10,7 @@ const { ordersPage, orderDetails, changeStatus } = require('../controllers/admin
 
 
 const { isLogin, isLogout } = require("../middleware/adminAuth")
-const store = require('../middleware/multer')
+const store = require('../middleware/multer');
 
 // Admin Login & Logout
 
@@ -19,7 +19,7 @@ router.post("/admin/login" , isLogout, doLogin)
 router.get("/admin/logout",  doLogout)
 
 
-//router.get("/admin/home",isLogin , getHome)
+router.get('/admin/home', isLogin,  getDashboard )
 
 // Product Page
 
@@ -35,7 +35,7 @@ router.delete('/admin/product_img_delete', isLogin, deleteProdImage)
 
 // Category Page
 
-router.get('/admin/addCategory',isLogin  , addCategoryPage)
+router.get('/admin/addCategory',isLogin  ,  addCategoryPage)
 router.post('/admin/addCategory', isLogin , store.single('image'), addNewCategory)
 router.get('/admin/category',  isLogin, showCategoryPage)
 router.get('/admin/editCategory/:id',  showEditCategory)

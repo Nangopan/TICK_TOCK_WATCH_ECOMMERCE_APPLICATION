@@ -12,12 +12,14 @@ const adminRouter = require("./routes/adminRoutes")
 const hbsHelper=require('./helpers/hbsHelpers')
 const DB=require("./DB/connectDb")
 
+const morgan = require('morgan')
+
 require('dotenv').config()
 
 DB()
 
 app.engine('hbs', exhbs.engine({
-    layoutsDir: __dirname + '/views/layouts',
+    layoutsDir: __dirname + '/views/layouts/',
     extname: 'hbs',
     defaultLayout: 'userLayout',
     partialsDir: __dirname + '/views/partials/'
@@ -34,6 +36,7 @@ app.engine('hbs', exhbs.engine({
   
   app.use(nocache());
   
+  app.use(morgan('dev'))
   
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));

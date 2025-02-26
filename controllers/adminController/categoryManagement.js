@@ -55,13 +55,18 @@ const addCategoryPage = (req, res) => {
 // Add New Category
 
 const addNewCategory = async (req, res) => {
+  console.log('Hai')
   const catName = req.body.name;
   const image = req.file;
+
+  console.log(req.body)
 
   try {
     const catExist = await Category.findOne({
       category: { $regex: new RegExp("^" + catName + "$", "i") },
     });
+console.log(image.filename)
+    console.log('cat ext' , catExist)
     if (!catExist) {
       const category = new Category({
         category: catName,
@@ -75,7 +80,10 @@ const addNewCategory = async (req, res) => {
       req.session.catExist = true;
       res.redirect("/admin/addCategory");
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error adding category:", error); // Log error
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 // Unlist Category
