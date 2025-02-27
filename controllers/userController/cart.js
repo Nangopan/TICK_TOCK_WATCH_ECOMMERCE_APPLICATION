@@ -142,26 +142,26 @@ const addToCart = async (req, res) => {
 
     const productToLookup = await Product.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(data.prodId) } }, // Find product by ID
-      {
-        $lookup: {
-          from: "productoffers", // The name of the collection you want to join
-          localField: "_id", // The field in the Product collection
-          foreignField: "productId", // The field in the ProductOffer collection that references Product
-          as: "productOffer", // The field where the joined data will be stored
-        },
-      },
-      {
-        $unwind: { 
-          path: "$productOffer", // Unwind to access individual offer data
-          preserveNullAndEmptyArrays: true, // Keep product even if there's no offer
-        },
-      }
+      // {
+      //   $lookup: {
+      //     from: "productoffers", // The name of the collection you want to join
+      //     localField: "_id", // The field in the Product collection
+      //     foreignField: "productId", // The field in the ProductOffer collection that references Product
+      //     as: "productOffer", // The field where the joined data will be stored
+      //   },
+      // },
+      // {
+      //   $unwind: { 
+      //     path: "$productOffer", // Unwind to access individual offer data
+      //     preserveNullAndEmptyArrays: true, // Keep product even if there's no offer
+      //   },
+      // }
     ]);
     let productToCart = productToLookup[0]
     console.log(productToCart);
     
 
-    const priceToUse = productToCart.productOffer.discountPrice || productToCart.price; 
+    const priceToUse = productToCart.price; 
     console.log("priceToUse =>     ",priceToUse)
 
     console.log("Product Data:", productToCart);

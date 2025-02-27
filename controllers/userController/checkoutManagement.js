@@ -15,7 +15,7 @@ const loadCheckoutPage = async (req, res) => {
     const ID = new mongoose.Types.ObjectId(userData._id);
 
     const addressData = await Address.find({ userId: userData._id }).lean();
-    let coupon = await Coupon.find().lean();
+    // let coupon = await Coupon.find().lean();
 
     const subTotal = await Cart.aggregate([
       {
@@ -70,7 +70,6 @@ const loadCheckoutPage = async (req, res) => {
       addressData,
       subTotal: subTotal[0].total,
       cart,
-      coupon,
     });
   } catch (error) {
     console.log(error.message);

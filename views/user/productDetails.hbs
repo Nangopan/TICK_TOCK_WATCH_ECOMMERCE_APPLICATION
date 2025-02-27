@@ -100,9 +100,9 @@
                                     <ul class="product-meta font-xs color-grey mt-50">
                                         <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                         <li class="mb-5">Tags: 
-                                            <a href="#" rel="tag">IPhone</a>, 
-                                            <a href="#"rel="tag">Mobile</a>, 
-                                            <a href="#" rel="tag">Android</a> 
+                                            <a href="#" rel="tag">Men</a>, 
+                                            <a href="#"rel="tag">Women</a>, 
+                                            <a href="#" rel="tag">kids</a> 
                                         </li>
                                         {{#if product.stock}}       
                                         <li>Availability: <span class="in-stock text-success ml-5 " style="font-weight: bold !important; font-size: 15px;">{{product.stock}} Items In Stock</span></li>
@@ -144,7 +144,7 @@
                     if (result.success) {
 
                         Swal.fire({
-                            icon: 'success',
+                            icon: 'success', 
                             title: 'Added to cart',
                             text: result.message,
                             showConfirmButton: false,

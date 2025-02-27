@@ -44,6 +44,8 @@ app.engine('hbs', exhbs.engine({
   app.set("view engine", "hbs")
   app.set("views", path.join(__dirname, "views"))
   
+  Handlebars.registerHelper( hbsHelper.incHelper(Handlebars), hbsHelper.incrementHelper(Handlebars), hbsHelper.mulHelper(Handlebars), hbsHelper.addHelper(Handlebars), hbsHelper.isCancelled(Handlebars), hbsHelper.formatDate(Handlebars), hbsHelper.isequal(Handlebars),hbsHelper.ifCondition1(Handlebars), hbsHelper.length(Handlebars), hbsHelper.singleIsCancelled(Handlebars), hbsHelper.ifCondition(Handlebars), hbsHelper.statushelper(Handlebars), hbsHelper.eqHelper(Handlebars)  )
+
   app.use(express.static(path.join(__dirname,"public")))
 
 

@@ -37,14 +37,14 @@
                                             <td>₹{{multiply this.productPrice this.quantity }}</td>
                                         </tr>
                                         {{/each}}
-                                        <tr>
+                                        {{!-- <tr>
                                         <th> Coupon <span id="copoun_code">
                                                 <small></small>
                                             </span></th>
                                         <td colspan="2"><em><span id="discount_amt">
                                                     <span class="text-success">No Coupon</span>
                                                 </span></em></td>
-                                    </tr>
+                                    </tr> --}}
                                         <tr>
                                         <th>Total</th>
                                         <td class="product-subtotal" colspan="2">₹{{subTotal}}</td>
@@ -65,10 +65,10 @@
                                 </table>
                             </div>
                              <div class="mb-30 mt-50">
-                            <div class="heading_s1 mb-3">
+                            {{!-- <div class="heading_s1 mb-3">
                                 <h4>Apply Coupon</h4>
-                            </div>
-                            <div class="total-amount">
+                            </div> --}}
+                            {{!-- <div class="total-amount">
                                 <div class="left">
                                     <div class="coupon">
                                         <form action="#" target="_blank">
@@ -93,10 +93,10 @@
                                         </form>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-lg-4">
 
-                                <button type="button" class="btn btn-fill-out btn-block " data-bs-toggle="collapse" data-bs-target="#couponList" aria-expanded="false" aria-controls="couponList"> <i class="fi-rs-label mr-10"></i> Show Available Coupons</button>
+                                {{!-- <button type="button" class="btn btn-fill-out btn-block " data-bs-toggle="collapse" data-bs-target="#couponList" aria-expanded="false" aria-controls="couponList"> <i class="fi-rs-label mr-10"></i> Show Available Coupons</button> --}}
 
                                 <div class="panel-collapse1 collapse coupon_form " id="couponList">
                                     <div class="panel-body">
@@ -163,17 +163,17 @@
                                     <label class="form-check-label" for="razorpay" data-bs-toggle="collapse"
                                         data-target="#checkPayment" aria-controls="checkPayment"> Razor Pay</label>
                                 </div>
-                                <div class="custome-radio">
+                                {{!-- <div class="custome-radio">
                                     <input class="form-check-input" required="" type="radio" name="payment_option"
                                         value="wallet" id="wallet" >
                                     <label class="form-check-label" for="wallet" data-bs-toggle="collapse"
-                                        data-target="#paypal" aria-controls="paypal"> Wallet</label>
-                                </div>
+                                        data-target="#paypal" aria-controls="paypal"></label>
+                                </div> --}}
                                 <div class="hotline d-none d-lg-block">
 
-                                    <p class="my-2 mx-2">Wallet Balance : <strong><span id="update_wallet">
+                                    {{!-- <p class="my-2 mx-2">Wallet Balance : <strong><span id="update_wallet">
                                                 ₹{{userData.wallet}}</span>
-                                        </strong></p>
+                                        </strong></p> --}}
 
                                     <input type="hidden" value="{{userData.wallet}}" name="wallet">
                                 </div>
