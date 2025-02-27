@@ -73,7 +73,7 @@
                     <div class="widget-category mb-30">
                         <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
                         <ul class="categories">
-                            {{#each loadCatData}}
+                            {{#each categoryData}}
                             <li>
                                
                                 <a onclick="filterByCategory('{{this._id}}')">{{this.category}}</a>
@@ -191,7 +191,8 @@ const productHtml = `
                     
                 </div>
                 <div class="product-badges product-badges-position product-badges-mrg">
-                    <span class="hot">Hot</span>
+                ${product.stock == 0 ?  `<span class="hot">Out of stock</span>` : `<span class="hot">Hot</span>`}
+                    
                 </div>
             </div>
             <div class="product-content-wrap">

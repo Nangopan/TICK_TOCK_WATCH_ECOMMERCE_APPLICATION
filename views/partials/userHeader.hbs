@@ -1,12 +1,21 @@
 <header
   class="header-area header-style-1 header-height-2 p-3 mb-2 bg-info text-white"
   style="background-color: #D3D3D3;">
-
+<style>
+.logo a {
+    display: inline-block;  /* Ensures the text stays in a single line */
+    white-space: nowrap;    /* Prevents wrapping to the next line */
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+</style>
 <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
   <div class="container">
     <div class="header-wrap d-flex justify-content-between align-items-center">
       <div class="fs-4 fw-bolder logo logo-width-1">
-        <a href="/">TICK TOCK</a>
+        <a href="/">TICK-TOCK</a>
       </div>
       <div class="header-right d-flex align-items-center">
         <div class="search-style-2 me-3">
@@ -17,10 +26,10 @@
       <div class="header-action-right d-flex align-items-center">
         <div class="header-action-2">
           <div class="header-action-icon-2">
-            <a href="/wishlist">
+            {{!-- <a href="/wishlist">
               <img class="svgInject" alt="Evara" src="/assets/imgs/theme/icons/wishlist3.png" />
                   {{! <span class="pro-count blue">0</span> }}
-            </a>
+            </a> --}}
           </div>
           <div class="header-action-icon-2">
             <a class="mini-cart-icon" href="/cart">
@@ -38,7 +47,7 @@
                 <ul class="dropdown-item-list">
                   <li><a class="dropdown-item" href="/profile">Account</a></li>
                   <li><a class="dropdown-item" href="/myOrders"> Orders</a></li>
-                  <li><a class="dropdown-item" href="/wallet"> Wallet</a></li>                                      
+                  {{!-- <li><a class="dropdown-item" href="/wallet"> Wallet</a></li>                                       --}}
                   <li><a class="dropdown-item" href="#">Address</a></li>
                   <div class="dropdown-divider"></div>
                   <li><a class="dropdown-item text-danger"  id="logoutbtn" href="/logout">Logout</a></li>

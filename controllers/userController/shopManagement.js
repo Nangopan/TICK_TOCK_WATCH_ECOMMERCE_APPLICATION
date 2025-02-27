@@ -8,7 +8,7 @@ let userData;
 const getProduct = async (req, res) => {
   try {
     const userData = req.session.user;
-
+     console.log("hiiii from getProduct",userData)
     const catName = await Product.aggregate([
       {
         $match: {
@@ -27,6 +27,7 @@ const getProduct = async (req, res) => {
         $unwind: "$category",
       },
     ]);
+    console.log("category name=>",catName)
 
     const newProduct = await Product.find()
       .sort({ createdOn: -1 })
@@ -39,7 +40,7 @@ const getProduct = async (req, res) => {
     }
 
     const limit = 6;
-    const loadCatData = await Category.find().lean();
+    const categoryData = await Category.find({isListed: true}).lean();
     const proData = await Product.find({ isBlocked: false })
       .skip((page - 1) * limit)
       .limit(limit)
@@ -57,7 +58,7 @@ const getProduct = async (req, res) => {
       userData,
       currentFunction: "getProductsPage",
       catName,
-      loadCatData,
+      categoryData,
       newProduct,
     });
   } catch (error) {
@@ -69,12 +70,17 @@ const getProduct = async (req, res) => {
 const searchAndSort = async (req, res) => {
   const { searchQuery, sortOption, categoryFilter, page, limit } = req.body;
 
-  const matchStage = { $match: {} };
+  const matchStage = { 
+    $match: { 
+      isBlocked: false 
+    } 
+  };
   if (searchQuery) {
     matchStage.$match.name = { $regex: searchQuery, $options: "i" };
   }
   if (categoryFilter) {
     matchStage.$match.category = new mongoose.Types.ObjectId(categoryFilter);
+
   }
 
   // Construct the sort stage
@@ -119,6 +125,7 @@ const searchAndSort = async (req, res) => {
       $unwind: {
         path: "$category"
       },
+    
     },
 
     sortStage, // Sorting stage
@@ -129,7 +136,9 @@ const searchAndSort = async (req, res) => {
   console.log(products);
   
 
-  const totalProducts = await Product.countDocuments(matchStage.$match);
+  const totalProducts = await Product.countDocuments({
+    isBlocked: false,
+  });
 
   res.json({ products, totalProducts });
 };

@@ -37,46 +37,6 @@ const getHome = async (req, res) => {
       {
         $unwind: "$category",
       },
-      {
-        $lookup: {
-          from: "productoffers",  // Assuming the collection name is "productoffers"
-          localField: "_id",  // Assuming the product id is the foreign key
-          foreignField: "productId",  // Field in productoffers referencing Product
-          as: "productOffer",
-        },
-      },
-      {
-        $unwind: {
-          path: "$productOffer",
-          preserveNullAndEmptyArrays: true,  // Ensure products without offers are still included
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          name: 1,
-          price: 1,
-          description: 1,
-          stock: 1,
-          popularity: 1,
-          bestSelling: 1,
-          imageUrl: 1,
-          category: {
-            _id: 1,
-            category: 1,
-            imageUrl: 1,
-            isListed: 1,
-            bestSelling: 1,
-          },
-          discountPrice: {
-            $cond: {
-              if: { $eq: ["$productOffer.currentStatus", true] },  // If currentStatus is true
-              then: "$productOffer.discountPrice",  // Show discountPrice if active
-              else: "$price",  // Otherwise, show price as discountPrice
-            },
-          },
-        },
-      },
     ]);
     
     console.log(Products);
@@ -255,11 +215,16 @@ const submitOtp = async (req, res) => {
 
 const resendOtp = async (req, res) => {
   try {
-    if (userEmail) otp = await userHelper.verifyEmail(userEmail);
-    console.log("Sending OTP to:", email, otp);
-    res.redirect("/submit_otp");
+    if (userEmail) {
+      otp = await userHelper.verifyEmail(userEmail);
+      console.log("Sending OTP to:", userEmail, otp); // Fixed variable name
+      res.json({ success: true, message: "OTP resent successfully" }); // Send success response
+    } else {
+      res.json({ error: "User email not found. Please restart signup." });
+    }
   } catch (error) {
     console.log(error);
+    res.json({ error: "An error occurred while resending OTP." });
   }
 };
 

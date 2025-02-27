@@ -380,23 +380,9 @@
             if (result.isConfirmed) {
                 subTotal = Number(document.getElementsByName('subTotal')[0].value);
                 if (paymentMethod === 'cash-on-delivery') {
-                    if (subTotal >= 1000) {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'Cash on delivery is not available for orders above ₹1000',
-                            icon: 'error',
-                            showCancelButton: false,
-
-                        })
-                    } else {
+                   
                         Cod()
-                    }
-                } else if (paymentMethod === 'razorpay') {
-                    online();
-                } else if (paymentMethod === 'wallet') {
-                    useWallet();
-                } else {
-                    console.log('Invalid payment method.');
+                    
                 }
             }
         });
