@@ -211,30 +211,40 @@ function Validation() {
 
 const deleteImage = async (productId, imageIndex) => {
     try {
+        const imageContainers = document.querySelectorAll('.image-container'); // Get all current images
+        if (imageContainers.length <= 3) { // Check if only 3 images remain
+            Swal.fire({
+                icon: "warning",
+                title: "Cannot delete!",
+                text: "At least 3 images must be present.",
+            });
+            return; // Stop deletion
+        }
+
         const response = await fetch(`/admin/product_img_delete?id=${productId}&image=${imageIndex}`, {
             method: 'DELETE'
         });
 
         const data = await response.json();
-        console.log("hei",data);
+        console.log("Response from server:", data);
 
         if (data) {
-    const imageElem = document.querySelector(`.pro-image[data-image-index="${imageIndex}"]`);
-    const imageContainer = document.querySelector(`.image-container[data-image-index="${imageIndex}"]`);
-    console.log("Image Element:", imageContainer); // Log the image element
-    if (imageElem) {
-        imageContainer.remove()
-    } else {
-        console.warn("Image element not found for index:", imageIndex); // Warn if element is not found
-    }
-} else {
-    console.warn("No data received from the server.");
-}
-
+            const imageElem = document.querySelector(`.pro-image[data-image-index="${imageIndex}"]`);
+            const imageContainer = document.querySelector(`.image-container[data-image-index="${imageIndex}"]`);
+            
+            if (imageContainer) {
+                imageContainer.remove();
+            } else {
+                console.warn("Image element not found for index:", imageIndex);
+            }
+        } else {
+            console.warn("No data received from the server.");
+        }
     } catch (error) {
         console.error(error);
     }
 };
+
 
 const deleteProImg = () => {
     const deleteButtons = document.querySelectorAll('.close-button');

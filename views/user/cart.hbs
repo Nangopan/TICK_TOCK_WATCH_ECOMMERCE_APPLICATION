@@ -182,14 +182,31 @@
 
     // Increment and Decrement quantity
   
-        $('.fa-plus, .fa-minus').click(function () {
-        const cartId = $(this).closest('tr').find('.num-product').prop('id');
-        const newValue = $(this).hasClass('fa-plus') ? parseInt($(`#${cartId}`).val()) + 1 : parseInt($(`#${cartId}`).val()) - 1;
-        if (newValue > 0) {
-            $(`#${cartId}`).val(newValue);
-            updateCartItemQuantity(cartId, newValue);
+      // Increment and Decrement quantity
+$('.fa-plus, .fa-minus').click(function () {
+    const cartId = $(this).closest('tr').find('.num-product').prop('id');
+    let currentValue = parseInt($(`#${cartId}`).val());
+
+    // Check if the user clicked the plus button
+    if ($(this).hasClass('fa-plus')) {
+        if (currentValue >= 5) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Limit Reached',
+                text: 'You cannot add more than 5 items per product!',
+            });
+            return; // Stop further execution
         }
-    });
+        currentValue++;
+    } else {
+        if (currentValue > 1) {
+            currentValue--;
+        }
+    }
+
+    $(`#${cartId}`).val(currentValue);
+    updateCartItemQuantity(cartId, currentValue);
+});
 
     // Update cart item quantity
     function updateCartItemQuantity(cartId, newValue) {
