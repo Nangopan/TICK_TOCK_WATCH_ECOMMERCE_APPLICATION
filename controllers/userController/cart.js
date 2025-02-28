@@ -27,20 +27,7 @@ const loadCartPage = async (req, res) => {
           preserveNullAndEmptyArrays: true, // To keep cart entries even if no matching product
         },
       },
-      {
-        $lookup: {
-          from: "productoffers", // Lookup product offers
-          localField: "productData._id", // Match the product ID
-          foreignField: "productId",
-          as: "productOffer",
-        },
-      },
-      {
-        $unwind: {
-          path: "$productOffer",
-          preserveNullAndEmptyArrays: true, // To keep cart entries even if no active offer
-        },
-      },
+
       {
         $project: {
           _id: 1,
@@ -48,13 +35,7 @@ const loadCartPage = async (req, res) => {
           quantity: 1,
           value: 1,
           productName: "$productData.name",
-          productPrice: {
-            $cond: {
-              if: { $gt: [{ $ifNull: ["$productOffer.discountPrice", 0] }, 0] }, // Check if discountPrice exists
-              then: "$productOffer.discountPrice", // Use discountPrice if available
-              else: "$productData.price", // Otherwise use regular price
-            },
-          },
+          productPrice: "$productData.price",
           productDescription: "$productData.description",
           productImage: "$productData.imageUrl",
           stock: "$productData.stock",
@@ -142,20 +123,6 @@ const addToCart = async (req, res) => {
 
     const productToLookup = await Product.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(data.prodId) } }, // Find product by ID
-      // {
-      //   $lookup: {
-      //     from: "productoffers", // The name of the collection you want to join
-      //     localField: "_id", // The field in the Product collection
-      //     foreignField: "productId", // The field in the ProductOffer collection that references Product
-      //     as: "productOffer", // The field where the joined data will be stored
-      //   },
-      // },
-      // {
-      //   $unwind: { 
-      //     path: "$productOffer", // Unwind to access individual offer data
-      //     preserveNullAndEmptyArrays: true, // Keep product even if there's no offer
-      //   },
-      // }
     ]);
     let productToCart = productToLookup[0]
     console.log(productToCart);

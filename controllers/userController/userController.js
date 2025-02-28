@@ -263,20 +263,6 @@ const productDetails = async (req, res) => {
     
     const products = await Product.aggregate([
       { $match: { _id: new ObjectId(productID) } }, // Match product by productID
-      {
-        $lookup: {
-          from: "productoffers",  // Lookup from the productoffers collection
-          localField: "_id",  // The field from Product that we are matching (product ID)
-          foreignField: "productId",  // The field in productoffers that refers to Product's ID
-          as: "productOffer",  // The name of the field where the offer data will be stored
-        },
-      },
-      {
-        $unwind: {
-          path: "$productOffer",  
-          preserveNullAndEmptyArrays: true,  // If no offer is found, it will be included as null
-        },
-      },
     ]);
     
     let product = products[0];

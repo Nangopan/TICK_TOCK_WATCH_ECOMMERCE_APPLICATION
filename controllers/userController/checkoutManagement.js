@@ -88,8 +88,7 @@ const placeorder = async (req, res) => {
     const totalamount = req.body.amount;
     console.log("Request dot body  ", addressId, payMethod, totalamount);
 
-    console.log('Coupon data:', req.body.couponData); // To check if the couponData is passed
-console.log('Coupon Name:', req.body.couponName); // To check the coupon name value
+   
 
     const result = Math.random().toString(36).substring(2, 7);
     const id = Math.floor(100000 + Math.random() * 900000);
@@ -140,12 +139,6 @@ console.log('Coupon Name:', req.body.couponName); // To check the coupon name va
     let finalTotal = totalamount;
     let discountAmt = 0;
 
-    if (req.body.couponData) {
-      console.log(req.body.couponData)
-      finalTotal = req.body.couponData.newTotal;
-      discountAmt = req.body.couponData.discountAmt;
-    }
-
     const DELIVERY_CHARGE = 50;
     const grandTotal = finalTotal + DELIVERY_CHARGE;
 
@@ -160,10 +153,8 @@ console.log('Coupon Name:', req.body.couponName); // To check the coupon name va
         orderId: ordeId,
         total: grandTotal,
         paymentMethod: payMethod,
-        discountAmt: discountAmt,
-        amountAfterDscnt: grandTotal,  // The grand total after discount + delivery charge
-        coupon: req.body.couponName ? req.body.couponName : "",
-        couponUsed: req.body.couponData ? true : false,
+        totalAmount: grandTotal,  
+       
       });
 
       if (req.body.status) {
@@ -194,41 +185,11 @@ console.log('Coupon Name:', req.body.couponName); // To check the coupon name va
     };
 
     if (addressId) {
-      if (payMethod === "cash-on-delivery") {
+      if (payMethod) {
         console.log("CASH ON DELIVERY");
         await saveOrder();
         res.json({ COD: true });
-      } else if (payMethod === "razorpay") {
-        const amount = grandTotal;
-        let instance = new Razorpay({
-          key_id: "rzp_test_RgbHBDrROekluj",
-          key_secret: "uRixJRQVnd8RCggLiHa5SEaG",
-        });
-        const order = await instance.orders.create({
-          amount: amount * 100,
-          currency: "INR",
-          receipt: "Manikandan",
-        });
-        await saveOrder();
-
-        res.json({
-          razorPaySucess: true,
-          order,
-          amount,
-        });
-      } else if (payMethod === "wallet") {
-        const newWallet = req.body.updateWallet;
-
-        await User.findByIdAndUpdate(
-          userData._id,
-          { $set: { wallet: newWallet + 50 } },
-          { new: true }
-        );
-
-        await saveOrder();
-
-        res.json({ walletSucess: true });
-      }
+      }  
     }
   } catch (error) {
     console.log(error.message);

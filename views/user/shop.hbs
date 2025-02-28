@@ -204,12 +204,7 @@ const productHtml = `
                     <span><span>90%</span></span>
                 </div>
                 <div class="product-price">
-                    ${
-                        product.discountPrice
-                            ? `<span>₹${product.discountPrice}</span>
-                               <span class="old-price">₹${product.price}</span>`
-                            : `<span>₹${product.price}</span>`
-                    }
+                    <span>₹${product.price}</span>
                 </div>
                 <div class="product-action-1 show">
                     <span>

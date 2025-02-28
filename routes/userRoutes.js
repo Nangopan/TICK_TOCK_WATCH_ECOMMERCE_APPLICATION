@@ -87,8 +87,6 @@ router.get('/delete_address/:id', logedin, isBlocked, deleteAddress)
 
 router.get('/myOrders', logedin, isBlocked, my_Orders)
 router.get('/orderDetails/:id', logedin, isBlocked, orderDetails)
-router.post('/verifyPayment', logedin, isBlocked, verify)
-router.post('/retry-payment/:id',logedin, isBlocked, retryPayment)
 
 // Cart Page
 

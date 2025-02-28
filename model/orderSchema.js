@@ -41,18 +41,10 @@ const orderSchema = new Schema({
     type: Number,
   },
 
-  amountAfterDscnt: {
+  totalAmount: {
     type: Number,
   
   },
-  coupon: {
-    type: String,
-  },
-  couponUsed: {
-    type: Boolean,
-    default: false,
-  },
-
   paymentMethod: {
     type: String,
     required: true,

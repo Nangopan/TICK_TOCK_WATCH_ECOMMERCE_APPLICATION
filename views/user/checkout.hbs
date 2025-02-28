@@ -103,7 +103,7 @@
                                         {{!-- <div class="mb-25">
                                             <h4>Address Form</h4>
                                         </div> --}}
-                                        {{#each coupon}}
+                                        
                                         <article class="itemlist">
                                             <div class="row align-items-center">
                                                 {{!-- <div class="col col-check flex-grow-0">
@@ -117,7 +117,7 @@
                                                     <a class="itemside">
 
                                                         <div class="info">
-                                                            <h6 class="mb-2">{{this.code}}</h6>
+                                                            <h6 class="mb-2"></h6>
                                                         </div>
                                                     </a>
                                                 </div>
@@ -126,7 +126,7 @@
                                                     <a class="itemside">
 
                                                         <div class="info">
-                                                            <h6 class="mb-0">{{this.discount}}%</h6>
+                                                            <h6 class="mb-0"></h6>
                                                         </div>
                                                     </a>
                                                 </div>
@@ -141,7 +141,7 @@
 
                                             </div> <!-- row .// -->
                                         </article>
-                                        {{/each}}
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -158,10 +158,10 @@
                                         </div>
                                         
                                     <div class="custome-radio">
-                                    <input class="form-check-input" required="" type="radio" name="payment_option"
+                                    {{!-- <input class="form-check-input" required="" type="radio" name="payment_option"
                                         value="razorpay" id="razorpay">
                                     <label class="form-check-label" for="razorpay" data-bs-toggle="collapse"
-                                        data-target="#checkPayment" aria-controls="checkPayment"> Razor Pay</label>
+                                        data-target="#checkPayment" aria-controls="checkPayment"> Razor Pay</label> --}}
                                 </div>
                                 {{!-- <div class="custome-radio">
                                     <input class="form-check-input" required="" type="radio" name="payment_option"
@@ -279,69 +279,7 @@
     let ct=0
 
 
-    // toggle coupon
-
-    let couponStatus
-
-    let originalSubTotal = Number(document.getElementsByName('subTotal')[0].value) ;
-
-    const toggleCoupon = async () => {
-        ct+=1
-        couponEl = document.getElementById('copon').value;
-        const currentStatus = document.getElementById('couponBtn').innerText.trim();
-        const endpoint = currentStatus === 'Apply' ? '/apply_coupon' : '/remove_coupon';
-
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ couponVal: couponEl, subTotal: originalSubTotal })
-        });
-
-         couponData = await response.json();
-
-         console.log(couponData)
-
-        const setCouponStatus = (msg, element) => {
-            element.innerHTML = `<p>${msg}</p>`;
-            setTimeout(() => {
-                element.style.opacity = 0;
-                element.innerHTML = '';
-            }, 2000);
-        };
-
-        const couponMsg = document.getElementById('couponMsg');
-        const sCoponMsg = document.getElementById('sCoponMsg');
-
-        if (couponData.status === 'invalid') {
-            ct=0
-            setCouponStatus('Invalid coupon', couponMsg);
-        } else if (couponData.status === 'expired') {
-            ct=0
-            setCouponStatus('Coupon has expired!', couponMsg);
-        } else if (couponData.status === 'already_used') {
-            ct=0
-            setCouponStatus('Coupon already used!', couponMsg);
-        } else if (couponData.status === 'not_used') {
-            ct=0
-            setCouponStatus('Coupon not used yet!', couponMsg);
-        } else if (couponData.status === 'removed') {
-            setCouponStatus('Coupon removed successfully', couponMsg);
-            document.getElementById('couponBtn').innerHTML = '<i class="fi-rs-label mr-10"></i>Apply';
-        } else if (couponData.status === 'applied') {
-            setCouponStatus('Coupon applied successfully', sCoponMsg);
-            document.getElementById('couponBtn').innerHTML = '<i class="fi-rs-label mr-10"></i>Remove';
-        }
    
-
-        if (couponData.status === 'applied' || couponData.status === 'removed') {
-            document.getElementById('new_sub_total').innerHTML = `<strong>${parseInt(couponData.newTotal) + 50}</strong>`;
-            document.getElementsByName('subTotal')[0].value = couponData.newTotal + 50;
-            document.getElementById('copoun_code').innerHTML = `<small>${couponEl}</small>`;
-            document.getElementById('discount_amt').innerHTML = `<span class="text-success">${couponData.discountAmt}</span>`;
-        }
-    };
 
 
 
@@ -362,7 +300,7 @@
         });
     });
 
-    const placeOrder = () => {
+   const placeOrder = () => {
         const selectedAddress = document.getElementById('selectedAddress').value;
         if (!selectedAddress) {
             Swal.fire('Error', 'Please select a delivery address.', 'error');
@@ -379,36 +317,13 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 subTotal = Number(document.getElementsByName('subTotal')[0].value);
-                if (paymentMethod === 'cash-on-delivery') {
-                   
-                        Cod()
-                    
+                if (paymentMethod) {
+                             Cod()    
+                } else {
+                    console.log('Invalid payment');
                 }
             }
         });
-    }
-
-
-    const useWallet = () => {
-        const wallet = document.getElementsByName('wallet')[0].value
-        const subTotal = Number(document.getElementsByName('subTotal')[0].value)
-        console.log(wallet, 'walletttttttttttt', subTotal)
-
-        if (wallet > subTotal) {
-            updateWallet = wallet - subTotal
-
-            console.log(updateWallet, 'my name is update wallet...........')
-            Cod()
-        } else {
-            alertify.set('notifier', 'position', 'bottom-center');
-            //alertify.success('you dont have sufficient balance in ur wallet choose another payment method')
-            Swal.fire({
-                icon: 'error',
-                title: 'Insufficient Balance',
-                text: 'You don’t have sufficient balance in your wallet. Please choose another payment method.',
-                confirmButtonText: 'OK'
-            });
-        }
     }
 
 
@@ -425,9 +340,6 @@
                 selectedAddress: selectAddress,
                 selectedPayment: paymentMethod,
                 amount: subTotal,
-                couponData: couponData,
-                couponName: couponEl,
-                updateWallet: updateWallet
             }
             
             if (!paymentStatus) {
@@ -455,7 +367,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Payment Failed',
-                    text: 'Your payment could not be processed. Please try again later or use a different payment method.',
+                    text: 'Your order could not be processed. Please try again later or use a different payment method.',
                     confirmButtonText: 'OK'
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -469,110 +381,11 @@
         // Optionally handle the error, e.g., show a notification to the user
         }
     };
-
-
-    const online = () => {
-        if(ct===0) {
-            subTotal = Number(document.getElementsByName('subTotal')[0].value) + 50
-        }else{
-            subTotal = Number(document.getElementsByName('subTotal')[0].value) 
-        }
-        
-        var options = {
-            "key": "rzp_test_OsDtnewxAfAwm0", // Enter the Key ID generated from the Dashboard
-            "amount": (subTotal)* 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-            "currency": "INR",
-            "image": "/images/logo/Logo_CH.png",
-
-            "name": "Mobile Bazaar", //your business name
-            /*"description": "Test Transaction",
-            "image": "https://example.com/your_logo",*/
-
-            "order_id":  undefined, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-            "handler": function (response) {
-                //console.log(response.razorpayOrder, status);
-              //  verifyPayment(response.razorpayOrder, status, response.razorpayOrder.id, response.orderId);
-                Cod()
-            },
-
-        };
-        var rzp1 = new Razorpay(options);
-        //rzp1.open();
-        // Handle errors
-        rzp1.on('payment.failed', function (response) {
-            console.log('payment failed....................................=>')
-            paymentStatus = false;
-            Cod()
-            Swal.fire({
-                icon: 'error',
-                title: 'Payment Failed',
-                text: 'Your payment could not be processed. Please try again later or use a different payment method.',
-                confirmButtonText: 'OK'
-                }).then((result) => {
-                if (result.isConfirmed) {
-                window.location.href = '/payment_failed';
-                }
-            });
-
-        })
-
-        rzp1.open();
-    }
-    
     
 
-const validateCoupon = async () => {
-    couponEl = document.getElementById('copon').value;
-    subTotal = Number(document.getElementsByName('subTotal')[0].value);
 
-    console.log(couponEl);
-    console.log('heloooo from validate coupon...............');
-    const response = await fetch('/validate_coupon', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            couponVal: couponEl,
-            subTotal: subTotal
-        })
-    });
 
-    console.log('hiiiii from coupon status........;;;;;;');
-    couponData = await response.json();
-    console.log(couponData);
-
-    
-};
-
-function verifyPayment(response, order) {
-
-    $.ajax({
-        url: '/verify-payment',
-        method: 'post',
-        data: {
-            order,
-            response,
-            from: "wallet"
-        },success: (response) => {
-            if (response) {
-                Swal.fire({
-                    title: "Success",
-                    text: "Payment has been succeed",
-                    icon: "success",
-                }).then(function () {
-                        location.reload()
-                    });
-            } else {
-                Swal.fire("PAYMENT ERROR!", "Something wrong occured while processing the payment.", "error");
-                location.reload()
-                }
-
-        }
-    })
-}
-
- //document.getElementById('couponBtn').addEventListener('click', toggleCoupon);
+ 
 </script>
 
 <script>

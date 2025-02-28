@@ -144,7 +144,7 @@ const my_Orders = async (req, res) => {
           date: 1,
           orderId: 1,
           status: 1,
-          amountAfterDscnt: 1,
+          totalAmount: 1,
           total: 1,
         },
       },
@@ -258,77 +258,6 @@ const orderDetails = async (req, res) => {
 };
 
 
-const verify = (req, res) => {
-  console.log(req.body.payment, "end");
-  const { orderId } = req.body
-  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body.payment
-  let hmac = crypto.createHmac("sha256", process.env.KEY_SECRET);
-  hmac.update(
-      `${razorpay_order_id}|${razorpay_payment_id}`
-  );
-  hmac = hmac.digest("hex");
-  console.log(hmac, "HMAC");
-  console.log(razorpay_signature, "signature");
-  if (hmac === razorpay_signature) {
-      console.log("true");
-      changeOrderStatusToConfirmed(orderId)
-      res.json({ status: true });
-  } else {
-      console.log("false");
-      res.json({ status: false });
-  }
-};
-
-// const retryPayment = async(req, res) =>{
-//   try {
-
-//     const id = req.params.id
-//     console.log("retry pymenyyyyyytt" , id )
-//     await Order.findByIdAndUpdate(id, { $set: { status: 'pending' } }, { new: true });
-
-//       res.json({
-//           razorPaySucess: true,
-//           order
-//       })
-    
-//   } catch (error) {
-    
-//   }
-//  }
-
-const retryPayment = async (req, res) => {
-  try {
-      // Get the order ID from the request parameters
-      const id = req.params.id;
-      console.log("Retry Payment for order ID:", id);
-
-      // Update the order status to 'pending' in the database
-      const updatedOrder = await Order.findByIdAndUpdate(id, { $set: { status: 'pending' } }, { new: true });
-
-      // Check if the order exists and was updated successfully
-      if (!updatedOrder) {
-          return res.status(404).json({
-              success: false,
-              message: "Order not found."
-          });
-      }
-
-      // If the update is successful, return a success response
-      res.json({
-          success: true,
-          message: "Payment status has been set to 'pending'. You can retry the payment.",
-          order: updatedOrder
-      });
-  } catch (error) {
-      // Catch any errors and send an error response
-      console.error("Error updating payment status:", error);
-      res.status(500).json({
-          success: false,
-          message: "An error occurred while retrying the payment. Please try again later."
-      });
-  }
-};
-
 
 module.exports = {
   viewUserProfile,
@@ -338,6 +267,4 @@ module.exports = {
   updatePassword,
   my_Orders,
   orderDetails,
-  verify,
-  retryPayment
 };
