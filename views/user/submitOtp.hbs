@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const inputs = document.querySelectorAll(".otp-field > input");
   const submitButton = document.querySelector(".btn");
 
-  let countdown = 10;
+  let countdown = 60;
   let countdownInterval;
 
   // Start countdown when the page loads
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Countdown function
   function startCountdown() {
-    countdown = 10;
+    countdown = 60;
     timerElement.textContent = countdown;
     timerText.style.display = 'block';
     disableResendButton();

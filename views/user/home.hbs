@@ -165,9 +165,9 @@
                     <span>₹{{price}}</span>
         
                     </div>
-                    <div class="product-action-1 show">
-                      <a aria-label="Add To Cart" class="action-btn hover-up" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
-                    </div>
+                    {{!-- <div class="product-action-1 show">
+                      <a aria-label="Add To Cart" class="action-btn hover-up .button.button-add-to-cart" href="shop-cart.html"><i class="fi-rs-shopping-bag-add"></i></a>
+                    </div> --}}
                   </div>
                 </div>
               </div>              
@@ -227,4 +227,67 @@
     <!-- Category Section End -->
 
   </main>
+  <script>
+     $(document).ready(function () {
+        $('.button.button-add-to-cart').on('click', function (e) {
+
+            var prodId = $(this).data('product-id');
+            //Suppose Need Input Field before Add to Cart Button in the product detail Page Use this
+            //var quantity = $('.order__quantity--input').length ? $('.order__quantity--input').val() : 1;
+            var quantity = 1;
+
+            $.ajax({
+                url: '/addtocart/' + prodId,
+
+                method: 'POST',
+                // contentType: 'application/json',
+                data: { prodId: prodId, quantity: quantity },
+                success: function (result) {
+                    if (result.success) {
+
+                        Swal.fire({
+                            icon: 'success', 
+                            title: 'Added to cart',
+                            text: result.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        $('#addcart').html('<button id="addcart-btn" onclick="window.location.href=\'/cart\'" class="button button-add-to-cart">Go to cart</button>');
+
+
+                    } else {
+                        if (result.message) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: result.message,
+
+                            })
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Login Required',
+                                showCancelButton: true,
+                                confirmButtonText: 'Login',
+
+
+                                confirmButtonColor: "#088178",
+                                cancelButtonColor: "#d33",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '/login';
+                                }
+                            })
+                        }
+
+                    }
+                },
+                error: function (error) {
+                    console.log('Error adding to cart', error)
+                }
+            })
+        })
+    })
+  </script>
 

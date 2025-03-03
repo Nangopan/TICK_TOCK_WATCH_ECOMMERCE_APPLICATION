@@ -39,11 +39,6 @@ const getHome = async (req, res) => {
       },
     ]);
     
-    console.log(Products);
-    
-    
-    console.log(Products);
-    
     console.log("Aggregated Product Details 1:", Products);
 
 
@@ -217,8 +212,8 @@ const resendOtp = async (req, res) => {
   try {
     if (userEmail) {
       otp = await userHelper.verifyEmail(userEmail);
-      console.log("Sending OTP to:", userEmail, otp); // Fixed variable name
-      res.json({ success: true, message: "OTP resent successfully" }); // Send success response
+      console.log("Sending OTP to:", userEmail, otp); 
+      res.json({ success: true, message: "OTP resent successfully" }); 
     } else {
       res.json({ error: "User email not found. Please restart signup." });
     }
