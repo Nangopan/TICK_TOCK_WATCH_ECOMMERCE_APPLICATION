@@ -13,7 +13,7 @@
                     </div> --}}
                     <div class="card-body">
                         <form method="post" class="form-add-product" action="/admin/updateProduct/{{productData._id}}"
-                              enctype="multipart/form-data" onsubmit="return Validation()">
+                              enctype="multipart/form-data" onsubmit="return Validation(event)">
 
                             <!-- Product Name -->
                             <div class="mb-4">
@@ -57,7 +57,7 @@
                                     <label class="form-label">Category:</label>
                                     <select name="category" id="category" class="form-select">
                                         {{#each categories}}
-                                        <option value="{{this._id}}">{{this.category}}</option>
+                                        <option value="{{this._id}}" {{#if this.isSelected}}selected{{/if}}>{{this.category}}</option>
                                         {{/each}}
                                     </select>
                                 </div>
@@ -82,15 +82,25 @@
                                 <h6 id="imgAlert" class="mt-2" style="color: red;"></h6>
                             </div>
                             
+
+
+
+
+
                             <!-- Buttons -->
                             <div class="d-flex g-2">
                                 <div class="m-2">
-                                    <button onclick="submitform(this.form)" class="btn btn-primary">Save</button>
+<button onclick="return Validation(event);" class="btn btn-primary">Save</button>
+
                                 </div>
                                 <div class="m-2">
                                     <a href="/admin/product" type="button" class="btn btn-primary" id="backbutton">Back</a>
                                 </div>
-                            </div>
+                            </div> 
+
+
+
+
 
                         </form>
                     </div>
@@ -116,28 +126,40 @@
     </footer>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+
+
 
 
 <script>
 
-function Validation() {
-    var errors = []; // Array to store validation errors
+function Validation(event) {
+    event.preventDefault(); // Prevent form submission
+    let errors = []; // Array to store validation errors
 
-    var fileInput = document.getElementById('productImage'); // Correct ID for file input
-    let productName = document.getElementById("productName").value;
-    let longdescription = document.getElementById("longdescription").value;
-    let Qty = document.getElementById("Qty").value;
-    let price = document.getElementById("price").value;
+    const fileInput = document.getElementById('productImage');
+    const productName = document.getElementById("productName").value.trim();
+    const longdescription = document.getElementById("longdescription").value.trim();
+    const Qty = document.getElementById("Qty").value.trim();
+    const price = document.getElementById("price").value.trim();
 
-    let productNameRegex = /^[a-zA-Z0-9\s\(\)\-\+]{4,}$/; 
-    let number = /^[0-9]\d*$/;
-    let descriptionRegex = /^(?!\s*$)[\s\S]{1,100}$/;
+    // Regular expressions for validation
+    const productNameRegex = /^[a-zA-Z0-9\s\(\)\-\+]{4,}$/;
+    const number = /^[1-9]\d*$/;
+    const number1 = /^[0-9]\d*$/;
+    const descriptionRegex = /^(?!\s*$)[a-zA-Z0-9\s\(\)\-\+]{10,100}$/;
 
-    let productNameAlert = document.getElementById("productNameAlert");
-    let qtyAlert = document.getElementById("qtyAlert");
-    let priceAlert = document.getElementById("priceAlert");
-    let longAlert = document.getElementById("longAlert");
-    let imgAlert = document.getElementById('imgAlert');
+
+    // Alert elements
+    const productNameAlert = document.getElementById("productNameAlert");
+    const qtyAlert = document.getElementById("qtyAlert");
+    const priceAlert = document.getElementById("priceAlert");
+    const longAlert = document.getElementById("longAlert");
+    const imgAlert = document.getElementById('imgAlert');
 
     // Reset previous alerts
     productNameAlert.innerHTML = "";
@@ -146,105 +168,100 @@ function Validation() {
     longAlert.innerHTML = "";
     imgAlert.innerHTML = "";
 
-    
-    if (!productName.match(productNameRegex)) {
-        errors.push("Name Not Valid");
+    // Validate Product Name
+  if (productName.length < 4) {
+        productNameAlert.innerHTML = "minimum 4 characters.";
+        errors.push("Invalid Product Name");
+    } else if (!productName.match(productNameRegex)) {
+        productNameAlert.innerHTML = "Invalid Name";
+        errors.push("Invalid Product Name");
+    }
+    // Validate Quantity
+    if (!Qty.match(number1)) {
+        qtyAlert.innerHTML = "Stock Invalid";
+        errors.push("Invalid Quantity");
     }
 
-    
-    if (!Qty.match(number)) {
-        errors.push("Please Check Qty Again");
-    }
-
-   
+    // Validate Price
     if (!price.match(number)) {
-        errors.push("Please Check Price Again");
+        priceAlert.innerHTML = "Price Invalid.";
+        errors.push("Invalid Price");
     }
 
-    // Validate description
+    // Validate Description
     if (!longdescription.match(descriptionRegex)) {
-        errors.push("Please Check about Again");
+        longAlert.innerHTML = "minimum 10 characters";
+        errors.push("Invalid Description");
     }
 
-    // File validation for images
-    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif']; // Allow only these image types
-    const invalidFileTypes = ['application/pdf']; // Disallow PDF files
-
-    for (let i = 0; i < fileInput.files.length; i++) {
-        const fileType = fileInput.files[i].type;
-        
-        // Check if the file type is invalid
-        if (invalidFileTypes.includes(fileType)) {
-            errors.push("PDF files are not allowed."); // Add error for PDF
-            break; // Stop further checks if a PDF is found
-        } else if (!validImageTypes.includes(fileType)) {
-            errors.push("Invalid file type. Please upload images only (jpg, png, gif).");
-            break;
+    // Validate Images
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    const invalidFileTypes = ['application/pdf'];
+    if (fileInput && fileInput.files.length > 0) {
+        for (let i = 0; i < fileInput.files.length; i++) {
+            const fileType = fileInput.files[i].type;
+            if (invalidFileTypes.includes(fileType)) {
+                imgAlert.innerHTML = "PDF files are not allowed.";
+                errors.push("Invalid Image Type");
+                break;
+            } else if (!validImageTypes.includes(fileType)) {
+                imgAlert.innerHTML = "Invalid file type. Only jpg, png, gif allowed.";
+                errors.push("Invalid Image Format");
+                break;
+            }
         }
     }
 
-    // Check if more than 5 images are uploaded
-    const existingImagesCount = document.querySelectorAll('.pro-image').length; // Count existing images
-    const newImagesCount = fileInput.files.length; // Count newly selected images
+    // Check maximum images
+    const existingImagesCount = document.querySelectorAll('.pro-image').length;
+    const newImagesCount = fileInput.files.length;
     const totalImagesCount = existingImagesCount + newImagesCount;
 
     if (totalImagesCount > 5) {
-        errors.push("Only 5 images are allowed.");
+        imgAlert.innerHTML = "Only 5 images are allowed.";
+        errors.push("Exceeded Image Limit");
     }
 
-    // Display all error messages
+    // If errors exist, prevent form submission
     if (errors.length > 0) {
-        productNameAlert.innerHTML = errors.includes("Name Not Valid") ? "Name Not Valid" : "";
-        qtyAlert.innerHTML = errors.includes("Please Check Qty Again") ? "Please Check Qty Again" : "";
-        priceAlert.innerHTML = errors.includes("Please Check Price Again") ? "Please Check Price Again" : "";
-        longAlert.innerHTML = errors.includes("Please Check about Again") ? "Please Check about Again" : "";
-        imgAlert.innerHTML = errors.includes("PDF files are not allowed.") ? "PDF files are not allowed." : 
-                             errors.includes("Invalid file type. Please upload images only (jpg, png, gif).") ? "Invalid file type. Please upload images only (jpg, png, gif)." : 
-                             errors.includes("Only 5 images are allowed.") ? "Only 5 images are allowed." : "";
-
-        return false; // Prevent form submission
+        console.log("Validation errors:", errors);
+        return false;
     }
 
-    return true; // Allow form submission if no errors
+    // If validation passed, submit the form
+    submitform(document.querySelector('.form-add-product'));
+
+    return true; // Allow form submission
 }
+
 
 
 const deleteImage = async (productId, imageIndex) => {
     try {
-        const imageContainers = document.querySelectorAll('.image-container'); // Get all current images
-        if (imageContainers.length <= 3) { // Check if only 3 images remain
-            Swal.fire({
-                icon: "warning",
-                title: "Cannot delete!",
-                text: "At least 3 images must be present.",
-            });
-            return; // Stop deletion
-        }
-
         const response = await fetch(`/admin/product_img_delete?id=${productId}&image=${imageIndex}`, {
             method: 'DELETE'
         });
 
         const data = await response.json();
-        console.log("Response from server:", data);
+        console.log("hei",data);
 
         if (data) {
-            const imageElem = document.querySelector(`.pro-image[data-image-index="${imageIndex}"]`);
-            const imageContainer = document.querySelector(`.image-container[data-image-index="${imageIndex}"]`);
-            
-            if (imageContainer) {
-                imageContainer.remove();
-            } else {
-                console.warn("Image element not found for index:", imageIndex);
-            }
-        } else {
-            console.warn("No data received from the server.");
-        }
+    const imageElem = document.querySelector(`.pro-image[data-image-index="${imageIndex}"]`);
+    const imageContainer = document.querySelector(`.image-container[data-image-index="${imageIndex}"]`);
+    console.log("Image Element:", imageContainer); // Log the image element
+    if (imageElem) {
+        imageContainer.remove()
+    } else {
+        console.warn("Image element not found for index:", imageIndex); // Warn if element is not found
+    }
+} else {
+    console.warn("No data received from the server.");
+}
+
     } catch (error) {
         console.error(error);
     }
 };
-
 
 const deleteProImg = () => {
     const deleteButtons = document.querySelectorAll('.close-button');
@@ -263,17 +280,19 @@ document.addEventListener("DOMContentLoaded", deleteProImg);
 
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
 <script>
     
+
+
     function submitform(form) {
-    event.preventDefault();    
+        
+    
     Swal.fire({
         title: "Do you want to save the changes?",
-        text: "Changes made will be saved.",
+        //text: "Changes made will be saved.",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#088178",
@@ -285,9 +304,11 @@ document.addEventListener("DOMContentLoaded", deleteProImg);
                 if (result.isConfirmed) {
                     Swal.fire({
                     title: "Saved",
-                    text: "Your changes have been saved.",
+                    //text: "Your changes have been saved.",
                     icon: "success",
-                    confirmButtonText: "OK"
+                    //confirmButtonText: "OK"
+                    confirmButtonText: "Yes, save it!",
+                    timer: 1500 
                 }).then(() => {
                     form.submit();
                 });

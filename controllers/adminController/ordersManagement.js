@@ -2,21 +2,24 @@ const Cart = require("../../model/cartSchema");
 const Product = require("../../model/productSchema");
 const Category = require("../../model/categorySchema");
 const User = require("../../model/userSchema");
-const { Address } = require("../../model/addressSchema");
+const Address = require("../../model/addressSchema");
 const Order = require("../../model/orderSchema");
+const HttpStatus = require('../../httpStatus');
 
 const mongoose = require("mongoose");
 const ObjectId = require("mongoose");
 
+
+
 const ordersPage = async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.session.user_id });
-    var page = 1;
+    let page = 1;
     if (req.query.page) {
       page = req.query.page;
     }
     console.log(page);
-    let limit = 3;
+    const limit = 5;
 
     const ordersData = await Order.find()
       .sort({ date: -1 })
@@ -36,9 +39,12 @@ const ordersPage = async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 const orderDetails = async (req, res) => {
   try {
     const orderId = req.params.id;
@@ -70,15 +76,17 @@ const orderDetails = async (req, res) => {
     res.render("admin/order_Details", {
       admin: true,
       orderedProDet,
-      layout: "adminlayout",
+      layout: "adminLayout",
       address,
       myOrderDetails,
     });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
 
 const changeStatus = async (req, res) => {
   try {
@@ -99,12 +107,12 @@ const changeStatus = async (req, res) => {
     console.log(status, "query");
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
 
 module.exports = {
   ordersPage,
   orderDetails,
-  changeStatus,
+  changeStatus
 };

@@ -15,14 +15,14 @@
                 </div>
                 {{/if}}
                 {{#if catExistMsg}}
-                <div class="alert alert-danger mt-3 alert-dismissible fade {{#if catExistMsg}}show{{/if}}" role="alert">
+                <div class="alert alert-danger mt-3 alert-dismissible fade show d-inline-block w-50 {{#if catExistMsg}}show{{/if}}" role="alert">
                     {{catExistMsg}}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 {{/if}}
                 <div class="row">
                     <div class="col-md-12">
-                        <form action="/admin/addCategory" method="post" id = "product_form'" class="" enctype="multipart/form-data">
+                        <form action="/admin/addCategory" method="post" id = "product_form" class="" enctype="multipart/form-data">
                             <div class="mb-4">
                                 <label for="categoryName" class="form-label">Category Name:</label>
                                 <input type="text" placeholder="Type here" class="form-control" name="name" id="product_name"  required />
@@ -30,7 +30,8 @@
                             <div id="name-validation-message" class="text-danger"></div>
                             <div class="mb-4">
                                 <label for="categoryImage" class="form-label">Category Image:</label>
-                                <input type="file" placeholder="Type here" class="form-control-file" name="image"  accept="image/*" id="product_name" />
+                                <input type="file" placeholder="Type here" class="form-control-file" name="image"  accept="image/*" id="category_image"/>
+                                <div id="image-validation-message" class="text-danger"></div>
                             </div>
                             <div  class="d-flex g-2">
                                 <div class="m-2">
@@ -52,7 +53,7 @@
             <div class="col-sm-6">
                 <script>
                     document.write(new Date().getFullYear())
-                </script> ©,Tick Tock .
+                </script> ©, Tick Tock .
             </div>
             <div class="col-sm-6">
                 <div class="text-sm-end">
@@ -69,6 +70,21 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
+
+    
+    document.getElementById('product_form').addEventListener('submit', function(event) {
+        const imageInput = document.getElementById('category_image');
+        const imageErrorMessage = document.getElementById('image-validation-message');
+
+        imageErrorMessage.textContent = '';
+
+        if (!imageInput.files.length) {
+            event.preventDefault();  
+            imageErrorMessage.textContent = 'Please select a category image.';
+        }
+    });
+
+
     //back
     $(document).ready(function () {
         $('#backbutton').click(function (e) {

@@ -1,16 +1,18 @@
 const User = require("../../model/userSchema");
 const fs = require("fs");
 const path = require("path");
+const HttpStatus = require('../../httpStatus');
+
+
 
 // Get User Page
-
 const usersPage = async (req, res) => {
   try {
-    var page = 1;
+    let page = 1;
     if (req.query.page) {
       page = req.query.page;
     }
-    let limit = 3;
+    const limit = 3;
     const users = await User.find({})
       .skip((page - 1) * limit)
       .limit(limit * 1)
@@ -25,11 +27,15 @@ const usersPage = async (req, res) => {
       users,
       layout: "adminLayout",
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+  }
 };
 
-//Block User
 
+
+//Block User
 const blockUser = async (req, res) => {
   try {
     const { id } = req.body;
@@ -44,9 +50,11 @@ const blockUser = async (req, res) => {
     res.redirect("/admin/users");
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
 
 module.exports = {
   usersPage,

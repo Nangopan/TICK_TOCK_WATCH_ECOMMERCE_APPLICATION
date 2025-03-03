@@ -1,0 +1,142 @@
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span></span> <a href="/shop">Shop</a>
+                <span></span> Wishlist
+            </div>
+        </div>
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table shopping-summery text-center">
+                            <thead>
+                                <tr class="main-heading">
+                                    <th scope="col" colspan="2">Product</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Action</th>
+                                    <th scope="col">Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each WishListProd}}
+                                <tr>
+                                    <td class="image product-thumbnail"><a href="/productDetails/{{this.productId}}"><img src="/assets/imgs/products/{{this.productImage.[0]}}" alt="#"></a></td>
+                                    <td class="product-des product-name">
+                                        <h5 class="product-name"><a href="/productDetails/{{this.productId}}">{{this.productName}}</a></h5>
+                                    </td>
+                                    <td class="price" data-title="Price"><span>₹{{this.productPrice}} </span></td>
+                                    <td class="text-right" data-title="Cart">
+                                        {{#if this.outOfStock}}
+                                            <span id="outofstock">
+                                                <button id="outofstock-btn" class="btn btn-md" style="background-color: #dc3545;">Out of stock</button>
+                                            </span>
+                                        {{else}}
+                                            {{#if this.ProductExistInCart}}
+                                            <span id="gocart">
+                                                <button id="addcart-btn" onclick="window.location.href='/cart'" class="button button-add-to-cart">Go to cart</button>
+                                            </span>
+                                            {{else}}
+                                            <span id="addcart">
+                                                <button id="addcart-btn" data-product-id="{{this.productId}}" class="button button-add-to-cart">Add to cart</button>
+                                            </span>
+                                            {{/if}}
+                                        {{/if}}
+                                    </td>
+                                    <td class="rem action" data-whishlist-id="{{this._id}}" data-product-id="{{this.productId}}" data-title="Remove"><a href="#"><i class="fi-rs-trash"></i></a></td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+    $(document).ready(function () {
+        // Event delegation for remove button
+        $(document).on('click', '.rem', function () {
+            var id = $(this).data('product-id');
+            var wishId = $(this).data('whishlist-id');
+            var $this = $(this);
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#088178",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/removeFromWishList',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ id: id, wishId: wishId }),
+                        success: function (productData) {
+                            console.log("Product removed from wishlist successfully");
+                            $this.closest('tr').remove(); 
+
+                            Swal.fire({
+                                title: 'Removed!',
+                                text: 'Product successfully removed from wishlist!',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((isConfirmed) => {
+                                window.location.reload();
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error removing product from wishlist:", error);
+                            Swal.fire("Error", "Something went wrong. Please try again later.", "error");
+                        }
+                    });
+                }
+            });
+        });
+
+        // Event delegation for add to cart button
+        $(document).on('click', '.button-add-to-cart', function () {
+            let prodId = $(this).data('product-id');
+            let quantity = 1;
+
+            $.ajax({
+                url: '/addtocart/' + prodId,
+                method: 'POST',
+                data: { prodId: prodId, quantity: quantity },
+                success: function (result) {
+                    if (result.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Added to cart',
+                            text: result.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        $('#addcart').html('<button id="addcart-btn" onclick="window.location.href=\'/cart\'" class="button button-add-to-cart">Go to cart</button>');
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: result.message,
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.log('Error adding to cart', error);
+                }
+            });
+        });
+    });
+</script>

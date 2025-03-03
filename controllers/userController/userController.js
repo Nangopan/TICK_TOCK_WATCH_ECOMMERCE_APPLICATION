@@ -4,10 +4,15 @@ const User = require("../../model/userSchema");
 const argon2 = require("argon2");
 const userHelper = require("../../helpers/user.helper");
 const Cart = require("../../model/cartSchema");
+const Wishlist = require('../../model/wishlistSchema')
 const Order = require("../../model/orderSchema");
+const HttpStatus = require('../../httpStatus');
+
 
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
+
+
 
 let otp;
 let userOtp;
@@ -16,13 +21,11 @@ let hashedPassword;
 let userRegData;
 let userData;
 
-// Homepage
+
 
 const getHome = async (req, res) => {
   try {
     const userData = req.session.user;
-
-   
 
     const Products = await Product.aggregate([
       { $match: { isBlocked: false } },
@@ -37,19 +40,62 @@ const getHome = async (req, res) => {
       {
         $unwind: "$category",
       },
+      {
+        $lookup: {
+          from: "productoffers",
+          localField: "_id",
+          foreignField: "productId",
+          as: "productOffer",
+        },
+      },
+      {
+        $addFields: {
+          productOffer: { $ifNull: [{ $arrayElemAt: ["$productOffer", 0] }, null] },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          price: 1,
+          description: 1,
+          stock: 1,
+          popularity: 1,
+          bestSelling: 1,
+          imageUrl: 1,
+          category: {
+            _id: 1,
+            category: 1,
+            imageUrl: 1,
+            isListed: 1,
+            bestSelling: 1,
+          },
+          discountPrice: {
+            $cond: {
+              if: { $and: [{ $eq: ["$productOffer.currentStatus", true] }, { $gt: ["$productOffer.discountPrice", 0] }] },
+              then: "$productOffer.discountPrice",  
+              else: null,  
+            },
+          },
+        },
+      },
     ]);
-    
-    console.log("Aggregated Product Details 1:", Products);
 
+    console.log(Products);
+    console.log("Aggregated Product Details 1:", Products);
 
     const category = await Category.find({ isListed: true }).lean();
     res.render("user/home", { category, Products, userData });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
 
-// Get Login Page
+
+
+
+
 
 const getLogin = async (req, res) => {
   const regSuccessMsg = "User registered sucessfully..!!";
@@ -74,9 +120,12 @@ const getLogin = async (req, res) => {
       res.render("user/login");
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
 
 // Do Login
 
@@ -95,7 +144,7 @@ const doLogin = async (req, res) => {
           req.session.user = userData;
           res.redirect("/");
         } else {
-          //userData = null
+         
           req.session.blockMsg = true;
           res.redirect("/login");
         }
@@ -108,9 +157,12 @@ const doLogin = async (req, res) => {
       res.redirect("/login");
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
 
 // Do Logout
 
@@ -121,8 +173,11 @@ const doLogout = async (req, res) => {
     res.redirect("/login");    
   } catch (error) {
     console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
 
 // Get Signup Page
 
@@ -130,9 +185,13 @@ const getSignup = async (req, res) => {
   try {
     res.render("user/signup");
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 
 // Do Signup
 
@@ -164,9 +223,13 @@ const doSignup = async (req, res) => {
       res.render("user/signup", { message, message1 });
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 
 // Get otp page
 
@@ -174,9 +237,13 @@ const getOtp = (req, res) => {
   try {
     res.render("user/submitOtp");
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 
 // Submit Otp
 
@@ -201,27 +268,29 @@ const submitOtp = async (req, res) => {
       res.json({ error: otpError });
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     res.json({ error: "An error occurred while submitting the OTP." });
   }
 };
+
+
+
 
 // Resend Otp
 
 const resendOtp = async (req, res) => {
   try {
-    if (userEmail) {
-      otp = await userHelper.verifyEmail(userEmail);
-      console.log("Sending OTP to:", userEmail, otp); 
-      res.json({ success: true, message: "OTP resent successfully" }); 
-    } else {
-      res.json({ error: "User email not found. Please restart signup." });
-    }
+    if (userEmail) otp = await userHelper.verifyEmail(userEmail);
+    console.log("Sending OTP to:", email, otp);
+    res.redirect("/submit_otp");
   } catch (error) {
-    console.log(error);
-    res.json({ error: "An error occurred while resending OTP." });
+    console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 
 //google callback
 
@@ -248,6 +317,9 @@ const googleCallback = async (req, res) => {
   }
 };
 
+
+
+
 // Get Product Page
 
 const productDetails = async (req, res) => {
@@ -257,13 +329,32 @@ const productDetails = async (req, res) => {
     console.log("Product ID: ", productID);
     
     const products = await Product.aggregate([
-      { $match: { _id: new ObjectId(productID) } }, // Match product by productID
+      { $match: { _id: new ObjectId(productID) } }, 
+      {
+        $lookup: {
+          from: "productoffers",  
+          localField: "_id",  
+          foreignField: "productId",  
+          as: "productOffer", 
+        },
+      },
+      {
+        $unwind: {
+          path: "$productOffer",  
+          preserveNullAndEmptyArrays: true,  
+        },
+      },
     ]);
     
     let product = products[0];
     console.log(product)
 
+    if (!product.productOffer) {
+      product.productOffer = {};
+    }
+
     let productExistInCart;
+    let productExistInWishlist
     let outOfStock;
 
     await Product.updateOne(
@@ -290,10 +381,23 @@ const productDetails = async (req, res) => {
       });
 
       console.log(ProductExist);
+
       if (ProductExist.length === 0) {
         productExistInCart = false;
       } else {
         productExistInCart = true;
+      }
+
+      const ProductExist1 = await Wishlist.find({
+        userId: userData._id,
+        product_Id: productID,
+      });
+
+      console.log(ProductExist1);
+      if (ProductExist1.length===0) {
+        productExistInWishlist = false;
+      } else {
+        productExistInWishlist = true;
       }
 
       res.render("user/productDetails", {
@@ -301,6 +405,8 @@ const productDetails = async (req, res) => {
         outOfStock,
         productExistInCart,
         ProductExist,
+        productExistInWishlist,
+        ProductExist1,
         userData,
         
       });
@@ -309,10 +415,27 @@ const productDetails = async (req, res) => {
         product,
         outOfStock,
         productExistInCart: false,
+        productExistInWishlist: false,
       });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+  }
 };
+
+
+const aboutpage = async (req, res) => {
+  try {
+      res.render('user/about', {userData})
+
+  } catch (error) {
+      console.log(error.message);
+      res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+
+  }
+}
+
 
 
 
@@ -328,5 +451,6 @@ module.exports = {
   doLogout,
   googleCallback,
   productDetails,
+  aboutpage
  
 };

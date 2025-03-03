@@ -41,15 +41,21 @@
                                                             <td>#{{this.orderId}}</td>
                                                             <td>{{ formatDate this.date}}</td>
                                                             <td>{{this.status}}</td>
+                                                            {{#if this.couponUsed}}
+                                                            <td>₹{{this.amountAfterDscnt}}</td>
+                                                            {{else}}
                                                             <td>₹{{this.total}}</td>
+                                                            {{/if}}
                                                             <td><a href="/orderDetails/{{this._id}}" class="btn-small d-block">View</a></td>
                                                         </tr>
                                                         {{/each}}
-                                                        {{!-- {{else}} --}}
+                                                        {{#unless myOrders.length}}
+        <tr>
+            <td colspan="5" class="text-center">No orders found</td>
+        </tr>
+    {{/unless}}
                                                         
-                                                            {{!-- <td colspan="5" class="text-center">No orders found</td> --}}
                                                         
-                                                        {{!-- {{/length}} --}}
                                                         
                                                     </tbody>
                                                 </table>

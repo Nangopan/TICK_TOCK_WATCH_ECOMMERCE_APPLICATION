@@ -1,17 +1,22 @@
 const Category = require("../../model/categorySchema");
 const Product = require("../../model/productSchema");
 const User = require("../../model/userSchema");
-const { Address } = require("../../model/addressSchema");
+const Address  = require("../../model/addressSchema");
 const userHelper = require("../../helpers/user.helper");
 const Cart = require("../../model/cartSchema");
+const Wishlist = require('../../model/wishlistSchema')
 const Order = require("../../model/orderSchema");
 const argon2 = require("argon2");
+const HttpStatus = require('../../httpStatus');
 
 const mongoose = require("mongoose");
 //const ObjectId = require('mongoose')
 const {
   Types: { ObjectId },
 } = mongoose;
+
+
+
 
 const viewUserProfile = async (req, res) => {
   try {
@@ -22,9 +27,12 @@ const viewUserProfile = async (req, res) => {
     res.render("user/profile", { userData: userDataObject });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 
 const EditUserProfile = async (req, res) => {
   try {
@@ -36,9 +44,12 @@ const EditUserProfile = async (req, res) => {
     res.render("user/editProfile", { userData: userDataObject });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 
 const updateUserProfile = async (req, res) => {
   try {
@@ -68,9 +79,12 @@ const updateUserProfile = async (req, res) => {
     res.redirect("/profile");
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 
 const changePassword = async (req, res) => {
   try {
@@ -81,9 +95,12 @@ const changePassword = async (req, res) => {
     res.render("user/changePassword", { userData });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 
 const updatePassword = async (req, res) => {
   try {
@@ -112,9 +129,12 @@ const updatePassword = async (req, res) => {
     }
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 
 
 const my_Orders = async (req, res) => {
@@ -123,7 +143,7 @@ const my_Orders = async (req, res) => {
     const id = user._id;
     const userData = await User.findById(id).lean();
     // const userDataObject = userData.toObject();
-    var page = 1;
+    let page = 1;
     if (req.query.page) {
       page = req.query.page;
     }
@@ -144,7 +164,7 @@ const my_Orders = async (req, res) => {
           date: 1,
           orderId: 1,
           status: 1,
-          totalAmount: 1,
+          amountAfterDscnt: 1,
           total: 1,
         },
       },
@@ -160,7 +180,7 @@ const my_Orders = async (req, res) => {
         $limit: limit,
       },
     ]);
-    const count = await Order.find({}).countDocuments();
+    const count = await Order.countDocuments({userId: new mongoose.Types.ObjectId(id)});
     const totalPages = Math.ceil(count / limit);
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
@@ -173,9 +193,12 @@ const my_Orders = async (req, res) => {
     });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 
 const orderDetails = async (req, res) => {
   try {
@@ -186,16 +209,9 @@ const orderDetails = async (req, res) => {
       const userId = user._id;
       let offerprice=0
 
-
-
-      // Retrieve user data
       const userData = await User.findById(userId).lean();
 
-      // Retrieve order details including populated address
       const myOrderDetails = await Order.findById(orderId).populate('address').lean();
-      // let hasReturnedItems = myOrderDetails.product.some(product => product.isReturned);
-      // let allCancelled = myOrderDetails.product.every(product => product.isCancelled);
-      // let allReturned = myOrderDetails.product.every(product => product.isReturned);
       await myOrderDetails.product.forEach((product) => {
           if (product.isReturned) {
               ct++
@@ -221,24 +237,61 @@ const orderDetails = async (req, res) => {
           }
       }
 
-     // myOrderDetails.allCancelled = allCancelled;
-     // myOrderDetails.allReturned = allReturned;
-
       if (!myOrderDetails) {
           return res.status(404).send("Order not found");
       }
 
-      // Retrieve ordered product details
+      // const orderedProDet = await Order.aggregate([
+      //     { $match: { _id: new mongoose.Types.ObjectId(orderId) } },
+      //     { $unwind: "$product" },
+      //     {
+      //         $project: {
+      //             _id: 1,
+      //             product: 1
+      //         }
+      //     }
+      // ]);
+      
       const orderedProDet = await Order.aggregate([
-          { $match: { _id: new mongoose.Types.ObjectId(orderId) } },
-          { $unwind: "$product" },
-          {
-              $project: {
-                  _id: 1,
-                  product: 1
-              }
-          }
-      ]);
+        { $match: { _id: new mongoose.Types.ObjectId(orderId) } },
+        { $unwind: "$product" },
+        {
+            $lookup: {
+                from: "productoffers", // Collection for product offers
+                localField: "product.productId", // Match the product ID
+                foreignField: "productId",
+                as: "productOffer",
+            },
+        },
+        {
+            $unwind: {
+                path: "$productOffer",
+                preserveNullAndEmptyArrays: true, // Allow products without offers
+            },
+        },
+        {
+            $project: {
+                _id: 1,
+                product: {
+                    _id: "$product._id",
+                    name: "$product.name",
+                    image: "$product.image",
+                    quantity: "$product.quantity",
+                    price: "$product.price", // Original price
+                    discountPrice: {
+                        $cond: {
+                            if: { $gt: ["$productOffer.discountPrice", 0] }, // Discount price exists
+                            then: "$productOffer.discountPrice",
+                            else: "$product.price", // Fallback to original price
+                        },
+                    },
+                },
+            },
+        },
+    ]);
+    
+    
+      
       const address=await Address.findOne(
           {
               userId:userId
@@ -247,13 +300,142 @@ const orderDetails = async (req, res) => {
       console.log(address,"address")
 
       console.log("myOrderDetails:", myOrderDetails);
-      //console.log("orderedProDet:", orderedProDet);
       offerprice-=(myOrderDetails.total)
 
       res.render('user/orderDetails', {offerprice, address,orderedProDet, myOrderDetails, userData });
   } catch (error) {
       console.error("Error fetching order details:", error.message);
-      res.status(500).send("Internal Server Error");
+      res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+  }
+};
+
+
+
+
+const verify = (req, res) => {
+  console.log(req.body.payment, "end");
+  const { orderId } = req.body
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body.payment
+  let hmac = crypto.createHmac("sha256", process.env.KEY_SECRET);
+  hmac.update(
+      `${razorpay_order_id}|${razorpay_payment_id}`
+  );
+  hmac = hmac.digest("hex");
+  console.log(hmac, "HMAC");
+  console.log(razorpay_signature, "signature");
+  if (hmac === razorpay_signature) {
+      console.log("true");
+      changeOrderStatusToConfirmed(orderId)
+      res.json({ status: true });
+  } else {
+      console.log("false");
+      res.json({ status: false });
+  }
+};
+
+
+
+
+
+const walletpage = async (req, res) => {
+  try {
+      const user = req.session.user;
+      const id = user._id;
+      const userData = await User.findById(id).lean();
+
+
+      console.log(userData);
+
+      var page = 1;
+      if (req.query.page) {
+          page = req.query.page;
+      }
+      let limit = 5;
+      const skip = (page - 1) * limit;
+
+      const historyData = await User.aggregate([
+          {
+              $match: {
+                  _id: userData._id
+              }
+          },
+          {
+              $project: {
+                  _id: 0,
+                  history: 1
+              }
+          },
+          {
+              $unwind: "$history"
+          },
+          {
+              $sort: { "history.date": -1 } // Sort the history array by date in descending order
+          },
+          {
+              $group: {
+                  _id: "$_id",
+                  history: { $push: "$history" }
+              }
+          },
+          {
+              $project: {
+                  history: { $slice: ["$history", skip, limit] }
+              }
+          }
+      ]);
+
+      const count = await User.aggregate([
+          { $match: { _id: userData._id } },
+        { $project: { historyCount: { $size: { $ifNull: ["$history", []] } } } }
+      ]);
+
+      const totalItems = count[0] ? count[0].historyCount : 0;
+      const totalPages = Math.ceil(totalItems / limit);
+      const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+      const history = historyData[0] ? historyData[0].history : [];
+
+      console.log(history);
+
+      res.render('user/wallet', { userData, history, pages });
+
+  } catch (error) {
+    console.log(error.message);
+    console.log(error.message);
+      res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+  }
+}
+
+
+
+
+const retryPayment = async (req, res) => {
+  try {
+     
+      const id = req.params.id;
+      console.log("Retry Payment for order ID:", id);
+
+      const updatedOrder = await Order.findByIdAndUpdate(id, { $set: { status: 'pending' } }, { new: true });
+
+      if (!updatedOrder) {
+          return res.status(404).json({
+              success: false,
+              message: "Order not found."
+          });
+      }
+
+      res.json({
+          success: true,
+          message: "Payment status has been set to 'pending'. You can retry the payment.",
+          order: updatedOrder
+      });
+  } catch (error) {
+      
+      console.error("Error updating payment status:", error);
+      res.status(HttpStatus.InternalServerError).json({
+          success: false,
+          message: "An error occurred while retrying the payment. Please try again later."
+      });
   }
 };
 
@@ -267,4 +449,7 @@ module.exports = {
   updatePassword,
   my_Orders,
   orderDetails,
+  verify,
+  walletpage,
+  retryPayment
 };

@@ -18,6 +18,11 @@
                         <h4>Basic</h4>
                     </div>
                     <div class="card-body">
+                        {{#if productExists}}
+                            <div class="alert alert-danger mt-3">
+                                Product already exists.
+                            </div>
+                        {{/if}}
                         <form method="post" id="product_form" class="form-add-product" action="/admin/addProduct"
                             enctype="multipart/form-data" onsubmit="return submitform(this)">
                             <div class="mb-4">
@@ -280,11 +285,9 @@
         var fileInput = document.getElementById('input1');
 
         let productName = document.getElementById("productName").value;
-
         let longdescription = document.getElementById("longdescription").value;
         let Qty = document.getElementById("Qty").value;
         let price = document.getElementById("price").value;
-
 
 
         let productNameRegex = /^[a-zA-Z0-9\s\(\)\-\+]{4,}$/;
@@ -292,15 +295,13 @@
         let descriptionRegex = /^(?!\s*$)[\s\S]{1,100}$/
 
 
-
-
         let productNameAlert = document.getElementById("productNameAlert");
         let qtyAlert = document.getElementById("qtyAlert");
         let priceAlert = document.getElementById("priceAlert");
-
-
         let longAlert = document.getElementById("longAlert");
         let imgAlert = document.getElementById('imgAlert')
+
+        
 
        if (!productName.match(productNameRegex)) {
         errors.push("Name Not Valid");
@@ -310,7 +311,7 @@
         errors.push("Please Check Qty Again");
     }
 
-    if (!price.match(number)) {
+    if (!number.test(price)) {
         errors.push("Please Check Price Again");
     }
 
@@ -322,9 +323,6 @@
     }
     
 
-
-
-
     // Display all error messages
     if (errors.length > 0) {
         productNameAlert.innerHTML = errors.includes("Name Not Valid") ? "Name Not Valid" : "";
@@ -333,6 +331,7 @@
         longAlert.innerHTML = errors.includes("Please Check about Again") ? "Please Check about Again" : "";
         imgAlert.innerHTML = errors.includes("Please choose an image") ? "Please choose an image" : "";
 
+        
         return false; // Prevent form submission
     }
 
@@ -371,6 +370,20 @@
         ////add products form submit
     function submitform(form) {
         event.preventDefault(); // Prevent default form submission action
+        const productName = form.name.value;
+        fetch('/admin/checkProductExists', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: productName }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.productExists) {
+                // Product already exists, show error message
+                document.getElementById('productExistsAlert').style.display = 'block';
+            } 
         if (Validation(form)) {
             Swal.fire({
                 title: "Are you sure?",

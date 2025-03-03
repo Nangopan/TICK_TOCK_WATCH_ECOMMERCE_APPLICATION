@@ -1,12 +1,39 @@
 const User = require("../../model/userSchema");
-const { Address } = require("../../model/addressSchema");
-
+const Address  = require("../../model/addressSchema");
+const HttpStatus = require('../../httpStatus');
 const mongoose = require("mongoose");
+
+
 //const ObjectId = require('mongoose')
 const {
   Types: { ObjectId },
 } = mongoose;
 
+
+// Load Address Page
+const manageAddress = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const id = user._id;
+
+    const userAddresses = await Address.find({ userId: id }).lean();
+
+    const userData = await User.findById(id);
+
+    res.render("user/address", {
+      userAddress: userAddresses,
+      userData: userData,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+  }
+};
+
+
+
+
+// Load Add Address Page
 const addAddress = async (req, res) => {
   try {
     const user = req.session.user;
@@ -14,10 +41,13 @@ const addAddress = async (req, res) => {
     res.render("user/addAddress", { userData });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
 
+
+
+// Add Address
 const addAddressPost = async (req, res) => {
   try {
     const userData = req.session.user;
@@ -39,29 +69,14 @@ const addAddressPost = async (req, res) => {
     res.redirect("/addresses");
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
 
-const manageAddress = async (req, res) => {
-  try {
-    const user = req.session.user;
-    const id = user._id;
 
-    const userAddresses = await Address.find({ userId: id }).lean();
 
-    const userData = await User.findById(id);
 
-    res.render("user/address", {
-      userAddress: userAddresses,
-      userData: userData,
-    });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send("Internal Server Error");
-  }
-};
-
+// Edit Address Pge
 const editAddress = async (req, res) => {
   try {
     const id = req.params.id;
@@ -73,10 +88,13 @@ const editAddress = async (req, res) => {
     res.render("user/editAddress", { address });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
 
+
+
+// Edit Address
 const editAddressPost = async (req, res) => {
   try {
     const id = req.params.id;
@@ -100,10 +118,12 @@ const editAddressPost = async (req, res) => {
     res.redirect("/addresses");
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
 
+
+// Delete Address
 const deleteAddress = async (req, res) => {
   try {
     const id = req.params.id;
@@ -114,9 +134,12 @@ const deleteAddress = async (req, res) => {
     res.redirect("/addresses");
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 
 module.exports = {
   addAddress,

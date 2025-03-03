@@ -16,80 +16,80 @@
         <a  class="btn btn-primary btn-sm rounded" href="/admin/addCategory">Create New Category</a>
       </div>
     </div>
-    <div class="card mb-4">
-      
-      
-      <div class="card-body">
 
-        
-            {{#each category}}
-            <article class="itemlist">
-                <div class="row align-items-center">
-                    <div class="col col-check flex-grow-0">
-                        {{!-- <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="">
-                        </div> --}}
-                    </div>
-                    <div class="col-lg-3 col-sm-3 col-3 flex-grow-1 col-name jsutify-content-center text-align-center">
-                        <a class="itemside" href="#">
-                            <div class="d-flex aligin-items-center justify-content-center">
-                                <img src="/assets/imgs/products/{{imageUrl}}" class="img-sm img-thumbnail" alt="Item">
-                            </div>
+<div class="card mb-4">
+    <div class="card-body">
+        {{#if catSaveMsg}}
+        <div class="alert alert-success mt-3 alert-dismissible fade show d-inline-block w-50  {{#if catSaveMsg}}show{{/if}}" role="alert">
+            {{catSaveMsg}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {{/if}}
+        {{#if catExistMsg}}
+        <div class="alert alert-danger mt-3 alert-dismissible fade {{#if catExistMsg}}show{{/if}}" role="alert">
+            {{catExistMsg}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {{/if}}
+        <!-- Table Structure -->
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center">Category Image</th>
+                    <th class="text-center">Category Name</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each category}}
+                <tr>
+                    <!-- Category Image -->
+                    <td class="text-center">
+                        <img src="/assets/imgs/products/{{this.imageUrl}}" class="img-sm img-thumbnail" alt="Item" style="max-width: 80px; height: auto;">
+                    </td>
 
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-sm-3 col-3 flex-grow-1 col-name text-align-center">
-                        <a class="itemside" href="#">
+                    <!-- Category Name -->
+                    <td class="text-center">
+                        <h6 class="mb-0">{{this.category}}</h6>
+                    </td>
 
-                            <div class="info">
-                                <h6 class="mb-0">{{this.category}}</h6>
-                            </div>
-                        </a>
-                    </div>
-                    {{!-- <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>$76.99</span> </div> --}}
-
-                    <div class="col-lg-3 col-sm-3 col-3 col-status">
-                        {{#if isListed}}
-                        <span class="badge rounded-pill alert-success">Listed</span>
+                    <!-- Status (Listed/Unlisted) -->
+                    <td class="text-center">
+                        {{#if this.isListed}}
+                            <span class="badge rounded-pill alert-success">Listed</span>
                         {{else}}
-                        <span class="badge rounded-pill alert-danger">Unlisted</span>
+                            <span class="badge rounded-pill alert-danger">Unlisted</span>
                         {{/if}}
-                    </div>
-                    <div class="col-lg-1 col-sm-1 col-1 col-date text-end">
-                        <a href="/admin/editCategory/{{this._id}}"
-                           
-                            class="btn btn-pill font-sm rounded btn-brand">
-                            <i class="material-icons md-edit"></i> Edit
-                        </a>
-                    </div>
-                    {{#if isListed}}
-                    <div class="col-lg-1 col-sm-1 col-1 col-date text-end">
-                        <a href="/admin/unlistCategory"
-                           id="listunlistrod" data-product-id="{{this._id}}"                           
-                            class="btn btn font-sm btn-light rounded">
-                            <i class="material-icons md-delete_forever"></i> Unlist
-                        </a>
-                    </div>
-                    {{else}}
-                    <div class="col-lg-1 col-sm-1 col-1 col-date text-end">
-                       
-                        <a href="/admin/unlistCategory"
-                           id="listunlistrod" data-product-id="{{this._id}}"                           
-                            class="btn btn font-sm btn-light rounded">
-                            <i class="material-icons md-delete_forever"></i> List
-                        </a>
-                    </div>
-                    {{/if}}
-                    
-                </div> 
-            </article>
-            {{/each}}
-            <!---end category tab-->
-        
+                    </td>
 
-      </div>
-      <!-- card-body end// -->
+                    <!-- Actions -->
+                    <td class="text-center">
+                        <a href="/admin/editCategory/{{this._id}}" class="btn btn-pill font-sm rounded btn-brand mx-1">
+                            Edit<i class="material-icons md-edit" style="font-size: 16px;"></i> 
+                        </a>
+                        {{#if this.isListed}}
+                            <a href="/admin/unlistCategory" id="listunlistrod" data-product-id="{{this._id}}" class="btn btn font-sm btn-light rounded mx-1">
+                                Unlist<i class="material-icons md-delete_forever" style="font-size: 16px;"></i> 
+                            </a>
+                        {{else}}
+                            <a href="/admin/unlistCategory" id="listunlistrod" data-product-id="{{this._id}}" class="btn btn font-sm btn-light rounded mx-1">
+                                List<i class="material-icons md-delete_forever" style="font-size: 16px;"></i> 
+                            </a>
+                        {{/if}}
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
     </div>
+</div>
+
+
+
+
+
+
     <!-- card end// -->
     <div class="pagination-area mt-15 mb-50">
             <nav aria-label="Page navigation example">
@@ -172,5 +172,7 @@ $(document).ready(function () {
         });
     });
 });
+
+
 
 </script>

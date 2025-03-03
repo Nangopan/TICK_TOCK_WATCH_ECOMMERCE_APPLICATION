@@ -34,7 +34,7 @@
                                                                 <p id="mobileError" style="color: red;"></p>
                                                             </div>
                                                             <div class="col-lg-12 mb-3">
-                                                                <label class="form-label">Address line 1</label>
+                                                                <label class="form-label">Address</label>
                                                                 <input class="form-control" type="text" placeholder="Enter your address" name="address1" id="address1">
                                                                 <p id="address1Error" style="color: red;"></p>
                                                             </div>
@@ -121,7 +121,7 @@
 
             if (address1Field.value.trim() === '') {
                 isValid = false;
-                showError(address1Error, 'Address line 1 is required.');
+                showError(address1Error, 'Address is required.');
             }
 
             if (cityField.value.trim() === '') {

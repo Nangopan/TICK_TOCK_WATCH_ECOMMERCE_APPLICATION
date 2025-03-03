@@ -43,7 +43,7 @@
                                     <td class="column-4">
                                         <div class="wrap-num-product flex-w m-l-auto m-r-0" id="quantityContainer">
                                             
-                                            <div id="incButton" data-offer=""
+                                            <div id="incButton" data-offer="{{this.offerprice}}"
                                                 class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
                                                 <i class="fa-solid fa-plus"></i>
                                             </div>
@@ -157,7 +157,7 @@
                                     title: 'Removed!',
                                     text: 'Product Succesfully Removed from Cart!!!',
                                     icon: 'success',
-                                    confirmButtonText: 'Cool'
+                                    confirmButtonText: 'OK'
                                 }).then(()=> window.location.reload())
                             }
 
@@ -168,45 +168,21 @@
                             swal("Error", "Something went wrong. Please try again later.", "error");
                         }
                     });
-                    Swal.fire({
-                        title: "Deleted!",
-                        text: "Your file has been deleted.",
-                        icon: "success"
-                    });
                 }
             });
-
-
         });
     });
 
     // Increment and Decrement quantity
   
-      // Increment and Decrement quantity
-$('.fa-plus, .fa-minus').click(function () {
-    const cartId = $(this).closest('tr').find('.num-product').prop('id');
-    let currentValue = parseInt($(`#${cartId}`).val());
-
-    // Check if the user clicked the plus button
-    if ($(this).hasClass('fa-plus')) {
-        if (currentValue >= 5) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Limit Reached',
-                text: 'You cannot add more than 5 items per product!',
-            });
-            return; // Stop further execution
+        $('.fa-plus, .fa-minus').click(function () {
+        const cartId = $(this).closest('tr').find('.num-product').prop('id');
+        const newValue = $(this).hasClass('fa-plus') ? parseInt($(`#${cartId}`).val()) + 1 : parseInt($(`#${cartId}`).val()) - 1;
+        if (newValue > 0) {
+            $(`#${cartId}`).val(newValue);
+            updateCartItemQuantity(cartId, newValue);
         }
-        currentValue++;
-    } else {
-        if (currentValue > 1) {
-            currentValue--;
-        }
-    }
-
-    $(`#${cartId}`).val(currentValue);
-    updateCartItemQuantity(cartId, currentValue);
-});
+    });
 
     // Update cart item quantity
     function updateCartItemQuantity(cartId, newValue) {

@@ -1,17 +1,19 @@
 const Product = require("../../model/productSchema");
+const Category = require("../../model/categorySchema");
+const productOffer = require("../../model/proOfferSchema");
 const fs = require("fs");
 const path = require("path");
-const Category = require("../../model/categorySchema");
+const HttpStatus = require('../../httpStatus');
+
 
 // Get Product Page
-
 const showProduct = async (req, res) => {
   try {
-    var page = 1;
+    let page = 1;
     if (req.query.page) {
       page = req.query.page;
     }
-    let limit = 3;
+    const limit = 4;
     const product = await Product.aggregate([
       {
         $lookup: {
@@ -33,34 +35,51 @@ const showProduct = async (req, res) => {
     const totalPages = Math.ceil(count / limit); 
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
     console.log(product);    
-    res.render("admin/product", { layout: "adminlayout", product, pages });
+    res.render("admin/product", { layout: "adminLayout", product, pages });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
 
-// Get Add Product Page
 
+
+// Get Add Product Page
 const addProductPage = async (req, res) => {
   try {
     const category = await Category.find({}).lean();
+    const productExists = req.session.productExists;
+    req.session.productExists = null; 
 
-    res.render("admin/add_product", { layout: "adminlayout", category });
+    res.render("admin/add_product", { layout: "adminLayout", category, productExists });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
 
-// Add New Product
 
+
+// Add New Product
 const addProduct = async (req, res) => {
   try {
+    const { name, price, description, category, stock } = req.body;
     const files = req.files;
     const images = [];
     files.forEach((file) => {
       const image = file.filename;
       images.push(image);
     });
+
+    const existingProduct = await Product.findOne({
+      name: { $regex: new RegExp("^" + name + "$", "i") }, 
+    });
+
+    if (existingProduct) {
+      req.session.productExists = true;
+      return res.redirect("/admin/addProduct"); 
+    }
+
     const newProduct = new Product({
       name: req.body.name,
       price: req.body.price,
@@ -79,11 +98,13 @@ const addProduct = async (req, res) => {
       .catch((err) => console.log(err));
   } catch (error) {
     console.error("Error creating Product:", error);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
 
-// Get Edit Product Page
 
+
+// Get Edit Product Page
 const showeditProduct = async (req, res) => {
   try {
     let productId = req.params.id;
@@ -91,18 +112,23 @@ const showeditProduct = async (req, res) => {
     const productData = await Product.findById(productId).lean();
     console.log(productData);
     const categories = await Category.find({ isListed: true }).lean();
+    categories.forEach((category) => {
+      category.isSelected = category._id.toString() === productData.category.toString();
+    });
     res.render("admin/editProduct", {
       productData,
       categories,
-      layout: "adminlayout",
+      layout: "adminLayout",
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error creating Product:", error);
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
 
-// Update Product
 
+
+// Update Product
 const updateProduct = async (req, res) => {
   try {
     const proId = req.params.id;
@@ -136,13 +162,29 @@ const updateProduct = async (req, res) => {
       { new: true }
     );
 
+    if (product.price !== price) {
+      const existingOffer = await productOffer.findOne({
+        productId: product._id,
+        currentStatus: true, 
+      });
+
+      if (existingOffer) {
+        const newDiscountPrice = price - (price * existingOffer.productOfferPercentage) / 100;
+        existingOffer.discountPrice = newDiscountPrice;
+        await existingOffer.save();
+      }
+    }
+
+
     req.session.productSave = true;
     res.redirect("/admin/product");
   } catch (error) {
     console.error("Error updating product:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
 
 const deleteProdImage = async (req, res) => {
   try {
@@ -152,12 +194,12 @@ const deleteProdImage = async (req, res) => {
 
     const product = await Product.findById(id);
     if (!product) {
-      return res.status(404).send({ error: "Product not found" });
+      return res.status(HttpStatus.NotFound).send({ error: "Product not found" });
     }
 
     const deletedImage = product.imageUrl.splice(image, 1)[0];
     if (!deletedImage) {
-      return res.status(400).send({ error: "Image not found" });
+      return res.status(HttpStatus.NotFound).send({ error: "Image not found" });
     }
     console.log("Deleted image:", deletedImage);
 
@@ -172,18 +214,19 @@ const deleteProdImage = async (req, res) => {
     if (fs.existsSync(imagePath)) {
       fs.unlinkSync(imagePath);
     } else {
-      return res.status(404).send({ error: "Image file not found" });
+      return res.status(HttpStatus.NotFound).send({ error: "Image file not found" });
     }
 
     res.status(200).send({ message: "Image deleted successfully" });
   } catch (error) {
     console.error("Error deleting image:", error); 
-    res.status(500).send({ error: error.message });
+    res.status(HttpStatus.InternalServerError).send("InternalServerError");
   }
 };
 
-// Block Product
 
+
+// Block Product
 const blockProduct = async (req, res) => {
   try {
     const { id } = req.body;
@@ -191,8 +234,13 @@ const blockProduct = async (req, res) => {
     const prod = await Product.findOne({ _id: id }).lean();
     const block = prod.isBlocked;
     await Product.findByIdAndUpdate(id, { $set: { isBlocked: !block } });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error.message); 
+    res.status(HttpStatus.InternalServerError).send("InternalServerError");
+  }
 };
+
+
 
 module.exports = {
   showProduct,

@@ -1,0 +1,185 @@
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-10">
+                <div class="content-header"></div>
+            </div>
+            <div class="col-lg-8 mt-5 justify-content-center">
+                <div class="card">
+                    <div class="card-body">
+                        {{!-- {{#if couponMsg}}
+                        <div class="alert alert-success mt-3 alert-dismissible fade {{#if couponMsg}}show{{/if}}" role="alert">
+                            {{couponMsg}}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {{/if}}
+                        {{#if couponExMsg}}
+                        <div class="alert alert-danger mt-3 alert-dismissible fade {{#if couponExMsg}}show{{/if}}" role="alert">
+                            {{couponExMsg}}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {{/if}} --}}
+                        {{!-- <form action="/admin/add_coupon" method="post" onsubmit="return validationf(this)" class="row g-3">
+                            <h5 class="content-title">Add New Coupon</h5>
+                            <div class="col-12">
+                                <label for="coupon-code" class="form-label">Coupon Code</label>
+                                <input type="text" class="form-control" id="coupon-code" placeholder="Enter coupon code" name="code">
+                                <h6 class="alertAddcoupon mt-1" style="color: red" id="couponcodealert"></h6>
+                            </div>
+                            <div class="col-12">
+                                <label for="discount" class="form-label">Discount (%)</label>
+                                <div class="input-group mb-3">
+                                    <input type="number" class="form-control" id="discount" name="percent" placeholder="Discount %..." aria-label="Discount">
+                                    <span class="input-group-text">%</span>
+                                    <h6 class="alertAddcoupon mt-1" style="color: red" id="discountalert"></h6>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label for="min-purchase" class="form-label">Minimum Purchase Amount</label>
+                                <input type="number" class="form-control" id="min-purchase" placeholder="Enter minimum purchase amount" name="minPurchase">
+                                <h6 class="alertAddcoupon mt-1" style="color: red" id="minalert"></h6>
+                            </div>
+                            <div class="col-12">
+                                <label for="max-discount" class="form-label">Max Discount Amount</label>
+                                <div class="input-group mb-3">
+                                    <input type="number" class="form-control" id="max-discount" placeholder="Enter maximum discount amount" name="maxDiscount">
+                                    <h6 class="alertAddcoupon mt-1" style="color: red" id="maxalert"></h6>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="expiry-date">Expiry Date</label>
+                                <input type="date" class="form-control" id="expiry-date" name="expDate">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Add Coupon</button>
+                                <a href="/admin/coupons" class="btn btn-primary" id="backbutton">Back</a>
+                            </div>
+                        </form> --}}
+                        <form id="addProductOfferForm" role="form" action="/admin/addProOffers" method="post">
+                    <div class="modal-body">
+
+                        <label for="productName" class="mb-2">Product Name:</label>
+                        <select name="productName" id="productName" class="form-select">
+                            {{#each products}}
+                            <option value="{{this.name}}">
+                                {{this.name}}
+                            </option>
+                            {{/each}}
+                        </select>
+
+                        <div class="offerPercentageInput p-2">
+                            <label for="productOfferPercentage" class="mb-2">Product Offer Percentage: </label>
+                            <div class="input-group">
+                                <input id="productOfferPercentage" name="productOfferPercentage" class="form-control"
+                                    placeholder="Enter the offer percentage">
+                            </div>
+                            <div class="form-text">Choose a percentage to be discounted. Between 5% and 90%.</div>
+                        </div>
+
+                        <div class="startDateInput p-2">
+                            <label for="startDate">Offer Start Date: </label>
+                            <div class="input-group">
+                                <input id="startDate" name="startDate" type="date" class="form-control">
+                            </div>
+                            <div class="form-text">Choose a start date for the offer to be considered.</div>
+                        </div>
+
+                        <div class="endDateInput p-2">
+                            <label for="endDate">Offer Expiry Date : </label>
+                            <div class="input-group">
+                                <input id="endDate" name="endDate" type="date" class="form-control">
+                            </div>
+                            <div class="form-text">Choose an exipry date for offer to end.</div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button id="backbutton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                        <button type="submit" class="btn btn-info">Save changes</button>
+                    </div>
+                </form>
+                    </div>
+                </div>
+            </div>
+    </section>
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear())
+                </script> ©, Tick Tock .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">
+                    All rights reserved
+                </div>
+            </div>
+        </div>
+    </footer>
+</main>
+
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.10/dist/sweetalert2.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        $('#addProductOfferForm').on('submit', function (e) {
+            e.preventDefault(); 
+
+            const formData = $(this).serialize(); 
+
+            $.ajax({
+                url: '/admin/addProOffers',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    Swal.fire({
+                        title: "Success!",
+                        text: response.message,
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    }).then(() => {
+                        window.location.href = "/admin/productOffers"; 
+                    });
+                },
+                error: function (xhr) {
+                    const errorMessage = xhr.responseJSON?.message || "Something went wrong!";
+                    Swal.fire({
+                        title: "Error!",
+                        text: errorMessage,
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
+                }
+            });
+        });
+    });
+
+
+
+
+    $(document).ready(function () {
+        $('#backbutton').click(function (e) {
+            e.preventDefault();
+            Swal.fire({
+                title: "Leave the Page?",
+                //text: "The Data will not be saved",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#088178",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/admin/productOffers";
+                }
+            });
+
+
+        });
+    });
+
+</script>

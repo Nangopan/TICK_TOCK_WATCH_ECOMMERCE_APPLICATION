@@ -1,40 +1,6 @@
 
     <main class="main-wrap">
-            <header class="main-header navbar">
-        <div class="col-search">
-            <form class="searchform">
-                <div class="input-group">
-                    <input list="search_terms" type="text" class="form-control" placeholder="Search term">
-                    <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
-                </div>
-                <datalist id="search_terms">
-                    <option value="Products">
-                    <option value="New orders">
-                    <option value="Apple iphone">
-                    <option value="Ahmed Hassan">
-                </datalist>
-            </form>
-        </div>
-        <div class="col-nav">
-            <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i
-                    class="material-icons md-apps"></i> </button>
-            <ul class="nav">
-                <li class="nav-item">
-                    <a class="nav-link btn-icon" href="#">
-                        <i class="material-icons md-notifications animation-shake"></i>
-                        <span class="badge rounded-pill">3</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
-                </li>
-             
-            </ul>
-        </div>
-    </header>
+    
 
         <section class="content-main">
 <div class="container-fluid">
@@ -89,14 +55,14 @@
                                 
                                 <p class="mb-2">Payment method: {{myOrderDetails.paymentMethod}}</p>
                                 <p class="mb-2">Order status : {{myOrderDetails.status}}</p>
-                                {{!-- {{#if myOrderDetails.discountAmt}}
+                                {{#if myOrderDetails.discountAmt}}
                                 <p class="mb-2">Amount after discount :
                                     ₹<strong>{{myOrderDetails.amountAfterDscnt}}</strong></p>
                                 <p class="mb-2">Discount amount : ₹<strong>{{myOrderDetails.discountAmt}}</strong></p>
                                 <p class="mb-2" style="color: green;">Coupon used: {{myOrderDetails.coupon}}</p>
                                 {{else}}
                                 <p class="mb-2" style="color: green;">No coupon applied</p>
-                                {{/if}} --}}
+                                {{/if}}
 
                             </div>
 

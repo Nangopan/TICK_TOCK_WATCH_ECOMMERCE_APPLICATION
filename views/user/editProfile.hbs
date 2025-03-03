@@ -4,7 +4,7 @@
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
-                <a href="index.html" rel="nofollow">Home</a>
+                <a href="/" rel="nofollow">Home</a>
                 <span></span> Account
                 <span></span> Edit Profile
             </div>
@@ -181,10 +181,10 @@
     function validateusername() {
         var username = document.getElementById('name').value;
 
-        var userPattern = /^[a-zA-Z0-9]{3,}$/;
+        var userPattern = /^[a-zA-Z0-9]{4,}$/;
 
         if (!userPattern.test(username)) {
-            alert("Invalid username please try again.");
+            alert("Name minimum 4 letters");
 
             document.getElementById('name').value = '';
 

@@ -108,7 +108,7 @@
             usernameError.textContent = "Username cannot be blank"; 
         } 
         else if (!usernamePattern.test(userNameInput)) {
-            usernameError.textContent = "Username should contain minimum 4 Letters";
+            usernameError.textContent = "Username is minimum 4 Letters";
         } else {
             usernameError.textContent = "";
         }
@@ -123,29 +123,24 @@
         }
     }
 
-       function validatePhoneNumber() {
-        const phonePattern = /^[1-9]\d{9}$/; // Ensures it does not start with 0
-        const phoneValue = phoneInput.value.trim();
-
-        if (!phonePattern.test(phoneValue)) {
-            phoneError.textContent = "Invalid phone number. It should be 10 digits and must not start with 0.";
+    function validatePhoneNumber() {
+        const phonePattern = /^\d{10}$/; // Assuming a 10-digit phone number
+        if (!phonePattern.test(phoneInput.value.trim())) {
+            phoneError.textContent = "Invalid phone number";
         } else {
             phoneError.textContent = "";
         }
     }
 
-   function validatePassword() {
-        const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        const passwordValue = passwordInput.value.trim();
-
-        if (!passwordPattern.test(passwordValue)) {
-            passwordError.textContent = "Password must be at least 8 characters and include a letter, a number, and a special character.";
+    function validatePassword() {
+        if (passwordInput.value.trim().length < 6) {
+            passwordError.textContent = "Password must be at least 6 characters";
         } else {
             passwordError.textContent = "";
         }
     }
 
-     function validateConfirmPassword() {
+    function validateConfirmPassword() {
         if (confirmPasswordInput.value.trim() !== passwordInput.value.trim()) {
             confirmPasswordError.textContent = "Passwords do not match";
         } else {

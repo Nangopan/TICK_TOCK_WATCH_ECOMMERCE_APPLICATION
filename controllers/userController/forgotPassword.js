@@ -1,9 +1,12 @@
 const userHelper = require("../../helpers/user.helper");
 const User = require("../../model/userSchema");
 const argon = require("argon2");
+const HttpStatus = require('../../httpStatus');
+
 
 let otp;
 let email;
+
 
 const submitMail = async (req, res) => {
   try {
@@ -16,9 +19,11 @@ const submitMail = async (req, res) => {
     }
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
 
 const submitMailPost = async (req, res) => {
   try {
@@ -35,9 +40,11 @@ const submitMailPost = async (req, res) => {
     }
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
 
 const forgotOtppage = async (req, res) => {
   try {
@@ -51,9 +58,12 @@ const forgotOtppage = async (req, res) => {
     }
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 const forgotOtpSubmit = async (req, res) => {
   let enteredOtp = req.body.otp;
 
@@ -69,14 +79,19 @@ const forgotOtpSubmit = async (req, res) => {
   }
 };
 
+
+
 const resetPasswordPage = async (req, res) => {
   try {
     res.render("user/forgotPassword/resetPassword");
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
 const resetPassword = async (req, res) => {
   try {
     hashedPassword = await userHelper.hashPassword(req.body.password);
@@ -89,9 +104,10 @@ const resetPassword = async (req, res) => {
     res.redirect("/login");
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
 
 module.exports = {
   submitMail,

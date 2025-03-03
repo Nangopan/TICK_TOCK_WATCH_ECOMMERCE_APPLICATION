@@ -1,7 +1,7 @@
-const mongoose=require('mongoose')
-const Schema=mongoose.Schema
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
-const CartSchema=new Schema({
+const CartSchema = new Schema({
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         required:true
@@ -9,6 +9,7 @@ const CartSchema=new Schema({
     product_Id: 
     {
         type:mongoose.Schema.Types.ObjectId, 
+        ref: 'Product',
         required:true
     },
     quantity :{
@@ -26,5 +27,5 @@ const CartSchema=new Schema({
 
 })
 
-const Cart=mongoose.model('carts',CartSchema)
-module.exports=Cart
+const Cart = mongoose.model('carts',CartSchema)
+module.exports = Cart

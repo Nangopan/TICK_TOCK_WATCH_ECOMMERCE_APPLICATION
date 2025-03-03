@@ -2,85 +2,54 @@ const Category = require("../../model/categorySchema");
 const Product = require("../../model/productSchema");
 const User = require("../../model/userSchema");
 const mongoose = require("mongoose");
+const HttpStatus = require('../../httpStatus');
+const { isBlocked } = require("../../middleware/usersAuth");
 
-let userData;
+
+
+
 
 const getProduct = async (req, res) => {
   try {
     const userData = req.session.user;
-     console.log("hiiii from getProduct",userData)
-    const catName = await Product.aggregate([
-      {
-        $match: {
-          isBlocked: false,
-        },
-      },
-      {
-        $lookup: {
-          from: "categories",
-          localField: "category",
-          foreignField: "_id",
-          as: "category",
-        },
-      },
-      {
-        $unwind: "$category",
-      },
-    ]);
-    console.log("category name=>",catName)
 
     const newProduct = await Product.find()
       .sort({ createdOn: -1 })
       .limit(3)
       .lean();
 
-    let page = 1;
-    if (req.query.page) {
-      page = parseInt(req.query.page);
-    }
+ 
+    const loadCatData = await Category.find({isListed: true}).lean();
 
-    const limit = 6;
-    const categoryData = await Category.find({isListed: true}).lean();
-    const proData = await Product.find({ isBlocked: false })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .populate("category", "category")
-      .lean();
-
-    const count = await Product.countDocuments({ isBlocked: false });
-    const totalPages = Math.ceil(count / limit);
-    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+    const iterator = Array(9).fill(0);
 
     res.render("user/shop", {
-      proData,
-      pages,
-      currentPage: page,
+ 
+      iterator,
       userData,
-      currentFunction: "getProductsPage",
-      catName,
-      categoryData,
+      loadCatData,
       newProduct,
     });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send("Internal Server Error");
+    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+
+
+
+
 
 const searchAndSort = async (req, res) => {
   const { searchQuery, sortOption, categoryFilter, page, limit } = req.body;
 
-  const matchStage = { 
-    $match: { 
-      isBlocked: false 
-    } 
-  };
+  const matchStage = { $match: {isBlocked: false} };
   if (searchQuery) {
     matchStage.$match.name = { $regex: searchQuery, $options: "i" };
   }
   if (categoryFilter) {
     matchStage.$match.category = new mongoose.Types.ObjectId(categoryFilter);
-
   }
 
   // Construct the sort stage
@@ -112,7 +81,7 @@ const searchAndSort = async (req, res) => {
   const limitStage = { $limit: limit };
 
   const products = await Product.aggregate([
-    matchStage, // Assuming this is the initial matching stage
+    matchStage, 
     {
       $lookup: {
         from: "categories",
@@ -123,25 +92,67 @@ const searchAndSort = async (req, res) => {
     },
     {
       $unwind: {
-        path: "$category"
+        path: "$category",
+        preserveNullAndEmptyArrays: true, 
       },
-    
     },
-
-    sortStage, // Sorting stage
-    skipStage, // Skipping stage for pagination
-    limitStage, // Limit stage for pagination
+    {
+      $lookup: {
+        from: "productoffers",  
+        localField: "_id",  
+        foreignField: "productId",  
+        as: "productOffer",
+      },
+    },
+    {
+      $unwind: {
+        path: "$productOffer",
+        preserveNullAndEmptyArrays: true, 
+      },
+    },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        price: 1,
+        description: 1,
+        stock: 1,
+        popularity: 1,
+        bestSelling: 1,
+        imageUrl: 1,
+        category: {
+          _id: 1,
+          category: 1,
+          imageUrl: 1,
+          isListed: 1,
+          bestSelling: 1,
+        },
+        productOffer: 1,  
+        discountPrice: {
+          $cond: {
+            if: { $eq: ["$productOffer.currentStatus", true] },  
+            then: "$productOffer.discountPrice",  
+            else: "$price",  
+          },
+        },
+      },
+    },
+    sortStage, 
+    skipStage, 
+    limitStage, 
   ]);
   
   console.log(products);
   
 
-  const totalProducts = await Product.countDocuments({
-    isBlocked: false,
-  });
+  const totalProducts = await Product.countDocuments(matchStage.$match);
 
   res.json({ products, totalProducts });
 };
+
+
+
+
 module.exports = {
   getProduct,
   searchAndSort

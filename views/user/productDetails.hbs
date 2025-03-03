@@ -38,21 +38,28 @@
                                 <div class="detail-info">
                                     <h2 class="title-detail">{{product.name}}</h2>
                                      {{!-- <input name="product_name" value="{{product.name}}" type="hidden">                                     --}}
-                                    <div class="clearfix product-price-cover">
-                                        <div class="product-price primary-color float-left">
-          
-   <div class="product-price-cover d-flex align-items-center justify-content-between">
-         <div class="product-price">
+   <div class="clearfix product-price-cover">
+  <div class="product-price primary-color float-left">
+    {{#if product.productOffer}} <!-- Check if productOffer exists -->
+      {{#if product.productOffer.discountPrice}} <!-- Check if discountPrice exists -->
+        <div class="product-price">
+          <span class="text-brand">₹{{product.productOffer.discountPrice}}</span>
+          <ins><span class="old-price font-md ml-15">₹{{product.price}}</span></ins>
+          <span class="save-price font-md color3 ml-15">{{product.productOffer.productOfferPercentage}}% Off</span>
+        </div>
+      {{else}} <!-- If discountPrice does not exist -->
+        <div class="product-price">
+          <span class="text-brand">₹{{product.price}}</span>
+        </div>
+      {{/if}}
+    {{else}} <!-- If productOffer does not exist -->
+      <div class="product-price">
         <span class="text-brand">₹{{product.price}}</span>
-       </div>
-      <!-- Static Star Rating -->
-       <div class="static-rating ms-3" style="color: #f8b400; font-size: 18px;">
-        ★★★★☆
-    </div>
+      </div>
+    {{/if}}
+  </div>
 </div>
-</div>
-                                        </div>
-                                    </div>
+
                                     <div class="bt-1 border-color-1 mt-15 mb-15"></div>
                                     <div class="short-desc mb-30">
                                         <p>{{product.description}}</p>
@@ -71,33 +78,45 @@
                                         </div> --}}
                                     <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                     
-                                   <div class="product-extra-link2">
-    {{#if outOfStock}}
-    <span id="outofstock">
-        <button id="outofstock-btn" class="btn btn-md " style="background-color: #dc3545;">Out of stock</button>
-    </span>
-    {{else}}
-    {{#if productExistInCart}}
-    <span id="gocart">
-        <button id="addcart-btn" onclick="window.location.href='/cart'" class="btn btn-md">Go to cart</button>
-    </span>
-    {{else}}
-    <span id="addcart">
-        <button id="addcart-btn" data-product-id="{{product._id}}" class="button button-add-to-cart">Add to cart</button>
-    </span>
-    {{/if}}
-    {{/if}}
-    <!-- No Discounts Applied Text -->
-    <div class="no-discount-text mt-10" style="font-size: 14px; font-weight: bold; color: #dc3545;">
-        No Discounts Applied
-    </div>
-</div>
+                                    <div class="product-extra-link2">
+
+                                            {{#if outOfStock}}
+                                            <span id="outofstock">
+                                                <button id="outofstock-btn" class="btn btn-md "
+                                                    style="background-color: #dc3545;">Out of stock</button>
+                                            </span>
+                                            {{else}}
+                                            {{#if productExistInCart}}
+                                            <span id="gocart">
+                                                <button id="addcart-btn" onclick="window.location.href='/cart'"
+                                                    class="btn btn-md">Go to Cart</button>
+                                            </span>
+                                            {{else}}
+                                            <span id="addcart">
+                                                <button id="addcart-btn" data-product-id="{{product._id}}"
+                                                    class="button button-add-to-cart">Add to Cart</button>
+                                            </span>
+                                            {{/if}}
+                                        
+                                            {{!-- <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                                href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>    --}}
+                                            {{#if productExistInWishlist}}
+                                            <span id="wishlist">
+                                                <button id="addwishlist-btn" onclick="window.location.href='/wishlist'" class="button button-add-to-wishlist">Go to Wishlist</button>
+                                            </span>
+                                            {{else}}
+                                            <span id="wishlist">
+                                                <button id="addwishlist-btn" data-product-id="{{product._id}}" class="button button-add-to-wishlist">Add to Wishlist</button>
+                                            </span>
+                                            {{/if}}
+                                            {{/if}}
+                                        </div>
                                     <ul class="product-meta font-xs color-grey mt-50">
                                         <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li>
                                         <li class="mb-5">Tags: 
-                                            <a href="#" rel="tag">Men</a>, 
-                                            <a href="#"rel="tag">Women</a>, 
-                                            <a href="#" rel="tag">kids</a> 
+                                            <a href="#" rel="tag">IPhone</a>, 
+                                            <a href="#"rel="tag">Mobile</a>, 
+                                            <a href="#" rel="tag">Android</a> 
                                         </li>
                                         {{#if product.stock}}       
                                         <li>Availability: <span class="in-stock text-success ml-5 " style="font-weight: bold !important; font-size: 15px;">{{product.stock}} Items In Stock</span></li>
@@ -139,7 +158,7 @@
                     if (result.success) {
 
                         Swal.fire({
-                            icon: 'success', 
+                            icon: 'success',
                             title: 'Added to cart',
                             text: result.message,
                             showConfirmButton: false,
@@ -182,4 +201,43 @@
             })
         })
     })
+
+
+    $(document).ready(function () {
+    const userId = ""; 
+
+    // Add to Wishlist
+    $('#addwishlist-btn').on('click', function (e) {
+        e.preventDefault();
+        
+        const prodId = $(this).data('product-id');
+
+        $.ajax({
+            type: 'POST',
+            url: '/addtowishlist',
+            contentType: 'application/json',
+            data: JSON.stringify({ id: prodId, userId: userId }),
+            success: function (response) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Product added to your Wishlist.',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                $('#wishlist').html('<button id="wishlist-btn" onclick="window.location.href=\'/wishlist\'" class="button button-add-to-wishlist">Go to Wishlist</button>');
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to add product to Wishlist.',
+                    icon: 'error',
+                    confirmButtonText: 'Try Again'
+                });
+                console.error(error);
+            }
+        });
+    });
+});
+
 </script>

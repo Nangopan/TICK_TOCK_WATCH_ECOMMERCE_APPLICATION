@@ -27,10 +27,10 @@
                     <div class="row">
                         <div class="col-md-12">
             
-                            <form action="/admin/updateCategory/{{category._id}}" method="post" enctype="multipart/form-data"  onsubmit="return Validation()">
+                            <form action="/admin/updateCategory/{{category._id}}" method="post" enctype="multipart/form-data" onsubmit="return Validation() && submitform(this);">
                                 <div class="mb-4">
                                     <label for="productName" class="form-label">Category Name:</label>
-                                    <input type="text"  class="form-control" id="productName" name="name" value={{category.category}} >
+                                    <input type="text"  class="form-control" id="productName" name="name" value="{{category.category}}" >
                                     <div class="error" style="color: red;" id="nameError"></div>
                                 </div>
                                 
@@ -46,15 +46,15 @@
                                     
                                 </div>
                                 
-                                <div class="d-flex g-2">
-                                    <div class="m-2">
-                                         <button type="submit" class="btn btn-primary">Edit category</button>
-
-                                    </div>
-                                    <div class="m-2">
-                                        <a href="/admin/Category" type="button" class="btn btn-primary" id="backbutton">Back</a>
-
-                                    </div>
+                                
+                                <div class="d-flex g-2 mt-4">
+    <div class="m-2">
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+    <div class="m-2">
+        <a href="/admin/Category" type="button" class="btn btn-primary" id="backbutton">Back</a>
+    </div>
+</div>
                                    
                                     
                                 </div>
@@ -85,6 +85,32 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
+
+    function submitform(form) {
+    Swal.fire({
+        title: "Do you want to save the changes?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#088178",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, save it!",
+        cancelButtonText: "No, cancel"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: "Saved",
+                icon: "success",
+                confirmButtonText: "OK"
+            }).then(() => {
+                form.submit(); // Submit the form if confirmed
+            });
+        } else {
+            console.log("User canceled the action");
+        }
+    });
+    return false; // Prevent default form submission
+}
+
     ////////////back
     $(document).ready(function () {
         $('#backbutton').click(function (e) {
@@ -101,7 +127,7 @@
                 confirmButtonText: "Yes"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = "/admin/Category";
+                    window.location.href = "/admin/category";
 
                 }
             });
@@ -111,58 +137,50 @@
     });
 </script>
 
-{{!-- <script>
-    function Validation() {
-        let errors = []
-        var name = document.getElementById('productName').value;       
-        var nameerror = document.getElementById('nameError')       
-        var categoryPattern = /^[a-zA-Z]{3,}$/;
-        if (!name.match( categoryPattern)) {
-        errors.push("Name Not Valid");
-    }    
-    if (errors.length > 0) {
-            nameError.innerHTML = errors.includes("Name Not Valid") ? "Name Not Valid" : "";        
-            return false; // Prevent form submission
-        }
-    return true;
-    }
-</script> --}}
+
 
 <script>
     function Validation() {
-        let errors = [];
+    var name = document.getElementById('productName').value;
+    var nameError = document.getElementById('nameError');
+    var categoryPattern = /^[a-zA-Z0-9\s]{4,}$/;
+    //var categoryPattern = /^[a-zA-Z]{4,}(?: [a-zA-Z]+)*$/;
 
-        var name = document.getElementById('productName').value;
-        var nameError = document.getElementById('nameError');
-        var categoryPattern = /^[a-zA-Z]{4,}(?: [a-zA-Z]+)*$/;
-
-        // Validate Category Name
-        if (!name.match(categoryPattern)) {
-            errors.push("Name Not Valid");
-        }
-
-        if (errors.length > 0) {
-            nameError.innerHTML = errors.includes("Name Not Valid") ? "Name Not Valid" : "";
-            return false; // Prevent form submission
-        }
-
-        return true;
+    // Validate Category Name
+    if (!name.match(categoryPattern)) {
+        nameError.innerHTML = "Name Not Valid";
+        return false; // Prevent form submission
     }
 
-    // Validate File Upload
-    function validateFile() {
-        const fileInput = document.getElementById('productImage');
-        const fileError = document.getElementById('fileError');
-        const filePath = fileInput.value;
-        const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+    return true;
+}
 
-        if (!allowedExtensions.exec(filePath)) {
-            fileError.innerHTML = "Invalid file type. Please upload an image (JPG, JPEG, PNG, GIF).";
-            fileInput.value = ''; // Clear the file input
-            return false;
-        } else {
-            fileError.innerHTML = ""; // Clear error message
-            return true;
-        }
+// Validate File Upload
+function validateFile() {
+    const fileInput = document.getElementById('productImage');
+    const fileError = document.getElementById('fileError');
+    const filePath = fileInput.value;
+    const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+
+    const file = fileInput.files[0];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    // Check file extension
+    if (!allowedExtensions.exec(filePath)) {
+        fileError.innerHTML = "Invalid file type. Please upload an image (JPG, JPEG, PNG, GIF).";
+        fileInput.value = ''; // Clear the file input
+        return false;
     }
+
+    // Check file size
+    if (file && file.size > maxSize) {
+        fileError.innerHTML = "File size should be less than 5MB.";
+        fileInput.value = ''; // Clear the file input
+        return false;
+    }
+
+    fileError.innerHTML = ""; // Clear error message
+    return true;
+}
+
 </script>

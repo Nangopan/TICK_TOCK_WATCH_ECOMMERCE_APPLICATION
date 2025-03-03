@@ -41,17 +41,17 @@
                                                         value="{{address.mobile}}" required>
                                                 </div>
                                                 <div class="col-lg-12 mb-3">
-                                                    <label class="form-label">Address line 1</label>
+                                                    <label class="form-label">Address</label>
                                                     <input class="form-control" type="text"
                                                         placeholder="Enter your address" name="address1" id="address1"
                                                         value="{{address.addressLine1}}" required>
                                                 </div>
-                                                <div class="col-lg-12 mb-3">
+                                                {{!-- <div class="col-lg-12 mb-3">
                                                     <label class="form-label">Address line 2</label>
                                                     <input class="form-control" type="text"
                                                         placeholder="Enter your address" name="address2" id="address2"
                                                         value="{{address.addressLine2}}" required>
-                                                </div>
+                                                </div> --}}
                                                 <div class="col-lg-12 mb-3">
                                                     <label class="form-label">City</label>
                                                     <input class="form-control" type="text"
@@ -146,6 +146,8 @@
 
 
 <script>
+
+    
 
     document.getElementById('backbutton').addEventListener('click', function(event) {
         event.preventDefault(); // Prevent the default action

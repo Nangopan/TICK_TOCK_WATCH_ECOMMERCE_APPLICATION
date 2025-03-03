@@ -32,16 +32,18 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-
-    popularity: {
-        type: Number,
-        default: 0,
-      },
-      
-      bestSelling:{
-        type:Number,
-        default:0
+    discountedPrice: { 
+      type: Number 
     },
+    popularity: {
+      type: Number,
+      default: 0,
+    },
+    bestSelling:{
+      type:Number,
+      default:0
+  },
+
     isBlocked: {
       type: Boolean,
       default: false,
@@ -49,5 +51,6 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 
 module.exports = mongoose.model("Product", productSchema);

@@ -41,10 +41,18 @@ const orderSchema = new Schema({
     type: Number,
   },
 
-  totalAmount: {
+  amountAfterDscnt: {
     type: Number,
   
   },
+  coupon: {
+    type: String,
+  },
+  couponUsed: {
+    type: Boolean,
+    default: false,
+  },
+
   paymentMethod: {
     type: String,
     required: true,
@@ -52,8 +60,8 @@ const orderSchema = new Schema({
 
   status: {
     type: String,
-    enum: ["pending", "Shipped", "Delivered", 'Cancelled', 'Returned' , 'Payment Failed'],
-    default: "pending",
+    enum: ["Pending", "Shipped", "Delivered", 'Cancelled', 'Returned' , 'Payment Failed'],
+    default: "Pending",
   },
 
   date: {
@@ -63,4 +71,5 @@ const orderSchema = new Schema({
 });
 
 const Order = mongoose.model("Order", orderSchema);
+
 module.exports = Order;
