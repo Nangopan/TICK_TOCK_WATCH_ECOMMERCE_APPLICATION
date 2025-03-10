@@ -8,7 +8,7 @@ const { ordersPage, orderDetails, changeStatus } = require('../controllers/admin
 const { couponPage, addCouponPage, addCouponPost, editCouponPage, editCouponPost, deleteCoupon } = require('../controllers/adminController/couponManagement');
 
 const{ productOfferPage, addProductOfferPage, addProductOffer, editProductOfferPage, editProductOffer, deleteProductOffer, categoryOfferPage, addCategoryOfferPage, addCategoryOffer, editCategoryOfferPage, editCategoryOffer, deleteCategoryOffer } = require('../controllers/adminController/offerManagement');
-
+const {  loadDashboard, getSales}=require('../controllers/adminController/dashBoardManagement');
 const { isLogin, isLogout } = require("../middleware/adminAuth")
 const store = require('../middleware/multer')
 
@@ -17,9 +17,9 @@ const store = require('../middleware/multer')
 router.get("/admin/login", isLogout , getLogin)
 router.post("/admin/login" , isLogout, doLogin)
 router.get("/admin/logout",  doLogout)
-router.get('/admin/home', isLogin,  getDashboard )
-// router.get('/admin/home', isLogin, loadDashboard)
-// //router.get("/admin/home",isLogin , getHome)
+
+router.get('/admin/home', isLogin, loadDashboard)
+
 
 // Product Page
 
@@ -82,6 +82,7 @@ router.post("/admin/editCategoryOffer/:id", isLogin, editCategoryOffer);
 router.delete('/admin/deleteCatOffer/:id', isLogin, deleteCategoryOffer)
 
 
+router.get('/admin/get_sales',isLogin, getSales)
 
 module.exports = router
 

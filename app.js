@@ -22,8 +22,13 @@ app.engine('hbs', exhbs.engine({
     layoutsDir: __dirname + '/views/layouts/',
     extname: 'hbs',
     defaultLayout: 'userLayout',
-    partialsDir: __dirname + '/views/partials/'
-  }));
+    partialsDir: __dirname + '/views/partials/',
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true,
+      allowProtoMethodsByDefault: true,
+    }
+  },
+ ));
   
   app.use(session({
     secret: 'cats',
@@ -51,7 +56,10 @@ app.engine('hbs', exhbs.engine({
 
 app.use("/", userRouter)
 app.use("/", adminRouter)
-
+runtimeOptions: {
+  allowProtoPropertiesByDefault: true
+  allowProtoMethodsByDefault: true
+    }
 const PORT = process.env.PORT
 
 app.listen(PORT, (req, res) => {

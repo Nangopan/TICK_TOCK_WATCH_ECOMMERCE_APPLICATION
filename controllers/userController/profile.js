@@ -8,6 +8,7 @@ const Wishlist = require('../../model/wishlistSchema')
 const Order = require("../../model/orderSchema");
 const argon2 = require("argon2");
 const HttpStatus = require('../../httpStatus');
+const referralSchema = require("../../model/referralSchema")
 
 const mongoose = require("mongoose");
 //const ObjectId = require('mongoose')
@@ -23,8 +24,9 @@ const viewUserProfile = async (req, res) => {
     const user = req.session.user;
     const id = user._id;
     const userData = await User.findById(id);
+    const referralData=await referralSchema.find({userId:id},{referralCode:1}).lean()
     const userDataObject = userData.toObject();
-    res.render("user/profile", { userData: userDataObject });
+    res.render("user/profile", { userData: userDataObject,referralData });
   } catch (error) {
     console.log(error.message);
     res.status(HttpStatus.InternalServerError).send("Internal Server Error");

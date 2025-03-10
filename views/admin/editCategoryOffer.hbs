@@ -45,7 +45,7 @@
                             <div class="input-group">
                                 <input id="categoryOfferEndDate" name="categoryOfferEndDate" type="date" class="form-control" value="{{endDate}}">
                             </div>
-                            <div class="form-text">Choose an exipry date for offer to end.</div>
+                            <div class="form-text">Choose an expiry date for the offer to end.</div>
                         </div>
 
                     </div>
@@ -84,6 +84,41 @@
         $('#addCategoryOfferForm').on('submit', function (e) {
             e.preventDefault(); 
 
+            const startDate = new Date($('#categoryOfferStartDate').val());
+            const endDate = new Date($('#categoryOfferEndDate').val());
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normalize today's date to avoid time comparison issues
+
+            if (!startDate || !endDate) {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Both start date and end date are required.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+                return;
+            }
+
+            if (startDate < today) {
+                Swal.fire({
+                    title: "Invalid Start Date!",
+                    text: "Start date cannot be in the past.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+                return;
+            }
+
+            if (endDate <= startDate) {
+                Swal.fire({
+                    title: "Invalid End Date!",
+                    text: "End date must be after the start date.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+                return;
+            }
+
             const formData = $(this).serialize(); 
 
             $.ajax({
@@ -111,15 +146,11 @@
                 }
             });
         });
-    });
 
-
-    $(document).ready(function () {
         $('#backbutton').click(function (e) {
             e.preventDefault();
             Swal.fire({
                 title: "Leave the Page?",
-                //text: "The Data will not be saved",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#088178",
@@ -130,8 +161,6 @@
                     window.location.href = "/admin/categoryOffers";
                 }
             });
-
-
         });
     });
 

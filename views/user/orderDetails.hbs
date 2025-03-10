@@ -19,7 +19,7 @@
                             <section class="content-body p-xl-4">
                                 <div class="content-header">
                                     <div>
-                                        <h2 class="content-title card-title">Order detail</h2>
+                                        <h2 class="content-title card-title">Order Detail</h2>
                                         <p>Details for Order ID: {{myOrderDetails._id}}</p>
                                     </div>
                                 </div>
@@ -61,11 +61,11 @@
                                                         <i class="text-primary material-icons md-local_shipping"></i>
                                                     </span>
                                                     <div class="text">
-                                                        <h6 class="mb-1">Order info</h6>
+                                                        <h6 class="mb-1">Order Info</h6>
                                                         <p class="mb-1">
-                                                            Shipping: Fargo express <br> Pay method:
-                                                            {{myOrderDetails.paymentMethod}} <br> Status:
-                                                            {{myOrderDetails.status}}
+                                                            Shipping: Fargo express <br> 
+                                                            Pay method: {{myOrderDetails.paymentMethod}} <br> 
+                                                            Status: {{myOrderDetails.status}}
                                                         </p>
                                                     </div>
                                                 </article>
@@ -112,165 +112,97 @@
                                                                         <div class="info">{{this.product.name}}</div>
                                                                     </a>
                                                                 </td>
-                                                                {{!-- <td> ₹{{this.product.price}} </td>
-                                                                <td>{{this.product.quantity}} </td>
-                                                                <td>₹{{multiply this.product.quantity
-                                                                    this.product.price }}</td> --}}
-
-                                                                     <td>
-        <!-- Display discount price if available, otherwise show the original price -->
-        ₹{{#if this.product.discountPrice}}{{this.product.discountPrice}}{{else}}{{this.product.price}}{{/if}}
-    </td>
-    <td>{{this.product.quantity}}</td>
-    <td>
-        <!-- Multiply quantity with either discount price or original price -->
-        ₹{{#if this.product.discountPrice}}
-            {{multiply this.product.quantity this.product.discountPrice}}
-        {{else}}
-            {{multiply this.product.quantity this.product.price}}
-        {{/if}}
-                                                                
-
+                                                                <td>
+                                                                    ₹{{#if this.product.discountPrice}}
+                                                                        {{this.product.discountPrice}}
+                                                                    {{else}}
+                                                                        {{this.product.price}}
+                                                                    {{/if}}
+                                                                </td>
+                                                                <td>{{this.product.quantity}}</td>
+                                                                <td>
+                                                                    ₹{{#if this.product.discountPrice}}
+                                                                        {{multiply this.product.quantity this.product.discountPrice}}
+                                                                    {{else}}
+                                                                        {{multiply this.product.quantity this.product.price}}
+                                                                    {{/if}}
+                                                                </td>
                                                                 <td class="text-end">                                                                    
                                                                     {{#singlestatuchecker this.product}}
                                                                         {{#ifCond ../myOrderDetails.status '==' 'Delivered'}}
-    {{#if (eq ../orderedProDet.length 1)}}
-        <!-- Disable the return button if only one product exists -->
-        <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Return</button>
-    {{else}}
-        <!-- Enable the return button if there are multiple products -->
-        <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}">Return</button>
-    {{/if}}
+                                                                            {{#if (eq ../orderedProDet.length 1)}}
+                                                                                <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Return</button>
+                                                                            {{else}}
+                                                                                <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}">Return</button>
+                                                                            {{/if}}
                                                                         {{else}} 
                                                                         {{#ifCond ../myOrderDetails.status '==' 'Payment Failed'}}
                                                                             <button id="retryPayment" class="btn btn-primary btn-sm retry-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Retry Payment</button>
-                                                                            
                                                                         {{else}}
                                                                         {{#ifCond ../myOrderDetails.status '==' 'Cancelled'}}
-                <!-- Disable the cancel button for each product if the entire order is cancelled -->
-                <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>
-                    Cancel
-                </button>
-            {{else}}
-                                                                            
+                                                                            <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>
+                                                                                Cancel
+                                                                            </button>
+                                                                        {{else}}
                                                                             {{#if (eq ../orderedProDet.length 1)}}
-                <!-- Disable the cancel button if only one product exists -->
-                <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>
-                    Cancel
-                </button>
-            {{else}}
-                <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}">
-                    Cancel
-                </button>
-            {{/if}}
+                                                                                <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>
+                                                                                    Cancel
+                                                                                </button>
+                                                                            {{else}}
+                                                                                <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}">
+                                                                                    Cancel
+                                                                                </button>
+                                                                            {{/if}}
                                                                         {{/ifCond}}
                                                                         {{/ifCond}}
-        {{/ifCond}}
+                                                                    {{/ifCond}}
                                                                     {{/singlestatuchecker}}
                                                                 </td>
                                                             </tr>
                                                             {{/each}}
                                                             <tr>
                                                                 <td colspan="5">
-                                                                    <article class="float-end">
-                                                                        <dl class="dlist">
-                                                                            <dt>Delivery:</dt>
-                                                                            <dd>
-                                                                                <span class="text-danger">+₹
-                                                                                    50</span>
-                                                                            </dd>
-                                                                        </dl>
-                                                                        <dl class="dlist">
-                                                                            <dt>Discount:</dt>
-                                                                            <dd>{{#if myOrderDetails.discountAmt}}
-                                                                                <span class="text-success">-₹
-                                                                                    {{myOrderDetails.discountAmt}}</span>
+                                                                    <div class="order-summary-container">
+                                                                        <div class="summary-row">
+                                                                            <div class="summary-item">
+                                                                                <span class="summary-label">Delivery:</span>
+                                                                                <span class="summary-value text-danger">+₹ 50</span>
+                                                                            </div>
+                                                                            <div class="summary-item">
+                                                                                <span class="summary-label">Discount:</span>
+                                                                                <span class="summary-value text-success">
+                                                                                    {{#if myOrderDetails.discountAmt}}
+                                                                                        -₹ {{myOrderDetails.discountAmt}}
                                                                                     {{else}}
-                                                                                    <span class="text-success">-₹ 0</span>
+                                                                                        -₹ 0
                                                                                     {{/if}}
-                                                                            </dd>
-                                                                        </dl>
-                                                                        <dl class="dlist">
-    <dt>Grand Total:</dt>
-    {{#if myOrderDetails.discountAmt}}
-        <dd>
-            <b id="grandTotal" class="h5">₹{{myOrderDetails.amountAfterDscnt}}</b>
-        </dd>
-    {{else}}
-        <dd>
-            <b id="grandTotal" class="h5">₹{{add myOrderDetails.total 0}}</b>
-        </dd>
-    {{/if}}
-</dl>
-
-                                                                        <dl class="dlist">
-                                                                            <dt class="text-muted">Status:</dt>
-                                                                            <dd>
-                                                                                <span
-                                                                                    class="badge rounded-pill alert-success text-success">{{myOrderDetails.status}}</span>
-                                                                            </dd>
-                                                                        </dl>
-                                                                        
-                                                                        {{#statuchecker myOrderDetails}}
-                                                                        {{else}}
-
-                                                                        {{/statuchecker}}
-                                                                        
-                                                                    </article>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div class="summary-item">
+                                                                                <span class="summary-label">Grand Total:</span>
+                                                                                <span id="grandTotal" class="summary-value total-amount">
+                                                                                    {{#if myOrderDetails.discountAmt}}
+                                                                                        ₹{{myOrderDetails.amountAfterDscnt}}
+                                                                                    {{else}}
+                                                                                        ₹{{add myOrderDetails.total 0}}
+                                                                                    {{/if}}
+                                                                                </span>
+                                                                            </div>
+                                                                            <div class="summary-item">
+                                                                                <span class="summary-label">Status:</span>
+                                                                                <span class="badge rounded-pill alert-success text-success">{{myOrderDetails.status}}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-1"></div>
-                                            {{!-- <div class="col-lg-4">
+                                            <div class="col-lg-4">
                                                 <div class="box shadow-sm bg-light">
-                                                    <h6 class="mb-15">Payment info</h6>
-                                                    <p>
-                                                        {{myOrderDetails.paymentMethod}}
-                                                    </p>
-                                                </div>
-                                                <div class="mt-3">
-                                                    <a href="/my_orders" type="button"
-                                                        class="btn btn-primary">Back</a>
-                                                    {{#ifeq myOrderDetails.status 'pending'}}
-                                                    <span id="cancel_btn">
-                                                        <button onclick="status()" type="button"
-                                                            class="btn btn-md rounded font-sm mx-2">
-                                                            Cancel order
-                                                        </button>
-                                                    </span>
-                                                    {{/ifeq}}
-                                                    {{#ifeq myOrderDetails.status 'Payment Failed'}}
-                                                    <span id="cancel_btn">
-                                                        <button onclick="status3()" type="button"
-                                                            class="btn btn-md rounded font-sm mx-2">
-                                                             Retry Payment
-                                                        </button>
-                                                    </span>
-                                                    {{/ifeq}}
-
-                                                    {{#ifeq myOrderDetails.status 'Delivered'}}
-                                                        <span id="return_btn">
-                                                            <button onclick="status2()" type="button"  class="btn btn-md rounded font-sm mx-2">
-                                                            Return
-                                                            </button>
-                                                        </span>
-                                                    {{/ifeq}}
-
-                                                    {{#ifeq myOrderDetails.status 'Shipped'}}
-                                                        <span id="cancel_btn">
-                                                            <button onclick="status()" type="button"  class="btn btn-md rounded font-sm mx-2">
-                                                            Cancel order
-                                                            </button>
-                                                        </span>
-                                                    {{/ifeq}}
-                                                </div>
-                                            </div> --}}
-                                            <div class="col-lg-5">
-                                                <div class="box shadow-sm bg-light">
-                                                    <!-- Optional: any other information you want to show -->
+                                                    <!-- Optional: any additional information -->
                                                 </div>
                                             </div>
                                         </div>
@@ -285,326 +217,55 @@
     </section>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+.order-summary-container {
+    width: 100%;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 15px;
+}
 
-<script>
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
 
-var grandTotalText = document.getElementById("grandTotal").innerText;
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+    text-align: center;
+}
 
-// Remove the ₹ symbol and any commas (if applicable) from the string
-const amount = parseInt(grandTotalText.replace(/[^\d]/g, '')) * 100;
+.summary-label {
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
 
-// Log the amount to check if the parsing works
-console.log('Grand Total:', amount);
+.summary-value {
+    font-weight: bold;
+}
 
+.total-amount {
+    color: #007bff;
+    font-size: 1.1em;
+}
 
-    const getInvoice = async (id) => {
-  try {
-    const response = await fetch(`/get_invoice?id=${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/pdf'
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch invoice');
+@media (max-width: 768px) {
+    .summary-row {
+        flex-direction: column;
+        align-items: stretch;
     }
-    
-    const blob = await response.blob();
 
-    // Create a URL for the downloaded file
-    const url = URL.createObjectURL(blob);
-
-    // Create a link element to trigger the download
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'invoice.pdf';
-
-    link.click();
-
-    // Clean up the URL object
-    URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error('Error fetching invoice:', error);    
-  }
-};
-    $(document).ready(function () {
-        function areAllProductsCancelled() {
-            let allCancelled = true;
-            $('.product-row').each(function () {
-                if (!$(this).data('is-cancelled')) {
-                    allCancelled = false;
-                    return false; // Exit the loop early if any product is not cancelled
-                }
-            });
-            return allCancelled;
-        }
-
-        // Event listener for canceling individual products
-        $('body').on('click', '.cancel-btn', function () {
-            const orderId = $(this).data('order-id');
-            const productId = $(this).data('prod-id');
-
-            if (orderId && productId) {
-                $.ajax({
-                    type: 'PUT',
-                    url: '/cancel-one-product',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ id: orderId, prodId: productId }),
-                    success: function (response) {
-                        if (response.success) {
-                             Swal.fire({
-                            icon: 'success',
-                            title: 'Cancelled product',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(()=>{window.location.reload();})
-                        }
-                    },
-                    error: function (error) {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            } else {
-                alert('Invalid order or product ID.');
-            }
-        });
-
-        // Event listener for canceling the entire order
-        $('#cancelOrder').on('click', function () {
-            const orderId = $(this).data('order-id');
-
-            if (orderId) {
-                $.ajax({
-                    type: 'PUT',
-                    url: `/cancel-order/${orderId}`,
-                    contentType: 'application/json',
-                    success: function (response) {
-                        if (response.success) {
-                             Swal.fire({
-                            icon: 'success',
-                            title: 'Cancelled Order',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(()=>{window.location.reload();})
-                        } else {
-                            alert(response.message);
-                        }
-                    },
-                    error: function (error) {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            } else {
-                alert('Invalid order ID.');
-            }
-        });
-        // Event listener for returning individual products
-        $('body').on('click', '.return-btn', function () {
-            const orderId = $(this).data('order-id');
-            const productId = $(this).data('prod-id');
-
-            if (orderId && productId) {
-                $.ajax({
-                    type: 'PUT',
-                    url: '/return-one-product',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ id: orderId, prodId: productId }),
-                    success: function (response) {
-                        if (response.success) {
-                            Swal.fire({
-                            icon: 'success',
-                            title: 'Returned product',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(()=>{window.location.reload();})
-                        }
-                    },
-                    error: function (error) {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            } else {
-                alert('Invalid order or product ID.');
-            }
-        });
-
-        // Event listener for return the entire order
-        $('#returnOrder').on('click', function () {
-            const orderId = $(this).data('order-id');
-
-            if (orderId) {
-                $.ajax({
-                    type: 'PUT',
-                    url: `/return-order/${orderId}`,
-                    contentType: 'application/json',
-                    success: function (response) {
-                        if (response.success) {
-                             Swal.fire({
-                            icon: 'success',
-                            title: 'Returned Order',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(()=>{window.location.reload();})
-                        } else {
-                            alert(response.message);
-                        }
-                    },
-                    error: function (error) {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            } else {
-                alert('Invalid order ID.');
-            }
-        });       
-
-});
-
-    // Event listener for retrying payment when the order's status is "Payment Failed"
-
-   $('body').on('click', '#retryPayment', function () {
-    const orderId = $(this).data('order-id');
-    console.log("orderId ", orderId);
-
-    if (orderId) {       
-        console.log("amount ", amount);
-        payment(orderId);
-    } else {
-        alert('Invalid order ID.');
+    .summary-item {
+        margin-bottom: 10px;
+        width: 100%;
     }
-});
-
-// Payment function
-const payment = (orderId) => {
-    // For demonstration purposes, let's assume the amount is passed directly to the payment function.
-    // You may hardcode or calculate the amount as needed.
-
-    
-
-    var options = {
-        "key": "rzp_test_OsDtnewxAfAwm0", 
-        "amount": amount, // Amount in currency subunits (paise)
-        "currency": "INR",
-        "name": "Mobile Bazaar",
-        "order_id": undefined, // Pass the actual order ID
-        "handler": async function (response) {
-            // On successful payment, invoke the retryPayment function with the 'Pending' status
-            try{
-                await retryPayment(orderId, 'Pending');
-            }catch (error) {
-            console.error("Error during retryPayment:", error);
-        }
-    },
-            
-    
-        "modal": {
-            "ondismiss": function() {
-                console.log('Payment modal dismissed');
-            }
-        }
-    };
-
-
-
-
-        var options = {
-      "key": "rzp_test_OsDtnewxAfAwm0", // Enter the Key ID generated from the Dashboard
-      "amount": parseInt(amount), // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-      "currency": "INR",
-        
-      "name" : "Mobile Bazaar",
-      /*"name": "Acme Corp", //your business name
-      "description": "Test Transaction",
-      "image": "https://example.com/your_logo",*/
-
-      "order_id": undefined, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-      "handler": function (response) {
-        retryPayment(orderId, 'Pending');
-      },
-
-    };
-
-
-
-    var rzp1 = new Razorpay(options);
-
-    rzp1.on('payment.failed', function (response) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Payment Failed',
-            text: 'Your payment could not be processed. Please try again later.',
-            confirmButtonText: 'OK'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                location.reload(); // Reload page after payment failure
-            }
-        });
-    });
-
-    rzp1.open();
-};
-
-// Retry Payment function (update payment status)
-
-const retryPayment = async (orderId, status) => {
-    try {
-        const response = await fetch(`/retry-payment/${orderId}`, {
-            method: 'POST', 
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ status: status }) 
-        });
-
-        
-        if (!response.ok) {
-            throw new Error('Failed to update payment status');
-        }
-
-        const data = await response.json();
-       
-        if (data.success) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Payment Retry Successful',
-                text: data.message, 
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                window.location.reload(); 
-            });
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Payment Retry Failed',
-                text: data.message, 
-                showConfirmButton: false,
-                timer: 1500
-            });
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An error occurred while retrying payment. Please try again.',
-            showConfirmButton: false,
-            timer: 1500
-        });
-    }
-};
-
-    
-</script>
+}
+</style>

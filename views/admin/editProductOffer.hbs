@@ -57,7 +57,6 @@
             </div>
     </section>
 
-
     <footer class="main-footer font-xs">
         <div class="row pb-30 pt-15">
             <div class="col-sm-6">
@@ -74,17 +73,49 @@
     </footer>
 </main>
 
-
-
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.10/dist/sweetalert2.min.js"></script>
 
 <script>
 
-
     $(document).ready(function () {
         $('#editProductOfferForm').on('submit', function (e) {
             e.preventDefault(); 
+
+            const startDate = new Date($('#startDate').val());
+            const endDate = new Date($('#endDate').val());
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normalize today's date to avoid time comparison issues
+
+            if (!startDate || !endDate) {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Both start date and end date are required.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+                return;
+            }
+
+            if (startDate < today) {
+                Swal.fire({
+                    title: "Invalid Start Date!",
+                    text: "Start date cannot be in the past.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+                return;
+            }
+
+            if (endDate <= startDate) {
+                Swal.fire({
+                    title: "Invalid End Date!",
+                    text: "End date must be after the start date.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
+                return;
+            }
 
             const formData = $(this).serialize(); 
 
@@ -113,15 +144,11 @@
                 }
             });
         });
-    });
 
-
-    $(document).ready(function () {
         $('#backbutton').click(function (e) {
             e.preventDefault();
             Swal.fire({
                 title: "Leave the Page?",
-                //text: "The Data will not be saved",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#088178",
@@ -132,8 +159,6 @@
                     window.location.href = "/admin/productOffers";
                 }
             });
-
-
         });
     });
 

@@ -28,20 +28,20 @@
           <div class="header-action-icon-2">
             <a href="/wishlist">
               <img class="svgInject" alt="Evara" src="/assets/imgs/theme/icons/wishlist3.png" />
-                   <span class="pro-count blue">0</span> 
+                   <span id="wishlist-count" class="pro-count blue">0</span> 
             </a>
           </div>
           <div class="header-action-icon-2">
             <a class="mini-cart-icon" href="/cart">
               <img alt="Evara" src="/assets/imgs/theme/icons/cart1.png"/>
-                  <span class="pro-count blue">0</span> 
+                  <span id="cart-count" class="pro-count blue">0</span> 
             </a>
           </div>
           {{#if userData}}
           <div class="header-action-icon-2">
             <div class="dropdown nav-item">
               <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false">
-                  <img class="img-xs rounded-circle mr-2" style="width: 40px;" src="/images/users/UserImage.png" alt="UserPhoto">
+                 <img class="img-xs rounded-circle mr-2" style="width: 40px;" src="/images/users/UserImage.png" alt="UserPhoto">
               </a>
               <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount" style="font-family: 'Times New Roman', Times, serif;">
                 <ul class="dropdown-item-list">
@@ -127,4 +127,24 @@
 
         });
     });
+
+     function updateCartWishlistCount() {
+    $.ajax({
+      type: "GET",
+      url: "/cart-wishlist-count",
+      success: function (data) {
+        console.log('cart-wishlist', data)
+        $("#wishlist-count").text(data.wishlistCount);
+        $("#cart-count").text(data.cartCount);
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching cart/wishlist count:", error);
+      }
+    });
+  }
+
+  $(document).ready(function () {
+    updateCartWishlistCount(); // Update when the page loads
+
+  });
 </script>

@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const Product = require("../../model/productSchema");
 const HttpStatus = require('../../httpStatus');
+const { log } = require("console");
 
 
 
@@ -92,24 +93,35 @@ const addNewCategory = async (req, res) => {
 // Unlist Category
 const unListCategory = async (req, res) => {
   try {
+    const { id } = req.body; // Category ID
+    let category = await Category.findById(id);
+      console.log(category)
+    if (!category) {
+      return res.status(404).send("Category not found");
+    }
 
-    const { id } = req.body;
+    let newListed = category.isListed; // Toggle isListed
 
-    const category = await Category.findById(id);
-    let newListed = category.isListed;
+    // Update category status
+    await Category.findByIdAndUpdate(id, { $set: { isListed: !newListed } }, { new: true });
 
-    await Category.findByIdAndUpdate(
-      id,
-      { $set: { isListed: !newListed } },
-      { new: true }
+    console.log(`Category ${id} updated. New isListed value: ${newListed}`);
+
+    // Block or unblock products associated with this category
+    const updateResult = await Product.updateMany(
+      { category: category._id },  // Find products of this category
+      { $set: { isBlocked: newListed } } // Block if category is unlisted, unblock if listed
     );
+
+    console.log(`Products updated: ${updateResult.modifiedCount}`);
 
     res.redirect("/admin/category");
   } catch (error) {
-    console.log(error.message);
-    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+    console.error("Error:", error.message);
+    res.status(500).send("Internal Server Error");
   }
 };
+
 
 
 //Load Edit Category Page

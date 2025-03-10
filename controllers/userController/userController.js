@@ -7,6 +7,8 @@ const Cart = require("../../model/cartSchema");
 const Wishlist = require('../../model/wishlistSchema')
 const Order = require("../../model/orderSchema");
 const HttpStatus = require('../../httpStatus');
+const Referral=require("../../model/referralSchema")
+const {v4:uuidv4}=require("uuid")
 
 
 const mongoose = require("mongoose");
@@ -20,6 +22,9 @@ let userEmail;
 let hashedPassword;
 let userRegData;
 let userData;
+let redeemAmount
+let referalAmount
+let OwnerId
 
 
 
@@ -176,7 +181,30 @@ const doLogout = async (req, res) => {
     res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+ 
+//cart and wishlistcount
+const cartAndWishlistCount = async (req, res) => { 
+  try {
+    if (!req.session.user) {
+      return res.json({ cartCount: 0, wishlistCount: 0 });
+    }
 
+    const userId = req.session.user._id;
+
+    // Get cart count (sum of quantity instead of counting documents)
+    const cartItems = await Cart.find({ userId });
+    const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0); 
+
+    // Get wishlist count safely
+    const wishlist = await Wishlist.findOne({ user: userId });
+    const wishlistCount = wishlist && Array.isArray(wishlist.productId) ? wishlist.productId.length : 0;
+
+    res.json({ cartCount, wishlistCount });
+  } catch (error) {
+    console.error("Error fetching counts:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 
 // Get Signup Page
@@ -208,7 +236,7 @@ const doSignup = async (req, res) => {
     const mobileExist = await User.findOne({ mobile: userMobile }).lean();
     if (!userExist && !mobileExist) {
       otp = await userHelper.verifyEmail(userEmail);
-      res.render("user/submitOtp");
+      res.render("user/referral");
     } else {
       if (userExist) {
         req.session.message = true;
@@ -227,6 +255,40 @@ const doSignup = async (req, res) => {
     res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
+
+const loadReferalPage=async(req,res)=>{
+  try{
+    res.render('user/referals')
+  }catch(error){
+    console.log(error)
+  }
+}
+
+//post referral offer 
+
+const verifyReferelCode = async (req, res) => {
+  try {
+      const referalCode = req.body.referalCode
+      console.log("referalCode  " , referalCode)
+      const Owner = await Referral.findOne({referralCode : referalCode })
+      OwnerId = Owner.userId
+
+      console.log("Owner----->" , Owner)
+      if (!Owner) {
+          res.json({ message: "Invalid referral code!" })
+          return
+      } else {
+          referalAmount = 200;
+          redeemAmount = 100;
+          res.json({ message: "Referral code verified successfully!" })
+          return
+      }
+
+  } catch (error) {
+      console.log(error.message);
+  }
+}
+
 
 
 
@@ -261,6 +323,44 @@ const submitOtp = async (req, res) => {
         isBlocked: false,
       });
       await user.save();
+
+      if(redeemAmount){
+        await User.updateOne(
+          {_id:user._id},
+          {
+            $inc:{wallet:redeemAmount},
+            $push:{
+              history:{
+                amount:redeemAmount,
+                status:'Referred',
+                date:Date.now()
+              }
+            }
+          }
+        )
+      }
+      const generateReferalCode=uuidv4()//generate a unique identifier in the version 4 format.
+      const referalCollection=new Referral({
+        userId:user._id,
+        referralCode:generateReferalCode
+      })
+      await referalCollection.save()
+
+      if(referalAmount && OwnerId){
+        await User.updateOne(
+          {_id:OwnerId},
+          {
+            $inc:{wallet:referalAmount},
+            $push:{
+              history:{
+                amount:referalAmount,
+                status:"Referred",
+                date:Date.now()
+              }
+            }
+          }
+        )
+      }
       req.session.regSuccessMsg = true;
       res.json({ success: true, redirectUrl: "/" });
     } else {
@@ -451,6 +551,8 @@ module.exports = {
   doLogout,
   googleCallback,
   productDetails,
-  aboutpage
- 
+  aboutpage,
+  cartAndWishlistCount,
+  verifyReferelCode,
+  loadReferalPage,
 };

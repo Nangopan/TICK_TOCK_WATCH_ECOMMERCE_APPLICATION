@@ -111,10 +111,12 @@ const showeditProduct = async (req, res) => {
 
     const productData = await Product.findById(productId).lean();
     console.log(productData);
-    const categories = await Category.find({ isListed: true }).lean();
+    const categories = await Category.find().lean();
     categories.forEach((category) => {
       category.isSelected = category._id.toString() === productData.category.toString();
     });
+
+    console.log('categories   ',categories )
     res.render("admin/editProduct", {
       productData,
       categories,

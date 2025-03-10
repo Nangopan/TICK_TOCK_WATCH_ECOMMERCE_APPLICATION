@@ -67,7 +67,7 @@
                             <div class="form-group">
                                 <label for="productImage">Product Image:</label>
                                 <div class="d-flex border p-10 m-tb-10">
-                                    <input name="product-id" type="hidden" value="{{productData._id}}">
+                                    <input name="product-id" type="hidden" value="{{productData._id}}" >
                                  {{#each productData.imageUrl}}
     <div class="image-container" data-image-index="{{@index}}">
         <div class="badge rounded-pill alert-danger">
@@ -133,9 +133,117 @@
 <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 
 
+<!-- Cropper.js CSS (Required) -->
+<link  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+
+<!-- Cropper.js JS (Required) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+
 
 
 <script>
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const fileInput = document.getElementById("productImage");
+    let cropper = null; // Global reference
+
+    fileInput.addEventListener("change", function (event) {
+        const files = event.target.files;
+        if (files.length > 0) {
+            handleImageCrop(files[0]);
+        }
+    });
+
+    function handleImageCrop(file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            showCropModal(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function showCropModal(imageSrc) {
+        Swal.fire({
+            title: "Crop Image",
+            html: `<div style="max-width: 100%; max-height: 400px; overflow: hidden;">
+                <img id="cropImage" style="max-width: 100%; max-height: 400px;"/>
+            </div>`,
+            showCancelButton: true,
+            confirmButtonText: "Crop & Upload",
+            didOpen: () => {
+                setTimeout(() => {
+                    const image = document.getElementById("cropImage");
+
+                    if (!image) {
+                        Swal.showValidationMessage("Image element not found.");
+                        return;
+                    }
+
+                    image.src = imageSrc; // Assign src before initializing Cropper
+
+                    image.onload = () => {
+                        if (cropper) {
+                            cropper.destroy();
+                        }
+                        cropper = new Cropper(image, {
+                            aspectRatio: 1,
+                            viewMode: 2,
+                            autoCropArea: 1,
+                        });
+                    };
+                }, 100); // Delay ensures modal has rendered before accessing elements
+            },
+            preConfirm: () => {
+                return new Promise((resolve) => {
+                    if (!cropper) {
+                        Swal.showValidationMessage("Cropper not initialized.");
+                        return resolve(false);
+                    }
+
+                    cropper.getCroppedCanvas().toBlob((blob) => {
+                        if (blob) {
+                            resolve(blob);
+                        } else {
+                            Swal.showValidationMessage("Failed to crop image.");
+                            resolve(false);
+                        }
+                    }, "image/jpeg");
+                });
+            }
+        }).then((result) => {
+            if (result.isConfirmed && result.value) {
+                replaceFileInput(result.value);
+            }
+        });
+    }
+
+    function replaceFileInput(blob) {
+        const dataTransfer = new DataTransfer();
+        const newFile = new File([blob], "cropped_image.jpg", { type: "image/jpeg" });
+
+        dataTransfer.items.add(newFile);
+
+        if (fileInput) {
+            fileInput.files = dataTransfer.files;
+            Swal.fire({
+                title: "Success",
+                text: "Cropped image ready for upload!",
+                icon: "success",
+            });
+        } else {
+            Swal.fire({
+                title: "Error",
+                text: "File input not found!",
+                icon: "error",
+            });
+        }
+    }
+});
+
+
+
 
 function Validation(event) {
     event.preventDefault(); // Prevent form submission
@@ -236,58 +344,7 @@ function Validation(event) {
 
 
 
-const deleteImage = async (productId, imageIndex) => {
-    try {
-        const response = await fetch(`/admin/product_img_delete?id=${productId}&image=${imageIndex}`, {
-            method: 'DELETE'
-        });
-
-        const data = await response.json();
-        console.log("hei",data);
-
-        if (data) {
-    const imageElem = document.querySelector(`.pro-image[data-image-index="${imageIndex}"]`);
-    const imageContainer = document.querySelector(`.image-container[data-image-index="${imageIndex}"]`);
-    console.log("Image Element:", imageContainer); // Log the image element
-    if (imageElem) {
-        imageContainer.remove()
-    } else {
-        console.warn("Image element not found for index:", imageIndex); // Warn if element is not found
-    }
-} else {
-    console.warn("No data received from the server.");
-}
-
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-const deleteProImg = () => {
-    const deleteButtons = document.querySelectorAll('.close-button');
-    const productId = document.getElementsByName('product-id')[0].value;
-    console.log('product ID=> ' , productId)
-    deleteButtons.forEach((button) => {
-        button.addEventListener('click', async (event) => {
-            const imageIndex = event.target.dataset.imageIndex;
-            await deleteImage(productId, imageIndex);
-        });
-    });
-};
-
-// Call deleteProImg once the DOM is loaded
-document.addEventListener("DOMContentLoaded", deleteProImg);
-
-</script>
-
-
-
-
-<script>
-    
-
-
-    function submitform(form) {
+function submitform(form) {
         
     
     Swal.fire({
@@ -343,4 +400,54 @@ document.addEventListener("DOMContentLoaded", deleteProImg);
             
         });
     });
+
+
+
+const deleteImage = async (productId, imageIndex) => {
+    try {
+        const response = await fetch(`/admin/product_img_delete?id=${productId}&image=${imageIndex}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+        console.log("hei",data);
+
+        if (data) {
+    const imageElem = document.querySelector(`.pro-image[data-image-index="${imageIndex}"]`);
+    const imageContainer = document.querySelector(`.image-container[data-image-index="${imageIndex}"]`);
+    console.log("Image Element:", imageContainer); // Log the image element
+    if (imageElem) {
+        imageContainer.remove()
+    } else {
+        console.warn("Image element not found for index:", imageIndex); // Warn if element is not found
+    }
+} else {
+    console.warn("No data received from the server.");
+}
+
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const deleteProImg = () => {
+    const deleteButtons = document.querySelectorAll('.close-button');
+    const productId = document.getElementsByName('product-id')[0].value;
+    console.log('product ID=> ' , productId)
+    deleteButtons.forEach((button) => {
+        button.addEventListener('click', async (event) => {
+            const imageIndex = event.target.dataset.imageIndex;
+            await deleteImage(productId, imageIndex);
+        });
+    });
+};
+
+// Call deleteProImg once the DOM is loaded
+document.addEventListener("DOMContentLoaded", deleteProImg);
+
 </script>
+
+
+
+
+

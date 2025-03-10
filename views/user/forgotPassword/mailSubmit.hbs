@@ -18,28 +18,37 @@
                                     <div class="heading_s1">
                                         <h3 class="mb-30 text-center">Enter your email</h3>
                                     </div>
-                    <form action="/forgotPassword" method="post">
+                                    <form id="emailForm" action="/forgotPassword" method="post">
+                                        <h6 id="error-message" style="color: red;" class="text-center mb-3"></h6>
 
-                    <h6 style="color: red;" class="text-center mb-5">{{mailError}}</h6>
+                                        <div class="form-floating mb-3 input-control">
+                                            <input type="text" class="form-control" id="email" placeholder="Enter your email" name="email" required>
+                                            <label for="email">Email</label>
+                                        </div>
 
-                         <div class="form-floating mb-3 input-control">
-                           <input type="text" class="form-control" id="email"  placeholder="Enter your email" name="email" required>
-                           <label for="email">Email</label>
-                        </div>
-                        {{!-- <div class="form-group">
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-fill-out btn-block hover-up">Submit</button>
+                                        </div>
+                                    </form>
 
-                            <input type="password" class="form-control" placeholder="Password" required>
-                        </div> --}}
+                                    <script>
+                                        document.getElementById("emailForm").addEventListener("submit", function(event) {
+                                            const emailInput = document.getElementById("email");
+                                            const errorMessage = document.getElementById("error-message");
+                                            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-                        <div class="text-center">
-                             <button type="submit" class="btn btn-fill-out btn-block hover-up">Submit</button>
+                                            if (!emailPattern.test(emailInput.value.trim())) {
+                                                errorMessage.textContent = "Please enter a valid email address.";
+                                                event.preventDefault(); // Prevent form submission
+                                            } else {
+                                                errorMessage.textContent = ""; // Clear error message
+                                            }
+                                        });
+                                    </script>
 
-                        </div>
-                    </form>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

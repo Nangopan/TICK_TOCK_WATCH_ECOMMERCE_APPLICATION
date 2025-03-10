@@ -73,34 +73,24 @@
                     </div>
 
                     <!-- Password input -->
-                    <div class="form-floating mb-3 input-control">
-                      <input
+                    <div class="form-floating mb-3 input-control" style="position: relative;">
+                         <input
                         type="password"
-                        class="form-control"
-                        id="password"
-                        placeholder="Password"
-                        name="password"
-                      />
-                      <label for="Password">Password</label>
-                      <div class="error" id="passwordError"></div>
-                    </div>
+                            class="form-control"
+                           id="password"
+                                placeholder="Password"
+                             name="password"
+                                 />
+                              <label for="Password">Password</label>
+                                           <span onclick="togglePasswordVisibility()" 
+                                      style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                                        <i id="togglePasswordIcon" class="fa fa-eye"></i>
+                                     </span>
+                                  <div class="error" id="passwordError"></div>
+                                </div>
 
                     <div class="login_footer form-group">
-                      <div class="chek-form">
-                        <div class="custome-checkbox">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            name="showPassword"
-                            id="showPasswordCheckbox"
-                            onchange="togglePasswordVisibility()"
-                          />
-                          <label
-                            class="form-check-label"
-                            for="showPasswordCheckbox"
-                          ><span>Show Password</span></label>
-                        </div>
-                      </div>
+                      
                       <div class="text-muted"><a
                           href="/forgotPassword"
                         >Forgot password ?</a></div>
@@ -175,4 +165,22 @@
         document.getElementById('showPasswordCheckbox').addEventListener('change', function() {
         const passwordInput = document.getElementById('password');
         passwordInput.type = this.checked ? 'text' : 'password';});
+ 
+  function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('password');
+      const icon = document.getElementById('togglePasswordIcon');
+
+      if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+      } else {
+          passwordInput.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+      }
+  }
+
+
+
     </script>

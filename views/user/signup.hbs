@@ -44,30 +44,27 @@
                                                 <label for="phone">Mobile Number</label>
                                                 <p style="color: red;" id="phoneError"></p>
                                             </div>
-                                            <div class="form-floating mb-3 input-control">
-                                                <input type="password" class="form-control" id="password" placeholder="Password" name="password" onchange="validatePassword()" required>
-                                                <label for="Password">Password</label>
-                                                <p style="color: red;" id="passwordError"></p>
-                                            </div>
+ <div class="form-floating mb-3 input-control" style="position: relative;">
+    <input type="password" class="form-control" id="password" placeholder="Password" name="password" onchange="validatePassword()" required>
+    <label for="password">Password</label>
+    <span class="toggle-password" onclick="togglePasswordVisibility('password', 'togglePasswordIcon')" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+        <i id="togglePasswordIcon" class="fa fa-eye"></i>
+    </span>
+    <p style="color: red;" id="passwordError"></p>
+</div>                                    
+<div class="form-floating mb-3 input-control" style="position: relative;">
+    <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" name="confirmPassword" onchange="validateConfirmPassword()" required>
+    <label for="confirmPassword">Confirm Password</label>
+    <span class="toggle-password" onclick="togglePasswordVisibility('confirmPassword', 'toggleConfirmPasswordIcon')" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+        <i id="toggleConfirmPasswordIcon" class="fa fa-eye"></i>
+    </span>
+    <p style="color: red;" id="confirmPasswordError"></p>
+</div>  
+      
+                                         
                                             <div class="login_footer form-group">
                                                 <div class="chek-form">
-                                                    <div class="custome-checkbox">
-                                                        <input class="form-check-input" type="checkbox" name="showPassword" id="showPasswordCheckbox" onchange="togglePasswordVisibility()">
-                                                        <label class="form-check-label" for="showPasswordCheckbox"><span>Show Password</span></label>
-                                                    </div>
-                                                </div>    
-                                            </div>    
-                                            <div class="form-floating mb-3 input-control">
-                                                <input type="password" class="form-control" id="confirmPassword" placeholder="Password" name="confirmPassword" onchange="validateConfirmPassword()" required>
-                                                <label for="confirmPassword">Confirm password</label>
-                                                <p style="color: red;" id="confirmPasswordError"></p>
-                                            </div>
-                                            <div class="login_footer form-group">
-                                                <div class="chek-form">
-                                                    <div class="custome-checkbox">
-                                                        <input class="form-check-input" type="checkbox" name="showPassword2" id="showPasswordCheckbox2" onchange="togglePasswordVisibility2()">
-                                                        <label class="form-check-label" for="showPasswordCheckbox2"><span>Show Password</span></label>
-                                                    </div>
+                                                   
                                                 </div>    
                                             </div>
                                             <div class="form-group text-center">
@@ -101,18 +98,18 @@
     const passwordError = document.getElementById("passwordError");
     const confirmPasswordError = document.getElementById("confirmPasswordError");
 
-    function validateUsername() {
-        const usernamePattern = /^[A-Za-z]{4,}$/
-        const userNameInput = usernameInput.value.trim()
-        if (userNameInput === "") {
-            usernameError.textContent = "Username cannot be blank"; 
-        } 
-        else if (!usernamePattern.test(userNameInput)) {
-            usernameError.textContent = "Username is minimum 4 Letters";
-        } else {
-            usernameError.textContent = "";
-        }
+   function validateUsername() {
+    const usernamePattern = /^[A-Za-z]{4,}$/; // Allows only alphabets, no spaces, minimum 4 characters
+    const userNameInput = usernameInput.value.trim();
+    
+    if (userNameInput === "") {
+        usernameError.textContent = "Username cannot be blank"; 
+    } else if (!usernamePattern.test(userNameInput)) {
+        usernameError.textContent = "Username must be at least 4 letters and contain only alphabets (no spaces or numbers)";
+    } else {
+        usernameError.textContent = "";
     }
+}
 
     function validateEmail() {
         const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -133,12 +130,24 @@
     }
 
     function validatePassword() {
-        if (passwordInput.value.trim().length < 6) {
-            passwordError.textContent = "Password must be at least 6 characters";
-        } else {
-            passwordError.textContent = "";
-        }
+    const passwordValue = passwordInput.value.trim();
+    let errors = [];
+
+    if (passwordValue.length < 6) {
+        errors.push("Password must be at least 6 characters long.");
     }
+    if (!/[A-Z]/.test(passwordValue)) {
+        errors.push("Password must contain at least one uppercase letter.");
+    }
+    if (!/[a-z]/.test(passwordValue)) {
+        errors.push("Password must contain at least one lowercase letter.");
+    }
+    if (!/[\W_]/.test(passwordValue)) {
+        errors.push("Password must contain at least one special character.");
+    }
+
+    passwordError.innerHTML = errors.length ? errors.join("<br>") : "";
+}
 
     function validateConfirmPassword() {
         if (confirmPasswordInput.value.trim() !== passwordInput.value.trim()) {
@@ -148,19 +157,18 @@
         }
     }
 
-    function togglePasswordVisibility() {
+    function togglePasswordVisibility(inputId, iconId) {
+        const passwordInput = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+
         if (passwordInput.type === "password") {
             passwordInput.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
         } else {
             passwordInput.type = "password";
-        }
-    }
-
-    function togglePasswordVisibility2() {
-        if (confirmPasswordInput.type === "password") {
-            confirmPasswordInput.type = "text";
-        } else {
-            confirmPasswordInput.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
         }
     }
 

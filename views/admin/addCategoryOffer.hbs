@@ -1,75 +1,64 @@
 <main class="main-wrap">
     <section class="content-main">
         <div class="row justify-content-center align-items-center">
-            
             <div class="col-lg-8 mt-5 justify-content-center">
                 <div class="card">
                     <div class="card-body">
                         <div class="modal-header">
-                    <h5 class="modal-title" id="addCategoryOfferModalLabel">Add Category Offer</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="addCategoryOfferForm" role="form" action="/admin/addCatOffers" method="post">
-                    <div class="modal-body">
-
-                        <div class="input-group mb-3">
-                            <label class="container">
-                                <label for="categoryName" class="mb-2" style="width: 100%";>Category Name: </label>
-                                <select name="categoryName" id="categoryName" class="form-select">
-                                    {{#each category}}
-                                    <option value="{{this.category}}">{{this.category}}</option>
-                                    {{/each}}
-                                </select>
-                            </label>
+                            <h5 class="modal-title" id="addCategoryOfferModalLabel">Add Category Offer</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-
-                        <div class="offerPercentageInput p-2">
-                            <label for="categoryOfferPercentage" class="mb-2">Category Offer Percentage: </label>
-                            <div class="input-group">
-                                <input id="categoryOfferPercentage" name="categoryOfferPercentage" class="form-control"
-                                    placeholder="Enter the offer percentage">
+                        <form id="addCategoryOfferForm" role="form" action="/admin/addCatOffers" method="post">
+                            <div class="modal-body">
+                                <div class="input-group mb-3">
+                                    <label class="container">
+                                        <label for="categoryName" class="mb-2" style="width: 100%">Category Name: </label>
+                                        <select name="categoryName" id="categoryName" class="form-select">
+                                            {{#each category}}
+                                            <option value="{{this.category}}">{{this.category}}</option>
+                                            {{/each}}
+                                        </select>
+                                    </label>
+                                </div>
+                                <div class="offerPercentageInput p-2">
+                                    <label for="categoryOfferPercentage" class="mb-2">Category Offer Percentage: </label>
+                                    <div class="input-group">
+                                        <input id="categoryOfferPercentage" name="categoryOfferPercentage" class="form-control" placeholder="Enter the offer percentage">
+                                    </div>
+                                    <div class="form-text">Choose a percentage to be discounted. Between 5% and 90%.</div>
+                                </div>
+                                <div class="startDateInput p-2">
+                                    <label for="categoryOfferStartDate">Offer Start Date: </label>
+                                    <div class="input-group">
+                                        <input id="categoryOfferStartDate" name="categoryOfferStartDate" type="date" class="form-control">
+                                    </div>
+                                    <div class="form-text">Choose a start date for the offer to be considered.</div>
+                                </div>
+                                <div class="endDateInput p-2">
+                                    <label for="categoryOfferEndDate">Offer Expiry Date : </label>
+                                    <div class="input-group">
+                                        <input id="categoryOfferEndDate" name="categoryOfferEndDate" type="date" class="form-control">
+                                    </div>
+                                    <div class="form-text">Choose an expiry date for the offer to end.</div>
+                                </div>
                             </div>
-                            <div class="form-text">Choose a percentage to be discounted. Between 5% and 90%.</div>
-                        </div>
-
-                        <div class="startDateInput p-2">
-                            <label for="categoryOfferStartDate">Offer Start Date: </label>
-                            <div class="input-group">
-                                <input id="categoryOfferStartDate" name="categoryOfferStartDate" type="date" class="form-control">
+                            <div class="modal-footer">
+                                <button id="backbutton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                                <button type="submit" class="btn btn-info">Save changes</button>
                             </div>
-                            <div class="form-text">Choose a start date for the offer to be considered.</div>
-                        </div>
-
-                        <div class="endDateInput p-2">
-                            <label for="categoryOfferEndDate">Offer Expiry Date : </label>
-                            <div class="input-group">
-                                <input id="categoryOfferEndDate" name="categoryOfferEndDate" type="date" class="form-control">
-                            </div>
-                            <div class="form-text">Choose an exipry date for offer to end.</div>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button id="backbutton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-                        <button type="submit" class="btn btn-info">Save changes</button>
-                    </div>
-                </form>
-            
+                        </form>
                     </div>
                 </div>
             </div>
+        </div>
     </section>
     <footer class="main-footer font-xs">
         <div class="row pb-30 pt-15">
             <div class="col-sm-6">
-                <script>
-                    document.write(new Date().getFullYear())
-                </script> ©, Tick Tock .
+                <script>document.write(new Date().getFullYear())</script> ©, Tick Tock.
             </div>
             <div class="col-sm-6">
-                <div class="text-sm-end">
-                    All rights reserved
-                </div>
+                <div class="text-sm-end">All rights reserved</div>
             </div>
         </div>
     </footer>
@@ -79,11 +68,41 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.10/dist/sweetalert2.min.js"></script>
 
 <script>
+    function validateDates() {
+        let startDate = new Date($('#categoryOfferStartDate').val());
+        let endDate = new Date($('#categoryOfferEndDate').val());
+        let today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-    
+        if (startDate < today) {
+            Swal.fire({
+                title: "Invalid Start Date!",
+                text: "Start date cannot be in the past.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+            return false;
+        }
+
+        if (endDate <= startDate) {
+            Swal.fire({
+                title: "Invalid End Date!",
+                text: "End date must be after the start date.",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+            return false;
+        }
+        return true;
+    }
+
     $(document).ready(function () {
         $('#addCategoryOfferForm').on('submit', function (e) {
             e.preventDefault(); 
+            
+            if (!validateDates()) {
+                return;
+            }
 
             const formData = $(this).serialize(); 
 
@@ -113,29 +132,4 @@
             });
         });
     });
-
-
-
-
-    $(document).ready(function () {
-        $('#backbutton').click(function (e) {
-            e.preventDefault();
-            Swal.fire({
-                title: "Leave the Page?",
-                //text: "The Data will not be saved",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#088178",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "/admin/categoryOffers";
-                }
-            });
-
-
-        });
-    });
-
 </script>

@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const { logedout, logedin, isBlocked } = require('../middleware/usersAuth')
-const { getHome, getLogin, getSignup, doSignup, getOtp, submitOtp, resendOtp, doLogin, doLogout , googleCallback, productDetails, aboutpage } = require("../controllers/userController/userController")
+const { getHome, getLogin, getSignup, doSignup, getOtp, verifyReferelCode,  loadReferalPage ,submitOtp, resendOtp, doLogin, doLogout , googleCallback, productDetails, aboutpage, cartAndWishlistCount } = require("../controllers/userController/userController")
 const { submitMail, submitMailPost, forgotOtppage, forgotOtpSubmit, resetPasswordPage, resetPassword } = require('../controllers/userController/forgotPassword')
 const { viewUserProfile, EditUserProfile, updateUserProfile, changePassword, updatePassword, my_Orders, orderDetails, verify, walletpage, retryPayment } = require('../controllers/userController/profile')
 const { addAddress, addAddressPost, manageAddress, editAddress, editAddressPost, deleteAddress } = require('../controllers/userController/addressManagement')
@@ -33,7 +33,7 @@ router.get("/login", logedout, getLogin)
 router.post('/login', doLogin)
 router.get('/logout', doLogout)
 
-
+router.get("/cart-wishlist-count",logedin,cartAndWishlistCount)
 // Signup
 
 router.get("/signup", logedout, getSignup)
@@ -45,6 +45,11 @@ router.post('/signup', logedout, doSignup)
 router.get('/submit_otp', logedout, getOtp)
 router.post('/submit_otp', logedout, submitOtp)
 router.get('/resend_otp', logedout, resendOtp)
+
+//referals
+
+router.get('/referals',logedout,loadReferalPage)
+router.post('/verifyReferalCode',verifyReferelCode)
 
 
 // Forgot Password
