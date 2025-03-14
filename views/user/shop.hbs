@@ -233,34 +233,37 @@ productList.append(productHtml);
     const userId = ""; 
 
     $('#productList').on('click', '.wish.action-btn', function (event) {
-        event.preventDefault();
-        var $button = $(this);
-        var id = $button.data('id');
+    event.preventDefault();
+    var $button = $(this);
+    var id = $button.data('id');
 
-        $.ajax({
-            type: 'POST',
-            url: '/addtowishlist',
-            contentType: 'application/json',
-            data: JSON.stringify({ id: id, userId: userId }),
-            success: function (productDdata) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Product Successfully added to Wishlist!!!',
-                    icon: 'success',
-                    confirmButtonText: 'Cool'
-                })//.then(() => window.location.reload());
-            },
-            error: function (xhr, status, error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'Failed to add product to Wishlist!!!',
-                    icon: 'error',
-                    confirmButtonText: 'Cool'
-                });
-                console.error(error);
-            }
-        });
+    $.ajax({
+        type: 'POST',
+        url: '/addtowishlist',
+        contentType: 'application/json',
+        data: JSON.stringify({ id: id, userId: userId }),
+        success: function (productDdata) {
+            // Trigger the custom event after successful addition
+            $(document).trigger('cart-wishlist-updated');
+            
+            Swal.fire({
+                title: 'Success!',
+                text: 'Product Successfully added to Wishlist!!!',
+                icon: 'success',
+                confirmButtonText: 'Cool'
+            });
+        },
+        error: function (xhr, status, error) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Failed to add product to Wishlist!!!',
+                icon: 'error',
+                confirmButtonText: 'Cool'
+            });
+            console.error(error);
+        }
     });
+});
 });
 
 

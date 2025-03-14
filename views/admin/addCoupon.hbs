@@ -100,6 +100,8 @@
         let discount = document.getElementById('discount').value;
         let minpurchase = document.getElementById('min-purchase').value;
         let maxdiscount = document.getElementById('max-discount').value;
+        let expiryDate = document.getElementById('expiry-date').value;
+        let today = new Date().toISOString().split('T')[0];
 
         let couponcodePattern = /^[A-Za-z0-9\s]{3,}$/;
 
@@ -107,11 +109,23 @@
         let discounterr = document.getElementById('discountalert');
         let minerror = document.getElementById('minalert');
         let maxerror = document.getElementById('maxalert');
+        let dateerror = document.createElement('h6');
+        dateerror.className = "alertAddcoupon mt-1";
+        dateerror.style.color = "red";
+        dateerror.id = "datealert";
+
+        let expiryDateInput = document.getElementById('expiry-date');
+        if (!document.getElementById('datealert')) {
+            expiryDateInput.parentNode.appendChild(dateerror);
+        } else {
+            dateerror = document.getElementById('datealert');
+        }
 
         couponerr.innerHTML = '';
         discounterr.innerHTML = '';
         minerror.innerHTML = '';
         maxerror.innerHTML = '';
+        dateerror.innerHTML = '';
 
         if (!couponcode.match(couponcodePattern)) {
             couponerr.innerHTML = 'Coupon code must be at least 3 characters long and only contain alphanumeric characters';
@@ -131,6 +145,14 @@
         if (maxdiscount <= 0) {
             maxerror.innerHTML = 'Maximum discount amount must be greater than 0';
             errors.push('Invalid maximum discount amount');
+        }
+
+        if (!expiryDate) {
+            dateerror.innerHTML = 'Expiry date is required';
+            errors.push('Missing expiry date');
+        } else if (expiryDate < today) {
+            dateerror.innerHTML = 'Expiry date cannot be in the past';
+            errors.push('Invalid expiry date');
         }
 
         if (errors.length > 0) {

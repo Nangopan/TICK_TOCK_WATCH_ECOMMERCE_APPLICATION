@@ -1,0 +1,150 @@
+<main class="main-wrap">
+
+    <section class="content-main">
+        <div class="content-header">
+            <h2 class="content-title">Banners list</h2>
+            <div>
+                <a href="/admin/add_banner" class="btn btn-primary"><i class="material-icons md-plus"></i>Add Banner</a>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <header class="card-header">
+                <div class="row gx-3">
+                    <div class="col-lg-4 col-md-6 me-auto">
+                        <input type="text" placeholder="Search..." class="form-control">
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 col-6">
+                    </div>
+                </div>
+            </header> <!-- card-header end// -->
+            <div class="card-body ">
+                <div class="table-responsive ">
+                    <table class="table table-hover ">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Banner Name</th>
+                                <th class="text-center">Line 2</th>
+                                <th class="text-center">Line 3</th>
+                                <th class="text-center">Line 4</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                         {{#each bannerData}}
+                        <tbody>
+                            <tr >
+                                <td width="20%" class="text-center">
+                                        <div class="info pl-3">
+                                            <h6 class="mb-0 title">{{this.line1}}</h6>
+                                        </div>
+                                </td>
+                                <td class="text-center" width="18%">{{this.line2}}</td>
+                                 <td class="text-center" width="18%">{{this.line3}}</td>
+                                 <td class="text-center" width="18%">{{this.line3}}</td>
+
+
+                                <td class="text-center" width="26%">
+{{#if this.active}}
+   
+        <a href="javascript:void(0);" data-banner-id="{{this._id}}" onclick="toggleBannerStatus('{{this._id}}', true)" class="btn btn-pill font-sm rounded btn-brand"  style="width: 100px">
+            <i class="material-icons md-edit"></i>Block
+        </a>
+
+{{else}}
+        <a href="javascript:void(0);" data-banner-id="{{this._id}}" onclick="toggleBannerStatus('{{this._id}}', false)" class="btn btn-pill font-sm rounded btn-brand" style="width: 100px">
+            <i class="material-icons md-edit"></i>Unblock
+        </a>
+    
+{{/if}}
+
+
+                            <a href="/admin/edit_banner/{{this._id}}"  class="btn btn-pill font-sm rounded btn-brand"  style="width: 100px">
+                                    <i class="material-icons md-edit"></i> Edit
+                                </a>
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+                        {{/each}}
+                    </table> <!-- table-responsive.// -->
+                </div>
+            </div> <!-- card-body end// -->
+        </div> <!-- card end// -->
+<div class="pagination-area mt-30 mb-50">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-start">
+            {{#each pages}}
+                <li class="page-number {{#if (eq ../currentPage this)}}active{{/if}}">
+                    <a class="page-link" href="?page={{this}}">{{this}}</a>
+                </li>
+            {{/each}}
+        </ul>
+    </nav>
+</div>
+
+
+        
+    </section> <!-- content-main end// -->
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script data-cfasync="false"
+                    src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+                <script>
+                    document.write(new Date().getFullYear())
+                </script> ©, Evara - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">
+                    All rights reserved
+                </div>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<style>
+    .btn-brand {
+        width: 100px; /* Adjust the width as needed */
+    }
+</style>
+
+<script>
+    function toggleBannerStatus(bannerId, status) {
+        const action = status ? 'Block' : 'Unblock';
+        const actionUrl = '/admin/toggle_banner';
+
+        Swal.fire({
+            title: `Are you sure you want to ${action} this banner?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: `${action}`
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: actionUrl,
+                    contentType: 'application/json',
+                    data: JSON.stringify({ id: bannerId }),
+                    success: function (response) {
+                        Swal.fire({
+                            title: 'Done!',
+                            text: `Banner successfully ${action}ed!`,
+                            icon: 'success',
+                            confirmButtonText: 'okay'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(`Error ${action}ing banner:`, error);
+                        Swal.fire("Error", "Something went wrong. Please try again later.", "error");
+                    }
+                });
+            }
+        });
+    }
+</script>

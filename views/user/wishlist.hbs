@@ -62,81 +62,87 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
-    $(document).ready(function () {
-        // Event delegation for remove button
-        $(document).on('click', '.rem', function () {
-            var id = $(this).data('product-id');
-            var wishId = $(this).data('whishlist-id');
-            var $this = $(this);
+   $(document).ready(function () {
+    // Event delegation for remove button
+    $(document).on('click', '.rem', function () {
+        var id = $(this).data('product-id');
+        var wishId = $(this).data('whishlist-id');
+        var $this = $(this);
 
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#088178",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '/removeFromWishList',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ id: id, wishId: wishId }),
-                        success: function (productData) {
-                            console.log("Product removed from wishlist successfully");
-                            $this.closest('tr').remove(); 
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#088178",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/removeFromWishList',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ id: id, wishId: wishId }),
+                    success: function (productData) {
+                        console.log("Product removed from wishlist successfully");
+                        $this.closest('tr').remove(); 
 
-                            Swal.fire({
-                                title: 'Removed!',
-                                text: 'Product successfully removed from wishlist!',
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            }).then((isConfirmed) => {
-                                window.location.reload();
-                            });
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("Error removing product from wishlist:", error);
-                            Swal.fire("Error", "Something went wrong. Please try again later.", "error");
-                        }
-                    });
-                }
-            });
-        });
+                        // Trigger the custom event to update wishlist count
+                        $(document).trigger('cart-wishlist-updated');
 
-        // Event delegation for add to cart button
-        $(document).on('click', '.button-add-to-cart', function () {
-            let prodId = $(this).data('product-id');
-            let quantity = 1;
-
-            $.ajax({
-                url: '/addtocart/' + prodId,
-                method: 'POST',
-                data: { prodId: prodId, quantity: quantity },
-                success: function (result) {
-                    if (result.success) {
                         Swal.fire({
+                            title: 'Removed!',
+                            text: 'Product successfully removed from wishlist!',
                             icon: 'success',
-                            title: 'Added to cart',
-                            text: result.message,
-                            showConfirmButton: false,
-                            timer: 1500
+                            confirmButtonText: 'OK'
+                        }).then((isConfirmed) => {
+                            window.location.reload();
                         });
-                        $('#addcart').html('<button id="addcart-btn" onclick="window.location.href=\'/cart\'" class="button button-add-to-cart">Go to cart</button>');
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: result.message,
-                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error removing product from wishlist:", error);
+                        Swal.fire("Error", "Something went wrong. Please try again later.", "error");
                     }
-                },
-                error: function (error) {
-                    console.log('Error adding to cart', error);
-                }
-            });
+                });
+            }
         });
     });
+
+    // Event delegation for add to cart button
+    $(document).on('click', '.button-add-to-cart', function () {
+        let prodId = $(this).data('product-id');
+        let quantity = 1;
+
+        $.ajax({
+            url: '/addtocart/' + prodId,
+            method: 'POST',
+            data: { prodId: prodId, quantity: quantity },
+            success: function (result) {
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Added to cart',
+                        text: result.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $('#addcart').html('<button id="addcart-btn" onclick="window.location.href=\'/cart\'" class="button button-add-to-cart">Go to cart</button>');
+                    
+                    // Trigger the custom event to update cart count
+                    $(document).trigger('cart-wishlist-updated');
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: result.message,
+                    });
+                }
+            },
+            error: function (error) {
+                console.log('Error adding to cart', error);
+            }
+        });
+    });
+});
 </script>

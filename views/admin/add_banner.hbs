@@ -1,0 +1,199 @@
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="row">
+            <div class="col-9">
+                <div class="content-header">
+                    <h2 class="content-title">Add New Product</h2>
+
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Basic</h4>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" id="product_form" class="form-add-product" action="/admin/add_banner"
+                            enctype="multipart/form-data" onsubmit="return submitform(this)">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-4">
+                                        <label class="form-label">Line 1</label>
+                                        <div class="row gx-2">
+                                            <input placeholder="Line 1 (Light)" type="text" id="line1" name="line1"
+                                                class="form-control">
+                                        </div>
+                                        <h6 class="alertAddProduct mt-1" style="color: red" id="priceAlert"></h6>
+
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-4">
+                                        <label class="form-label">Line 2</label>
+                                        <input name="line2" class="form-control" placeholder="Line 2 (Bold)" type="text"
+                                            id="line2">
+                                    </div>
+                                    <h6 class="alertAddProduct mt-1" style="color: red" id="qtyAlert"></h6>
+                                </div>
+                            </div>
+                           
+                            <div class="row">
+                                 <div class="col-lg-6">
+                                    <div class="mb-4">
+                                        <label class="form-label">Line 3</label>
+                                        <div class="row gx-2">
+                                            <input placeholder="Line 3 (Bold)" type="text" id="line3" name="line3"
+                                                class="form-control">
+                                        </div>
+                                        <h6 class="alertAddProduct mt-1" style="color: red" id="priceAlert"></h6>
+
+
+                                    </div>
+                                </div>
+                                 <div class="col-lg-6">
+                                    <div class="mb-4">
+                                        <label class="form-label">Line 4</label>
+                                        <div class="row gx-2">
+                                            <input placeholder="Line 4 (Add onn message)" type="text" id="line4" name="line4"
+                                                class="form-control">
+                                        </div>
+                                        <h6 class="alertAddProduct mt-1" style="color: red" id="priceAlert"></h6>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+    <!-- Image 1 -->
+    <div class="col-lg-3">
+        <div class="mb-4">
+            <label class="form-label">Image 1</label>
+            <div class="input-group">
+                <input class="form-control" type="file" name="image" id="input1"
+                    accept="image/png, image/jpeg, image/jpg ,image/avif"
+                    onchange="viewImage(event, 1)"/>
+                <label for="input1" id="file-1-preview">
+                    <img src="" alt="" id="imgView1">
+                </label>
+            </div>
+            <div class="image-cropper" style="display: none; width: 200px; height: 250px;">
+                <img src="" id="croppedImg1" alt="" />
+                <button type="button" id="saveButton1" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+                            <h6 id="imgAlert" class=" mt-2" style="color: red;"></h6>
+
+
+                            <div class="d-flex g-2">
+                                <div class="m-2">
+    <button id="submitBtn" class="btn btn-primary">SUBMIT</button>
+</div>
+
+                                <div class="m-2">
+                                    <a href="/admin/banner" type="button" class="btn btn-primary"
+                                        id="backbutton">BACK</a>
+
+                                </div>
+
+
+                            </div>
+                            {{!-- <div class="mb-4">
+                                <label class="form-label">Tax rate</label>
+                                <input type="text" placeholder="%" class="form-control" id="product_name">
+                            </div>
+                            <label class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" value="">
+                                <span class="form-check-label"> Make a template </span>
+                            </label> --}}
+                        </form>
+                    </div>
+                </div> <!-- card end// -->
+
+
+
+            </div>
+    </section> <!-- content-main end// -->
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear())
+                </script> ©, Evara - HTML Ecommerce Template .
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">
+                    All rights reserved
+                </div>
+            </div>
+        </div>
+    </footer>
+</main>
+
+
+  <script>
+function viewImage(event, index) {
+    let input = event.target;
+    let file = input.files[0];
+
+    // Check file size
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+        alert("File size exceeds the maximum limit of 5MB.");
+        input.value = ""; // Clear the file input
+        return;
+    }
+
+    const allowedExtensions = /\.(jpg|jpeg|png|gif|avif)$/i;
+    if (!allowedExtensions.test(file.name)) {
+        alert('Please upload file having extensions .jpeg/.jpg/.png/.gif/.avif only.');
+        input.value = ""; // Clear the file input
+        return;
+    }
+
+    let reader = new FileReader();
+
+    reader.onload = function () {
+        let dataURL = reader.result;
+        let image = document.getElementById('imgView' + index);
+        image.src = dataURL;
+
+        // Initialize Cropper.js on the image
+        let cropper = new Cropper(image, {
+            aspectRatio: 1 / 1, // Initial aspect ratio
+            viewMode: 1,
+            guides: true,
+            background: false,
+            autoCropArea: 1,
+            zoomable: true
+        });
+
+        // Show the image cropper container
+        let cropperContainer = document.querySelector('#croppedImg' + index).parentNode;
+        cropperContainer.style.display = 'block';
+
+        // Update the cropped image when the "Save" button is clicked
+        let saveButton = document.querySelector('#saveButton' + index);
+        saveButton.addEventListener('click', async function () {
+            let croppedCanvas = cropper.getCroppedCanvas();
+            let croppedImage = document.getElementById("croppedImg" + index);
+            croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
+
+            // Generate a unique name for the cropped image file based on the current timestamp
+            let timestamp = new Date().getTime();
+            let fileName = `cropped-img-${timestamp}-${index}.png`;
+
+            await croppedCanvas.toBlob(blob => {
+                let imgFile = new File([blob], fileName, { type: "image/png" });
+                const fileList = new DataTransfer();
+                fileList.items.add(imgFile);
+                input.files = fileList.files;
+            });
+            // cropperContainer.style.display = 'none';
+        });
+    };
+    reader.readAsDataURL(file);
+}
+</script>

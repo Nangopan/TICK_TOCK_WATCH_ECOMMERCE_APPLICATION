@@ -9,6 +9,7 @@ const Order = require("../../model/orderSchema");
 const HttpStatus = require('../../httpStatus');
 const Referral=require("../../model/referralSchema")
 const {v4:uuidv4}=require("uuid")
+const Banners=require("../../model/bannerSchema")
 
 
 const mongoose = require("mongoose");
@@ -85,12 +86,12 @@ const getHome = async (req, res) => {
         },
       },
     ]);
-
-    console.log(Products);
+   const banners= await Banners.find({active: true}).lean()
+    console.log(banners);
     console.log("Aggregated Product Details 1:", Products);
 
     const category = await Category.find({ isListed: true }).lean();
-    res.render("user/home", { category, Products, userData });
+    res.render("user/home", { category, Products, userData,banners});
   } catch (error) {
     console.log(error.message);
     res.status(HttpStatus.InternalServerError).send("Internal Server Error");
@@ -103,33 +104,38 @@ const getHome = async (req, res) => {
 
 
 const getLogin = async (req, res) => {
-  const regSuccessMsg = "User registered sucessfully..!!";
+  const regSuccessMsg = "User registered successfully..!!";
   const blockMsg = "User has been Blocked..!!";
   const mailErr = "Incorrect email or password..!!";
   const successMessage = "Password reset successfully!";
 
   try {
+    const enteredEmail = req.session.enteredEmail || ""; // Retrieve stored email
+    const enteredPassword = req.session.enteredPassword || "";
+    req.session.enteredEmail = "";
+    req.session.enteredPassword = "";
+
+
     if (req.session.mailErr) {
-      res.render("user/login", { mailErr });
+      res.render("user/login", { mailErr, enteredEmail, enteredPassword  });
       req.session.mailErr = false;
     } else if (req.session.regSuccessMsg) {
-      res.render("user/login", { regSuccessMsg });
+      res.render("user/login", { regSuccessMsg, enteredEmail, enteredPassword  });
       req.session.regSuccessMsg = false;
     } else if (req.session.successMessage) {
-      res.render("user/login", { successMessage });
+      res.render("user/login", { successMessage, enteredEmail, enteredPassword  });
       req.session.successMessage = false;
     } else if (req.session.blockMsg) {
-      res.render("user/login", { blockMsg });
+      res.render("user/login", { blockMsg, enteredEmail, enteredPassword  });
       req.session.blockMsg = false;
     } else {
-      res.render("user/login");
+      res.render("user/login", { enteredEmail , enteredPassword });
     }
   } catch (error) {
     console.log(error.message);
     res.status(HttpStatus.InternalServerError).send("Internal Server Error");
   }
 };
-
 
 
 // Do Login
@@ -149,16 +155,21 @@ const doLogin = async (req, res) => {
           req.session.user = userData;
           res.redirect("/");
         } else {
-         
           req.session.blockMsg = true;
+          req.session.enteredEmail = email; // Store entered email
+          req.session.enteredPassword = password;
           res.redirect("/login");
         }
       } else {
         req.session.mailErr = true;
+        req.session.enteredEmail = email; // Store entered email
+        req.session.enteredPassword = password;
         res.redirect("/login");
       }
     } else {
       req.session.mailErr = true;
+      req.session.enteredEmail = email; // Store entered email
+      req.session.enteredPassword = password;
       res.redirect("/login");
     }
   } catch (error) {

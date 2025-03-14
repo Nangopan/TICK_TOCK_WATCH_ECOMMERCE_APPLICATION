@@ -15,7 +15,7 @@
   <div class="container">
     <div class="header-wrap d-flex justify-content-between align-items-center">
       <div class="fs-4 fw-bolder logo logo-width-1">
-        <a href="/">TICK-TOCK</a>
+        <a href="/" class="text-white">TICK-TOCK</a>
       </div>
       <div class="header-right d-flex align-items-center">
         <div class="search-style-2 me-3">
@@ -129,22 +129,26 @@
     });
 
      function updateCartWishlistCount() {
-    $.ajax({
-      type: "GET",
-      url: "/cart-wishlist-count",
-      success: function (data) {
-        console.log('cart-wishlist', data)
-        $("#wishlist-count").text(data.wishlistCount);
-        $("#cart-count").text(data.cartCount);
-      },
-      error: function (xhr, status, error) {
-        console.error("Error fetching cart/wishlist count:", error);
-      }
-    });
-  }
-
-  $(document).ready(function () {
-    updateCartWishlistCount(); // Update when the page loads
-
+  $.ajax({
+    type: "GET",
+    url: "/cart-wishlist-count",
+    success: function (data) {
+      console.log('cart-wishlist', data)
+      $("#wishlist-count").text(data.wishlistCount);
+      $("#cart-count").text(data.cartCount);
+    },
+    error: function (xhr, status, error) {
+      console.error("Error fetching cart/wishlist count:", error);
+    }
   });
+}
+
+$(document).ready(function () {
+  updateCartWishlistCount(); // Update when the page loads
+  
+  // Add custom event listener for cart/wishlist updates
+  $(document).on('cart-wishlist-updated', function() {
+    updateCartWishlistCount();
+  });
+});
 </script>

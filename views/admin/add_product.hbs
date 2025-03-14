@@ -1,7 +1,10 @@
 <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
-</head>
+<!-- Cropper.js CSS (Required) -->
+<link  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
 
+<!-- Cropper.js JS (Required) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+</head>
 
 <main class="main-wrap">
     <section class="content-main">
@@ -9,7 +12,6 @@
             <div class="col-9">
                 <div class="content-header">
                     <h2 class="content-title">Add New Product</h2>
-
                 </div>
             </div>
             <div class="col-lg-12">
@@ -18,28 +20,20 @@
                         <h4>Basic</h4>
                     </div>
                     <div class="card-body">
-                        {{#if productExists}}
-                            <div class="alert alert-danger mt-3">
-                                Product already exists.
-                            </div>
-                        {{/if}}
                         <form method="post" id="product_form" class="form-add-product" action="/admin/addProduct"
                             enctype="multipart/form-data" onsubmit="return submitform(this)">
                             <div class="mb-4">
                                 <label for="product_name" class="form-label">Product Name</label>
                                 <input type="text" placeholder="Type here" name="name" class="form-control"
-                                    id="productName" onchange="validate_productName()" id="productName"
-                                    onchange="validate_productName()">
+                                    id="productName" onchange="validate_productName()">
                                 <h6 class="alertAddProduct mt-1" style="color: red" id="productNameAlert"></h6>
-
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Full description</label>
                                 <textarea placeholder="Type here" name="description" id="longdescription"
-                                    id="longdescription" onchange="validate_description()" .0 class="form-control"
+                                    onchange="validate_description()" class="form-control"
                                     rows="5"></textarea>
                                 <h6 class="alertAddProduct mt-1" style="color: red" id="longAlert"></h6>
-
                             </div>
                             <div class="row">
                                 <div class="col-lg-4">
@@ -50,8 +44,6 @@
                                                 class="form-control">
                                         </div>
                                         <h6 class="alertAddProduct mt-1" style="color: red" id="priceAlert"></h6>
-
-
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -70,138 +62,92 @@
                                         {{/each}}
                                     </select>
                                 </div>
-
-
-
                             </div>
                             <div class="row">
+                                <!-- Image 1 -->
                                 <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Image 1</label>
-                                        <div class="input-group">
-                                            <input class="form-control" type="file" name="image" id="input1"
-                                                accept="image/png, image/jpeg, image/jpg" 
-                                                onchange="viewImage1(event),viewImage(event, 1)"/>
-                                                <label for="input1" id="file-1-preview">
-                                            <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView1">
-                                        </div>
-                                        <div class="image-cropper" style="display: none; width: 200px; height: 250px;">
-                                            <img src="" id="croppedImg1" alt="" />
-                                            <button type="button" id="saveButton1"
-                                                class="btn btn-primary">Save</button>
+                                        <input class="form-control" type="file" name="image" id="input1"
+                                            accept="image/png, image/jpeg, image/jpg" 
+                                            onchange="openCropper(event, 1)">
+                                        <div id="preview-container-1" class="mt-2" style="display: none;">
+                                            <img src="" id="preview-1" style="max-width: 100%; display: block;">
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Repeat the above code for Image 2 to Image 5 with appropriate IDs -->
-                                                                <div class="col-lg-4">
+                                <!-- Image 2 -->
+                                <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Image 2</label>
-                                        <div class="input-group">
-                                            <input class="form-control" type="file" name="image" id="input2"
-                                                accept="image/png, image/jpeg, image/jpg" 
-                                                onchange="viewImage1(event),viewImage(event, 2)"/>
-                                                <label for="input1" id="file-2-preview">
-                                            <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView2">
-                                        </div>
-                                        <div class="image-cropper" style="display: none; width: 200px; height: 250px;">
-                                            <img src="" id="croppedImg2" alt="" />
-                                            <button type="button" id="saveButton2"
-                                                class="btn btn-primary">Save</button>
+                                        <input class="form-control" type="file" name="image" id="input2"
+                                            accept="image/png, image/jpeg, image/jpg" 
+                                            onchange="openCropper(event, 2)">
+                                        <div id="preview-container-2" class="mt-2" style="display: none;">
+                                            <img src="" id="preview-2" style="max-width: 100%; display: block;">
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Repeat the above code for Image 2 to Image 5 with appropriate IDs -->
-                                                                <div class="col-lg-4">
+                                <!-- Image 3 -->
+                                <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Image 3</label>
-                                        <div class="input-group">
-                                            <input class="form-control" type="file" name="image" id="input3"
-                                                accept="image/png, image/jpeg, image/jpg" 
-                                                onchange="viewImage1(event),viewImage(event, 3)"/>
-                                                <label for="input1" id="file-3-preview">
-                                            <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView3">
-                                        </div>
-                                        <div class="image-cropper" style="display: none; width: 200px; height: 250px;">
-                                            <img src="" id="croppedImg3" alt="" />
-                                            <button type="button" id="saveButton3"
-                                                class="btn btn-primary">Save</button>
+                                        <input class="form-control" type="file" name="image" id="input3"
+                                            accept="image/png, image/jpeg, image/jpg" 
+                                            onchange="openCropper(event, 3)">
+                                        <div id="preview-container-3" class="mt-2" style="display: none;">
+                                            <img src="" id="preview-3" style="max-width: 100%; display: block;">
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Repeat the above code for Image 2 to Image 5 with appropriate IDs -->
-                                                               <div class="col-lg-4">
+                                <!-- Image 4 -->
+                                <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Image 4</label>
-                                        <div class="input-group">
-                                            <input class="form-control" type="file" name="image" id="input4"
-                                                accept="image/png, image/jpeg, image/jpg" 
-                                                onchange="viewImage1(event),viewImage(event, 4)"/>
-                                                <label for="input1" id="file-4-preview">
-                                            <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView4">
-                                        </div>
-                                        <div class="image-cropper" style="display: none; width: 200px; height: 250px;">
-                                            <img src="" id="croppedImg4" alt="" />
-                                            <button type="button" id="saveButton4"
-                                                class="btn btn-primary">Save</button>
+                                        <input class="form-control" type="file" name="image" id="input4"
+                                            accept="image/png, image/jpeg, image/jpg" 
+                                            onchange="openCropper(event, 4)">
+                                        <div id="preview-container-4" class="mt-2" style="display: none;">
+                                            <img src="" id="preview-4" style="max-width: 100%; display: block;">
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Repeat the above code for Image 2 to Image 5 with appropriate IDs -->
-                                                                <div class="col-lg-4">
+                                <!-- Image 5 -->
+                                <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Image 5</label>
-                                        <div class="input-group">
-                                            <input class="form-control" type="file" name="image" id="input5"
-                                                accept="image/png, image/jpeg, image/jpg" 
-                                                onchange="viewImage1(event),viewImage(event, 5)"/>
-                                                <label for="input1" id="file-5-preview">
-                                            <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView5">
-                                        </div>
-                                        <div class="image-cropper" style="display: none; width: 200px; height: 250px;">
-                                            <img src="" id="croppedImg5" alt="" />
-                                            <button type="button" id="saveButton5"
-                                                class="btn btn-primary">Save</button>
+                                        <input class="form-control" type="file" name="image" id="input5"
+                                            accept="image/png, image/jpeg, image/jpg" 
+                                            onchange="openCropper(event, 5)">
+                                        <div id="preview-container-5" class="mt-2" style="display: none;">
+                                            <img src="" id="preview-5" style="max-width: 100%; display: block;">
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Repeat the above code for Image 2 to Image 5 with appropriate IDs -->
-
                             </div>
-                            <h6 id="imgAlert" class=" mt-2" style="color: red;"></h6>
-
+                            <h6 id="imgAlert" class="mt-2" style="color: red;"></h6>
 
                             <div class="d-flex g-2">
                                 <div class="m-2">
                                     <button type="submit" class="btn btn-primary">Add Product</button>
-
                                 </div>
                                 <div class="m-2">
                                     <a href="/admin/product" type="button" class="btn btn-primary"
                                         id="backbutton">Back</a>
-
                                 </div>
-
-
                             </div>
-                            
                         </form>
                     </div>
-                </div> 
-
-
-
+                </div>
             </div>
     </section> 
     <footer class="main-footer font-xs">
         <div class="row pb-30 pt-15">
             <div class="col-sm-6">
-                <script data-cfasync="false"
-                    src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
                 <script>
                     document.write(new Date().getFullYear())
                 </script> ©, Tick Tock .
@@ -215,70 +161,36 @@
     </footer>
 </main>
 
+<!-- Modal for image cropping -->
+<div class="modal fade" id="cropperModal" tabindex="-1" aria-labelledby="cropperModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cropperModalLabel">Crop Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeCropperModal()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="img-container">
+                    <img id="cropperImage" src="" style="max-width: 100%;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeCropperModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" id="cropButton">Crop & Save</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+<!-- Load all JavaScript libraries in the correct order -->
+<!-- First jQuery, then Bootstrap, then other libraries -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-
+<!-- Validation script -->
 <script>
-    
-
-    function viewImage1(event) {
-        document.getElementById('imgView1').src = URL.createObjectURL(event.target.files[0])
-    }
-
-    function viewImage(event, index) {
-        let input = event.target;
-        let reader = new FileReader();
-
-        reader.onload = function () {
-            let dataURL = reader.result;
-            let image = document.getElementById('imgView' + index);
-            image.src = dataURL;
-
-            // Initialize Cropper.js on the image
-            let cropper = new Cropper(image, {
-                aspectRatio: 1 / 1, 
-                viewMode: 1,
-                guides: true,
-                background: false,
-                autoCropArea: 1,
-                zoomable: true
-            });
-
-
-            // Show the image cropper container
-            let cropperContainer = document.querySelector('#croppedImg' + index).parentNode;
-            cropperContainer.style.display = 'block';
-
-            // Update the cropped image when the "Save" button is clicked
-            let saveButton = document.querySelector('#saveButton' + index);
-            saveButton.addEventListener('click', async function () {
-                let croppedCanvas = cropper.getCroppedCanvas();
-                let croppedImage = document.getElementById("croppedImg" + index);
-                croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
-
-                // Generate a unique name for the cropped image file based on the current timestamp
-                let timestamp = new Date().getTime();
-                let fileName = `cropped-img-${timestamp}-${index}.png`;
-
-                await croppedCanvas.toBlob(blob => {
-                    let input = document.getElementById('input' + index)
-                    let imgFile = new File([blob], fileName, blob)
-                    const fileList = new DataTransfer();
-                    fileList.items.add(imgFile);
-                    input.files = fileList.files
-                });
-                // cropperContainer.style.display = 'none';
-            });
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-
-
-
     function Validation() {
         var errors = []; // Array to store validation errors
 
@@ -289,64 +201,65 @@
         let Qty = document.getElementById("Qty").value;
         let price = document.getElementById("price").value;
 
-
         let productNameRegex = /^[a-zA-Z0-9\s\(\)\-\+]{4,}$/;
         let number = /^[1-9]\d*$/;
         let descriptionRegex = /^(?!\s*$)[\s\S]{1,100}$/
-
 
         let productNameAlert = document.getElementById("productNameAlert");
         let qtyAlert = document.getElementById("qtyAlert");
         let priceAlert = document.getElementById("priceAlert");
         let longAlert = document.getElementById("longAlert");
-        let imgAlert = document.getElementById('imgAlert')
+        let imgAlert = document.getElementById('imgAlert');
 
+        if (!productName.match(productNameRegex)) {
+            errors.push("Name Not Valid");
+        }
+
+        if (!Qty.match(number)) {
+            errors.push("Please Check Qty Again");
+        }
+
+        if (!price.match(number)) {
+            errors.push("Please Check Price Again");
+        }
+
+        if (!longdescription.match(descriptionRegex)) {
+            errors.push("Please Check about Again");
+        }
         
-
-       if (!productName.match(productNameRegex)) {
-        errors.push("Name Not Valid");
-    }
-
-    if (!Qty.match(number)) {
-        errors.push("Please Check Qty Again");
-    }
-
-    if (!number.test(price)) {
-        errors.push("Please Check Price Again");
-    }
-
-    if (!longdescription.match(descriptionRegex)) {
-        errors.push("Please Check about Again");
-    }
-    if (fileInput.files.length === 0) {
-        errors.push("Please choose an image");
-    }
+        if (fileInput.files.length === 0) {
+            errors.push("Please choose an image");
+        }
     
+        // Display all error messages
+        if (errors.length > 0) {
+            productNameAlert.innerHTML = errors.includes("Name Not Valid") ? "Name Not Valid" : "";
+            qtyAlert.innerHTML = errors.includes("Please Check Qty Again") ? "Please Check Qty Again" : "";
+            priceAlert.innerHTML = errors.includes("Please Check Price Again") ? "Please Check Price Again" : "";
+            longAlert.innerHTML = errors.includes("Please Check about Again") ? "Please Check about Again" : "";
+            imgAlert.innerHTML = errors.includes("Please choose an image") ? "Please choose an image" : "";
 
-    // Display all error messages
-    if (errors.length > 0) {
-        productNameAlert.innerHTML = errors.includes("Name Not Valid") ? "Name Not Valid" : "";
-        qtyAlert.innerHTML = errors.includes("Please Check Qty Again") ? "Please Check Qty Again" : "";
-        priceAlert.innerHTML = errors.includes("Please Check Price Again") ? "Please Check Price Again" : "";
-        longAlert.innerHTML = errors.includes("Please Check about Again") ? "Please Check about Again" : "";
-        imgAlert.innerHTML = errors.includes("Please choose an image") ? "Please choose an image" : "";
+            return false; // Prevent form submission
+        }
 
-        
-        return false; // Prevent form submission
+        return true; // Allow form submission if no errors
     }
 
-    return true; // Allow form submission if no errors
+    // Placeholders for validation functions referenced in the HTML
+    function validate_productName() {
+        // Add implementation if needed
     }
 
-
-
-
+    function validate_description() {
+        // Add implementation if needed
+    }
 </script>
+
+<!-- Back button and form submission script -->
 <script>
-      $(document).ready(function () {
+    $(document).ready(function () {
         $('#backbutton').click(function (e) {
             e.preventDefault();
-
 
             Swal.fire({
                 title: "Leave the page?",
@@ -359,31 +272,14 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = "/admin/product";
-
                 }
             });
-
-
         });
     });
 
-        ////add products form submit
+    // Add products form submit
     function submitform(form) {
         event.preventDefault(); // Prevent default form submission action
-        const productName = form.name.value;
-        fetch('/admin/checkProductExists', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name: productName }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.productExists) {
-                // Product already exists, show error message
-                document.getElementById('productExistsAlert').style.display = 'block';
-            } 
         if (Validation(form)) {
             Swal.fire({
                 title: "Are you sure?",
@@ -396,18 +292,140 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     Swal.fire({
-                    title: "Saved",
-                    text: "Product added successfully",
-                    icon: "success",
-                    confirmButtonText: "OK"
-                }).then(() => {
-                    form.submit();
-                });
-                }else {
-               
-                console.log("User canceled the action");
-            }
+                        title: "Saved",
+                        text: "Product added successfully",
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    }).then(() => {
+                        form.submit();
+                    });
+                } else {
+                    console.log("User canceled the action");
+                }
             }); 
         }
     }
+</script>
+
+<!-- Fixed Cropper implementation script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let cropper;
+        let currentImageIndex;
+        let currentInputElement;
+        
+        // Make these functions globally available
+        window.openCropper = function(event, index) {
+            console.log("Opening cropper for image", index);
+            const input = event.target;
+            currentImageIndex = index;
+            currentInputElement = input;
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // Set the image in the cropper modal
+                    const cropperImage = document.getElementById('cropperImage');
+                    cropperImage.src = e.target.result;
+                    
+                    // Initialize or destroy existing cropper
+                    if (cropper) {
+                        cropper.destroy();
+                        cropper = null;
+                    }
+                    
+                    // Show the modal using jQuery
+                    $('#cropperModal').modal('show');
+                    
+                    // Initialize cropper after modal is shown
+                    $('#cropperModal').on('shown.bs.modal', function() {
+                        try {
+                            cropper = new Cropper(cropperImage, {
+                                aspectRatio: 1, // Square aspect ratio
+                                viewMode: 1,
+                                autoCropArea: 1,
+                                responsive: true,
+                                zoomable: true,
+                                scalable: true
+                            });
+                            console.log("Cropper initialized successfully");
+                        } catch (error) {
+                            console.error("Error initializing cropper:", error);
+                            alert("Error initializing image cropper. Please try again or contact support.");
+                        }
+                    });
+                    
+                    // Update crop button event handler
+                    document.getElementById('cropButton').onclick = function() {
+                        cropAndSaveImage();
+                    };
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+        
+        window.cropAndSaveImage = function() {
+            if (!cropper) {
+                console.error("Cropper not initialized");
+                return;
+            }
+            
+            try {
+                // Get cropped canvas
+                const canvas = cropper.getCroppedCanvas({
+                    width: 400,
+                    height: 400,
+                    fillColor: '#fff',
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high',
+                });
+                
+                if (!canvas) {
+                    console.error("Failed to get cropped canvas");
+                    return;
+                }
+                
+                // Convert canvas to blob
+                canvas.toBlob((blob) => {
+                    // Create a new File object
+                    const fileName = `cropped_image_${currentImageIndex}_${new Date().getTime()}.jpg`;
+                    const croppedFile = new File([blob], fileName, { type: 'image/jpeg' });
+                    
+                    // Create a new FileList
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(croppedFile);
+                    currentInputElement.files = dataTransfer.files;
+                    
+                    // Display the cropped image in the preview
+                    const previewContainer = document.getElementById(`preview-container-${currentImageIndex}`);
+                    const previewImg = document.getElementById(`preview-${currentImageIndex}`);
+                    
+                    previewImg.src = URL.createObjectURL(blob);
+                    previewContainer.style.display = 'block';
+                    
+                    // Close the modal
+                    closeCropperModal();
+                }, 'image/jpeg', 0.95);
+            } catch (error) {
+                console.error("Error during image cropping:", error);
+                alert("There was an error cropping the image. Please try again.");
+                closeCropperModal();
+            }
+        };
+        
+        window.closeCropperModal = function() {
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            
+            // Remove the event handler to prevent multiple bindings
+            $('#cropperModal').off('shown.bs.modal');
+            
+            // Hide modal using jQuery
+            $('#cropperModal').modal('hide');
+        };
+    });
 </script>

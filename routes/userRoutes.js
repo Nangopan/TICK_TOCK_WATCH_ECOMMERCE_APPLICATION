@@ -12,6 +12,7 @@ const { showWishlistPage, addToWishList, removeFromWishList } = require('../cont
 const { addMoneyToWallet , verifyPayment }= require('../controllers/userController/walletManagement')
 const { payment_failed, cancelOrder,returnOrder, cancelOneProduct , returnOneProduct, getInvoice }= require('../controllers/userController/orderManagement')
 require('../middleware/googleAuth')
+const {editReviewPost,editReview,addNewReviewPost}=require("../controllers/userController/review")
 const passport = require('passport');
 const store = require("../middleware/multer")
 
@@ -143,6 +144,9 @@ router.get('/get_invoice', logedin, isBlocked, getInvoice)
 
 
 router.get('/about', aboutpage)
+
+router.post('/addReview', logedin, isBlocked, addNewReviewPost)
+router.post('/editReview/:id', logedin, isBlocked, editReviewPost)
 
 
 

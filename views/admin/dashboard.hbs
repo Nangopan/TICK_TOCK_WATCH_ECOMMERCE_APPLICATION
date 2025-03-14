@@ -61,7 +61,7 @@
                 </div>
             </div>
         </div>
-        {{!-- <div class="row">
+        <div class="row">
                 <div class="col-xl-4 col-lg-12">
                     <div class="card mb-4">
                         <article class="card-body">
@@ -88,7 +88,7 @@
                     </div>
 
                 </div>
-            </div> --}}
+            </div>
         <div class="form-inline d-flex m-3">
             <div class="form-group" style="margin-right: 5%;">
                 <label for="date-range">Select Range : </label>
@@ -257,7 +257,7 @@
             <div class="col-sm-6">
                 <script>
                     document.write(new Date().getFullYear())
-                </script> ©, Tick Tock .
+                </script> ©, Mobile Bazaar .
             </div>
             <div class="col-sm-6">
                 <div class="text-sm-end">
@@ -314,9 +314,162 @@ getChartData();
 
 
 
+function salesGraph(months, ordersByMonth) {
+    const ctx = document.getElementById('myChart1').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [{
+                label: '# of Sales',
+                data: ordersByMonth,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.label + ': ' + tooltipItem.raw + ' sales';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+function revenue(months, revenueByMonth) {
+    const ctx1 = document.getElementById('myChar').getContext('2d');
+    new Chart(ctx1, {
+        type: 'bar', // Bar chart type
+        data: {
+            labels: months,
+            datasets: [{
+                label: '# Revenue',
+                data: revenueByMonth,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)', // Light blue color for the bars
+                borderColor: 'rgba(54, 162, 235, 1)', // Border color
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y', // Make the bars horizontal
+            scales: {
+                x: {
+                    beginAtZero: true, // Start the x-axis from 0
+                },
+                y: {
+                    beginAtZero: true // Start the y-axis from 0
+                }
+            },
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.label + ': ' + tooltipItem.raw + ' revenue';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
 
 
 
+
+
+function categoryRevenue(categories, revenues) {
+    console.log("Categories:", categories);
+    console.log("Revenues:", revenues);
+
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: categories,
+            datasets: [{
+                label: 'Revenue by Category',
+                data: revenues,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                    
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                    
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                datalabels: {
+                    color: '#000',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    },
+                    formatter: (value, context) => {
+                        return context.chart.data.labels[context.dataIndex];
+                    },
+                    anchor: 'end',
+                    align: 'start',
+                    offset: 10
+                }
+            }
+        }
+    });
+}
 
 
 

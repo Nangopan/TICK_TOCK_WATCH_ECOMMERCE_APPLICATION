@@ -13,9 +13,14 @@
                     {{/if}}
                     <form method="post" action="/admin/login">
                         <div class="mb-3">
-                            <input class="form-control" 
-                            name = "email"
-                            placeholder="Username or email" type="text" required>
+                            <input
+  type="email"
+  class="form-control"
+  id="email"
+  placeholder="name@example.com"
+  name="email"
+  value="{{email}}"
+/>
                         </div>
                         <div class="mb-3">
                             <input class="form-control" 

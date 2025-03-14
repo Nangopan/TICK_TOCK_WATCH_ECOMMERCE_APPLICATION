@@ -19,7 +19,7 @@
                             <section class="content-body p-xl-4">
                                 <div class="content-header">
                                     <div>
-                                        <h2 class="content-title card-title">Order Detail</h2>
+                                        <h2 class="content-title card-title">Order detail</h2>
                                         <p>Details for Order ID: {{myOrderDetails._id}}</p>
                                     </div>
                                 </div>
@@ -61,11 +61,11 @@
                                                         <i class="text-primary material-icons md-local_shipping"></i>
                                                     </span>
                                                     <div class="text">
-                                                        <h6 class="mb-1">Order Info</h6>
+                                                        <h6 class="mb-1">Order info</h6>
                                                         <p class="mb-1">
-                                                            Shipping: Fargo express <br> 
-                                                            Pay method: {{myOrderDetails.paymentMethod}} <br> 
-                                                            Status: {{myOrderDetails.status}}
+                                                            Shipping: Fargo express <br> Pay method:
+                                                            {{myOrderDetails.paymentMethod}} <br> Status:
+                                                            {{myOrderDetails.status}}
                                                         </p>
                                                     </div>
                                                 </article>
@@ -113,96 +113,96 @@
                                                                     </a>
                                                                 </td>
                                                                 <td>
-                                                                    ₹{{#if this.product.discountPrice}}
-                                                                        {{this.product.discountPrice}}
-                                                                    {{else}}
-                                                                        {{this.product.price}}
-                                                                    {{/if}}
+                                                                    <!-- Display discount price if available, otherwise show the original price -->
+                                                                    ₹{{#if this.product.discountPrice}}{{this.product.discountPrice}}{{else}}{{this.product.price}}{{/if}}
                                                                 </td>
                                                                 <td>{{this.product.quantity}}</td>
                                                                 <td>
+                                                                    <!-- Multiply quantity with either discount price or original price -->
                                                                     ₹{{#if this.product.discountPrice}}
                                                                         {{multiply this.product.quantity this.product.discountPrice}}
                                                                     {{else}}
                                                                         {{multiply this.product.quantity this.product.price}}
                                                                     {{/if}}
                                                                 </td>
+
                                                                 <td class="text-end">                                                                    
                                                                     {{#singlestatuchecker this.product}}
                                                                         {{#ifCond ../myOrderDetails.status '==' 'Delivered'}}
                                                                             {{#if (eq ../orderedProDet.length 1)}}
-                                                                                <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Return</button>
+                                                                                <!-- Disable the return button if only one product exists -->
+                                                                                <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Return</button>
                                                                             {{else}}
+                                                                                <!-- Enable the return button if there are multiple products -->
                                                                                 <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}">Return</button>
                                                                             {{/if}}
                                                                         {{else}} 
-                                                                        {{#ifCond ../myOrderDetails.status '==' 'Payment Failed'}}
-                                                                            <button id="retryPayment" class="btn btn-primary btn-sm retry-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Retry Payment</button>
-                                                                        {{else}}
-                                                                        {{#ifCond ../myOrderDetails.status '==' 'Cancelled'}}
-                                                                            <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>
-                                                                                Cancel
-                                                                            </button>
-                                                                        {{else}}
-                                                                            {{#if (eq ../orderedProDet.length 1)}}
-                                                                                <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>
-                                                                                    Cancel
-                                                                                </button>
+                                                                            {{#ifCond ../myOrderDetails.status '==' 'Payment Failed'}}
+                                                                                <button id="retryPayment" class="btn btn-primary btn-sm retry-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Retry Payment</button>
                                                                             {{else}}
-                                                                                <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}">
-                                                                                    Cancel
-                                                                                </button>
-                                                                            {{/if}}
+                                                                                {{#ifCond ../myOrderDetails.status '==' 'Cancelled'}}
+                                                                                    <!-- Disable the cancel button for each product if the entire order is cancelled -->
+                                                                                    <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Cancel</button>
+                                                                                {{else}}
+                                                                                    {{#if (eq ../orderedProDet.length 1)}}
+                                                                                        <!-- Disable the cancel button if only one product exists -->
+                                                                                        <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Cancel</button>
+                                                                                    {{else}}
+                                                                                        <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}">Cancel</button>
+                                                                                    {{/if}}
+                                                                                {{/ifCond}}
+                                                                            {{/ifCond}}
                                                                         {{/ifCond}}
-                                                                        {{/ifCond}}
-                                                                    {{/ifCond}}
                                                                     {{/singlestatuchecker}}
                                                                 </td>
                                                             </tr>
                                                             {{/each}}
-                                                            <tr>
-                                                                <td colspan="5">
-                                                                    <div class="order-summary-container">
-                                                                        <div class="summary-row">
-                                                                            <div class="summary-item">
-                                                                                <span class="summary-label">Delivery:</span>
-                                                                                <span class="summary-value text-danger">+₹ 50</span>
-                                                                            </div>
-                                                                            <div class="summary-item">
-                                                                                <span class="summary-label">Discount:</span>
-                                                                                <span class="summary-value text-success">
-                                                                                    {{#if myOrderDetails.discountAmt}}
-                                                                                        -₹ {{myOrderDetails.discountAmt}}
-                                                                                    {{else}}
-                                                                                        -₹ 0
-                                                                                    {{/if}}
-                                                                                </span>
-                                                                            </div>
-                                                                            <div class="summary-item">
-                                                                                <span class="summary-label">Grand Total:</span>
-                                                                                <span id="grandTotal" class="summary-value total-amount">
-                                                                                    {{#if myOrderDetails.discountAmt}}
-                                                                                        ₹{{myOrderDetails.amountAfterDscnt}}
-                                                                                    {{else}}
-                                                                                        ₹{{add myOrderDetails.total 0}}
-                                                                                    {{/if}}
-                                                                                </span>
-                                                                            </div>
-                                                                            <div class="summary-item">
-                                                                                <span class="summary-label">Status:</span>
-                                                                                <span class="badge rounded-pill alert-success text-success">{{myOrderDetails.status}}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
+                                                <!-- Order summary row outside of table for better horizontal alignment -->
+                                 <div class="d-flex justify-content-end mt-4">
+    <div class="order-summary d-flex flex-wrap align-items-center p-3 bg-light rounded shadow-sm">
+        <div class="d-flex align-items-center px-3 py-2 border-end">
+            <span class="text-muted me-3 fw-bold">Delivery:</span>
+            <span class="text-danger">+₹ 50</span>
+        </div>
+        <div class="d-flex align-items-center px-3 py-2 border-end">
+            <span class="text-muted me-3 fw-bold">Discount:</span>
+            <span class="text-success">
+                {{#if myOrderDetails.discountAmt}}
+                -₹ {{myOrderDetails.discountAmt}}
+                {{else}}
+                -₹ 0
+                {{/if}}
+            </span>
+        </div>
+        <div class="d-flex align-items-center px-3 py-2 border-end">
+            <span class="text-muted me-3 fw-bold">Grand Total:</span>
+            <span>
+                <b id="grandTotal" class="h5 mb-0">
+                    {{#if myOrderDetails.discountAmt}}
+                    ₹{{myOrderDetails.amountAfterDscnt}}
+                    {{else}}
+                    ₹{{add myOrderDetails.total 0}}
+                    {{/if}}
+                </b>
+            </span>
+        </div>
+        <div class="d-flex align-items-center px-3 py-2">
+            <span class="text-muted me-3 fw-bold">Status:</span>
+            <span class="badge rounded-pill alert-success text-success">{{myOrderDetails.status}}</span>
+        </div>
+        
+        {{#statuchecker myOrderDetails}}
+        {{else}}
+        {{/statuchecker}}
+    </div>
+</div>
                                             </div>
                                             <div class="col-lg-4">
                                                 <div class="box shadow-sm bg-light">
-                                                    <!-- Optional: any additional information -->
+                                                    <!-- Optional: any other information you want to show -->
                                                 </div>
                                             </div>
                                         </div>
@@ -217,55 +217,400 @@
     </section>
 </main>
 
-<style>
-.order-summary-container {
-    width: 100%;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    margin-top: 15px;
-}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-.summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
+<script>
+var grandTotalText = document.getElementById("grandTotal").innerText;
 
-.summary-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 120px;
-    text-align: center;
-}
+// Remove the ₹ symbol and any commas (if applicable) from the string
+const amount = parseInt(grandTotalText.replace(/[^\d]/g, '')) * 100;
 
-.summary-label {
-    font-weight: 600;
-    color: #6c757d;
-    margin-bottom: 5px;
-}
+// Log the amount to check if the parsing works
+console.log('Grand Total:', amount);
 
-.summary-value {
-    font-weight: bold;
-}
 
-.total-amount {
-    color: #007bff;
-    font-size: 1.1em;
-}
-
-@media (max-width: 768px) {
-    .summary-row {
-        flex-direction: column;
-        align-items: stretch;
+    const getInvoice = async (id) => {
+  try {
+    const response = await fetch(`/get_invoice?id=${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/pdf'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch invoice');
     }
+    
+    const blob = await response.blob();
 
-    .summary-item {
-        margin-bottom: 10px;
-        width: 100%;
+    // Create a URL for the downloaded file
+    const url = URL.createObjectURL(blob);
+
+    // Create a link element to trigger the download
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'invoice.pdf';
+
+    link.click();
+
+    // Clean up the URL object
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error fetching invoice:', error);    
+  }
+};
+    $(document).ready(function () {
+        function areAllProductsCancelled() {
+            let allCancelled = true;
+            $('.product-row').each(function () {
+                if (!$(this).data('is-cancelled')) {
+                    allCancelled = false;
+                    return false; // Exit the loop early if any product is not cancelled
+                }
+            });
+            return allCancelled;
+        }
+
+        // Event listener for canceling individual products
+    $('body').on('click', '.cancel-btn', function () {
+    const orderId = $(this).data('order-id');
+    const productId = $(this).data('prod-id');
+    const $button = $(this); // Store reference to button
+
+    // Disable the button immediately to prevent multiple clicks
+    $button.prop('disabled', true);
+    // Add visual feedback by changing appearance
+    $button.css({
+        'opacity': '0.5',
+        'background-color': '#d6d6d6',
+        'border-color': '#c0c0c0',
+        'color': '#808080',
+        'cursor': 'not-allowed',
+        'transition': 'opacity 0.3s ease'
+    });
+
+    if (orderId && productId) {
+        $.ajax({
+            type: 'PUT',
+            url: '/cancel-one-product',
+            contentType: 'application/json',
+            data: JSON.stringify({ id: orderId, prodId: productId }),
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cancelled product',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        // Store the cancelled status in localStorage before reload
+                        let cancelledButtons = JSON.parse(localStorage.getItem('cancelledButtons') || '{}');
+                        cancelledButtons[`${orderId}-${productId}`] = true;
+                        localStorage.setItem('cancelledButtons', JSON.stringify(cancelledButtons));
+                        window.location.reload();
+                    });
+                }
+            },
+            error: function (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                // Re-enable the button on error
+                $button.prop('disabled', false).css({
+                    'opacity': '1',
+                    'background-color': '',
+                    'border-color': '',
+                    'color': '',
+                    'cursor': '',
+                    'transition': ''
+                });
+            }
+        });
+    } else {
+        alert('Invalid order or product ID.');
+        // Re-enable the button if IDs are invalid
+        $button.prop('disabled', false).css({
+            'opacity': '1',
+            'background-color': '',
+            'border-color': '',
+            'color': '',
+            'cursor': '',
+            'transition': ''
+        });
     }
-}
-</style>
+});
+
+// Add this code to apply disabled state on page load
+$(document).ready(function() {
+    // After the page loads, check localStorage for cancelled buttons
+    const cancelledButtons = JSON.parse(localStorage.getItem('cancelledButtons') || '{}');
+    
+    // Apply disabled state to any previously cancelled buttons
+    $('.cancel-btn').each(function() {
+        const orderId = $(this).data('order-id');
+        const productId = $(this).data('prod-id');
+        
+        if (cancelledButtons[`${orderId}-${productId}`]) {
+            $(this).prop('disabled', true);
+            $(this).css({
+                'opacity': '0.5',
+                'background-color': '#d6d6d6',
+                'border-color': '#c0c0c0',
+                'color': '#808080',
+                'cursor': 'not-allowed'
+            });
+        }
+    });
+
+    // Your existing ready code would continue below...
+});
+
+
+
+        
+
+        // Event listener for canceling the entire order
+        $('#cancelOrder').on('click', function () {
+            const orderId = $(this).data('order-id');
+
+            // Disable the button immediately
+            $(this).prop('disabled', true);
+            // Add visual feedback
+            $(this).css({
+                'opacity': '0.5',
+                'background-color': '#d6d6d6',
+                'border-color': '#c0c0c0',
+                'color': '#808080',
+                'cursor': 'not-allowed',
+                'transition': 'opacity 0.3s ease'
+            });
+
+            if (orderId) {
+                $.ajax({
+                    type: 'PUT',
+                    url: `/cancel-order/${orderId}`,
+                    contentType: 'application/json',
+                    success: function (response) {
+                        if (response.success) {
+                             Swal.fire({
+                            icon: 'success',
+                            title: 'Cancelled Order',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(()=>{window.location.reload();})
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            } else {
+                alert('Invalid order ID.');
+            }
+        });
+        
+        // Event listener for returning individual products
+        $('body').on('click', '.return-btn', function () {
+            const orderId = $(this).data('order-id');
+            const productId = $(this).data('prod-id');
+
+            // Disable the button immediately
+            $(this).prop('disabled', true);
+            // Add visual feedback
+            $(this).css({
+                'opacity': '0.5',
+                'background-color': '#d6d6d6',
+                'border-color': '#c0c0c0',
+                'color': '#808080',
+                'cursor': 'not-allowed',
+                'transition': 'opacity 0.3s ease'
+            });
+
+            if (orderId && productId) {
+                $.ajax({
+                    type: 'PUT',
+                    url: '/return-one-product',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ id: orderId, prodId: productId }),
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                            icon: 'success',
+                            title: 'Returned product',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(()=>{window.location.reload();})
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            } else {
+                alert('Invalid order or product ID.');
+            }
+        });
+
+        // Event listener for return the entire order
+        $('#returnOrder').on('click', function () {
+            const orderId = $(this).data('order-id');
+
+            // Disable the button immediately
+            $(this).prop('disabled', true);
+            // Add visual feedback
+            $(this).css({
+                'opacity': '0.5',
+                'background-color': '#d6d6d6',
+                'border-color': '#c0c0c0',
+                'color': '#808080',
+                'cursor': 'not-allowed',
+                'transition': 'opacity 0.3s ease'
+            });
+
+            if (orderId) {
+                $.ajax({
+                    type: 'PUT',
+                    url: `/return-order/${orderId}`,
+                    contentType: 'application/json',
+                    success: function (response) {
+                        if (response.success) {
+                             Swal.fire({
+                            icon: 'success',
+                            title: 'Returned Order',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(()=>{window.location.reload();})
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            } else {
+                alert('Invalid order ID.');
+            }
+        });       
+    });
+
+    // Event listener for retrying payment when the order's status is "Payment Failed"
+    $('body').on('click', '#retryPayment', function () {
+        const orderId = $(this).data('order-id');
+        console.log("orderId ", orderId);
+
+        // Disable the button immediately
+        $(this).prop('disabled', true);
+        // Add visual feedback
+        $(this).css({
+            'opacity': '0.5',
+            'background-color': '#d6d6d6',
+            'border-color': '#c0c0c0',
+            'color': '#808080',
+            'cursor': 'not-allowed',
+            'transition': 'opacity 0.3s ease'
+        });
+
+        if (orderId) {       
+            console.log("amount ", amount);
+            payment(orderId);
+        } else {
+            alert('Invalid order ID.');
+        }
+    });
+
+    // Payment function
+    const payment = (orderId) => {
+        var options = {
+            "key": "rzp_test_OsDtnewxAfAwm0", 
+            "amount": parseInt(amount),
+            "currency": "INR",
+            "name": "Mobile Bazaar",
+            "order_id": undefined,
+            "handler": function (response) {
+                retryPayment(orderId, 'Pending');
+            },
+            "modal": {
+                "ondismiss": function() {
+                    console.log('Payment modal dismissed');
+                }
+            }
+        };
+
+        var rzp1 = new Razorpay(options);
+
+        rzp1.on('payment.failed', function (response) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Payment Failed',
+                text: 'Your payment could not be processed. Please try again later.',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload(); // Reload page after payment failure
+                }
+            });
+        });
+
+        rzp1.open();
+    };
+
+    // Retry Payment function (update payment status)
+    const retryPayment = async (orderId, status) => {
+        try {
+            const response = await fetch(`/retry-payment/${orderId}`, {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: status }) 
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update payment status');
+            }
+
+            const data = await response.json();
+           
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Payment Retry Successful',
+                    text: data.message, 
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(() => {
+                    window.location.reload(); 
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Payment Retry Failed',
+                    text: data.message, 
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An error occurred while retrying payment. Please try again.',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    };
+</script>

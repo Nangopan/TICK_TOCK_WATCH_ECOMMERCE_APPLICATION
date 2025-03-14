@@ -1,5 +1,5 @@
 const HttpStatus = require('../../httpStatus');
-
+const Reviews=require("../../model/reviewSchema")
 
 // Load Login Page
 const getLogin = async (req, res) => {
@@ -62,9 +62,39 @@ const getDashboard = async(req, res)=>{
   }
 }
 
+
+const loadReviews = async (req, res) => {
+  try {
+
+    const reviews = await Reviews.aggregate([
+      {
+        $lookup: {
+          from: "products",
+          localField: "productId",
+          foreignField: "_id",
+          as: "productDetails"
+        }
+      },
+      {
+        $unwind: "$productDetails"
+      }
+    ])
+    console.log(reviews)
+
+
+    console.log("REVIEWSSSSSSSSSSS", reviews)
+
+    res.render('admin/reviews', { reviews, layout: 'adminlayout' })
+
+  } catch (error) {
+
+  }
+};
+
 module.exports = {
   getLogin,  
   doLogin,
   doLogout,
   getDashboard,
+  loadReviews,
 };

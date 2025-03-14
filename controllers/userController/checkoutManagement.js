@@ -123,7 +123,14 @@ const loadCheckoutPage = async (req, res) => {
     const addressData = await Address.find({ userId }).lean();
 
     // Fetch available coupons
-    const coupon = await Coupon.find().lean();
+    // Fetch only usable coupons (not used by the current user)
+    const coupon = await Coupon.find({
+      $or: [
+        { usedBy: { $ne: userData._id } }, // Not used by this user
+        { usedBy: { $exists: false } },    // Not assigned to any user
+        { isUsed: false }                  // If you track usage with a boolean field
+      ]
+    }).lean();
 
     // Get the cart data to match product IDs and quantities
   const cartItems = await Cart.find({ userId: ID }).lean();

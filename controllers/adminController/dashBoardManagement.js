@@ -194,8 +194,24 @@ const getSales = async (req, res) => {
 };
 
 
+const getChartData = (req, res) => {
+    try {
+        res.json({
+            months: months,
+            revnueByMonth: revnueByMonth,
+            odersByMonth: odersByMonth,
+            cat: categories,
+            revenue: revenues
+        });
+    } catch (error) {
+        console.error('Error fetching chart data:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
 
 module.exports = {
     loadDashboard,
     getSales,
+    getChartData,
 };

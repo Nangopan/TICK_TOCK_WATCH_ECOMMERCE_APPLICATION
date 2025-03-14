@@ -1,14 +1,15 @@
 const express = require('express')
 const router = express.Router()
-const { getLogin, doLogin, doLogout,getDashboard } = require("../controllers/adminController/adminController")
+const { getLogin, doLogin, doLogout,getDashboard,loadReviews } = require("../controllers/adminController/adminController")
 const { showProduct, addProductPage, addProduct, blockProduct, showeditProduct, updateProduct, deleteProdImage } = require('../controllers/adminController/productManagement');
 const { addCategoryPage, addNewCategory, showCategoryPage, unListCategory, showEditCategory, updateCategory } = require('../controllers/adminController/categoryManagement');
 const { usersPage, blockUser } = require('../controllers/adminController/userManagement');
 const { ordersPage, orderDetails, changeStatus } = require('../controllers/adminController/ordersManagement');
 const { couponPage, addCouponPage, addCouponPost, editCouponPage, editCouponPost, deleteCoupon } = require('../controllers/adminController/couponManagement');
+const {loadBanner,addBanner,addBannerPost,editBanner,deleteBanner, updateBannerPost}=require("../controllers/adminController/bannerManagement")
 
 const{ productOfferPage, addProductOfferPage, addProductOffer, editProductOfferPage, editProductOffer, deleteProductOffer, categoryOfferPage, addCategoryOfferPage, addCategoryOffer, editCategoryOfferPage, editCategoryOffer, deleteCategoryOffer } = require('../controllers/adminController/offerManagement');
-const {  loadDashboard, getSales}=require('../controllers/adminController/dashBoardManagement');
+const {  loadDashboard, getSales,getChartData}=require('../controllers/adminController/dashBoardManagement');
 const { isLogin, isLogout } = require("../middleware/adminAuth")
 const store = require('../middleware/multer')
 
@@ -83,6 +84,16 @@ router.delete('/admin/deleteCatOffer/:id', isLogin, deleteCategoryOffer)
 
 
 router.get('/admin/get_sales',isLogin, getSales)
+router.get('/admin/get_chart_data',isLogin, getChartData)
+
+router.get('/admin/banners', loadBanner)
+router.get('/admin/add_banner', addBanner)
+router.post('/admin/add_banner', store.single('image'),addBannerPost)
+router.get('/admin/delete_banner',deleteBanner)
+router.get('/admin/edit_banner/:id' ,editBanner)
+router.post('/admin/edit_banner/:id' , store.single('image'),  updateBannerPost )
+
+router.get('/admin/reviews' ,loadReviews)
 
 module.exports = router
 
