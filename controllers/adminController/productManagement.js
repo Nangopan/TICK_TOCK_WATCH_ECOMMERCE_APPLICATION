@@ -34,7 +34,7 @@ const showProduct = async (req, res) => {
     const count = await Product.find({}).countDocuments();
     const totalPages = Math.ceil(count / limit); 
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-    console.log(product);    
+    console.log(product,pages);    
     res.render("admin/product", { layout: "adminLayout", product, pages });
   } catch (error) {
     console.log(error.message);

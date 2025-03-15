@@ -157,50 +157,58 @@
                                                                 </td>
                                                             </tr>
                                                             {{/each}}
+                                                            <tr>
+                                                                <td colspan="5">
+                                                                    <!-- Modified section for horizontal alignment -->
+                                                                    <div class="d-flex justify-content-end align-items-start w-100">
+                                                                        <article class="text-end">
+                                                                            <dl class="dlist">
+                                                                                <dt>Delivery:</dt>
+                                                                                <dd>
+                                                                                    <span class="text-danger">+₹ 50</span>
+                                                                                </dd>
+                                                                            </dl>
+                                                                            <dl class="dlist">
+                                                                                <dt>Discount:</dt>
+                                                                                <dd>{{#if myOrderDetails.discountAmt}}
+                                                                                    <span class="text-success">-₹ {{myOrderDetails.discountAmt}}</span>
+                                                                                    {{else}}
+                                                                                    <span class="text-success">-₹ 0</span>
+                                                                                    {{/if}}
+                                                                                </dd>
+                                                                            </dl>
+                                                                            <dl class="dlist">
+                                                                                <dt>Grand Total:</dt>
+                                                                                {{#if myOrderDetails.discountAmt}}
+                                                                                    <dd>
+                                                                                        <b id="grandTotal" class="h5">₹{{myOrderDetails.amountAfterDscnt}}</b>
+                                                                                    </dd>
+                                                                                {{else}}
+                                                                                    <dd>
+                                                                                        <b id="grandTotal" class="h5">₹{{add myOrderDetails.total 0}}</b>
+                                                                                    </dd>
+                                                                                {{/if}}
+                                                                            </dl>
+                                                                            <dl class="dlist">
+                                                                                <dt class="text-muted">Status:</dt>
+                                                                                <dd>
+                                                                                    <span class="badge rounded-pill alert-success text-success">{{myOrderDetails.status}}</span>
+                                                                                </dd>
+                                                                            </dl>
+                                                                            
+                                                                            {{#statuchecker myOrderDetails}}
+                                                                            {{else}}
+                                                                            {{/statuchecker}}
+                                                                        </article>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
-                                                <!-- Order summary row outside of table for better horizontal alignment -->
-                                 <div class="d-flex justify-content-end mt-4">
-    <div class="order-summary d-flex flex-wrap align-items-center p-3 bg-light rounded shadow-sm">
-        <div class="d-flex align-items-center px-3 py-2 border-end">
-            <span class="text-muted me-3 fw-bold">Delivery:</span>
-            <span class="text-danger">+₹ 50</span>
-        </div>
-        <div class="d-flex align-items-center px-3 py-2 border-end">
-            <span class="text-muted me-3 fw-bold">Discount:</span>
-            <span class="text-success">
-                {{#if myOrderDetails.discountAmt}}
-                -₹ {{myOrderDetails.discountAmt}}
-                {{else}}
-                -₹ 0
-                {{/if}}
-            </span>
-        </div>
-        <div class="d-flex align-items-center px-3 py-2 border-end">
-            <span class="text-muted me-3 fw-bold">Grand Total:</span>
-            <span>
-                <b id="grandTotal" class="h5 mb-0">
-                    {{#if myOrderDetails.discountAmt}}
-                    ₹{{myOrderDetails.amountAfterDscnt}}
-                    {{else}}
-                    ₹{{add myOrderDetails.total 0}}
-                    {{/if}}
-                </b>
-            </span>
-        </div>
-        <div class="d-flex align-items-center px-3 py-2">
-            <span class="text-muted me-3 fw-bold">Status:</span>
-            <span class="badge rounded-pill alert-success text-success">{{myOrderDetails.status}}</span>
-        </div>
-        
-        {{#statuchecker myOrderDetails}}
-        {{else}}
-        {{/statuchecker}}
-    </div>
-</div>
                                             </div>
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-1"></div>
+                                            <div class="col-lg-5">
                                                 <div class="box shadow-sm bg-light">
                                                     <!-- Optional: any other information you want to show -->
                                                 </div>
@@ -275,102 +283,48 @@ console.log('Grand Total:', amount);
         }
 
         // Event listener for canceling individual products
-    $('body').on('click', '.cancel-btn', function () {
-    const orderId = $(this).data('order-id');
-    const productId = $(this).data('prod-id');
-    const $button = $(this); // Store reference to button
+        $('body').on('click', '.cancel-btn', function () {
+            const orderId = $(this).data('order-id');
+            const productId = $(this).data('prod-id');
 
-    // Disable the button immediately to prevent multiple clicks
-    $button.prop('disabled', true);
-    // Add visual feedback by changing appearance
-    $button.css({
-        'opacity': '0.5',
-        'background-color': '#d6d6d6',
-        'border-color': '#c0c0c0',
-        'color': '#808080',
-        'cursor': 'not-allowed',
-        'transition': 'opacity 0.3s ease'
-    });
-
-    if (orderId && productId) {
-        $.ajax({
-            type: 'PUT',
-            url: '/cancel-one-product',
-            contentType: 'application/json',
-            data: JSON.stringify({ id: orderId, prodId: productId }),
-            success: function (response) {
-                if (response.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Cancelled product',
-                        text: response.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        // Store the cancelled status in localStorage before reload
-                        let cancelledButtons = JSON.parse(localStorage.getItem('cancelledButtons') || '{}');
-                        cancelledButtons[`${orderId}-${productId}`] = true;
-                        localStorage.setItem('cancelledButtons', JSON.stringify(cancelledButtons));
-                        window.location.reload();
-                    });
-                }
-            },
-            error: function (error) {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
-                // Re-enable the button on error
-                $button.prop('disabled', false).css({
-                    'opacity': '1',
-                    'background-color': '',
-                    'border-color': '',
-                    'color': '',
-                    'cursor': '',
-                    'transition': ''
-                });
-            }
-        });
-    } else {
-        alert('Invalid order or product ID.');
-        // Re-enable the button if IDs are invalid
-        $button.prop('disabled', false).css({
-            'opacity': '1',
-            'background-color': '',
-            'border-color': '',
-            'color': '',
-            'cursor': '',
-            'transition': ''
-        });
-    }
-});
-
-// Add this code to apply disabled state on page load
-$(document).ready(function() {
-    // After the page loads, check localStorage for cancelled buttons
-    const cancelledButtons = JSON.parse(localStorage.getItem('cancelledButtons') || '{}');
-    
-    // Apply disabled state to any previously cancelled buttons
-    $('.cancel-btn').each(function() {
-        const orderId = $(this).data('order-id');
-        const productId = $(this).data('prod-id');
-        
-        if (cancelledButtons[`${orderId}-${productId}`]) {
+            // Disable the button immediately to prevent multiple clicks
             $(this).prop('disabled', true);
+            // Add visual feedback by changing appearance
             $(this).css({
                 'opacity': '0.5',
                 'background-color': '#d6d6d6',
                 'border-color': '#c0c0c0',
                 'color': '#808080',
-                'cursor': 'not-allowed'
+                'cursor': 'not-allowed',
+                'transition': 'opacity 0.3s ease'
             });
-        }
-    });
 
-    // Your existing ready code would continue below...
-});
-
-
-
-        
+            if (orderId && productId) {
+                $.ajax({
+                    type: 'PUT',
+                    url: '/cancel-one-product',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ id: orderId, prodId: productId }),
+                    success: function (response) {
+                        if (response.success) {
+                             Swal.fire({
+                            icon: 'success',
+                            title: 'Cancelled product',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(()=>{window.location.reload();})
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            } else {
+                alert('Invalid order or product ID.');
+            }
+        });
 
         // Event listener for canceling the entire order
         $('#cancelOrder').on('click', function () {
