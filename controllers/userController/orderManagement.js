@@ -93,7 +93,8 @@ const cancelOrder = async (req, res) => {
                         history: {
                             amount: notCancelledAmt,
                             status: 'Refund Amount for Order Cancellation',
-                            date: Date.now()
+                            date: Date.now(),
+                            orderId: id
                         }
                     }
                 }
@@ -170,7 +171,8 @@ const returnOrder = async (req, res) => {
                         history: {
                             amount: notCancelledAmt,
                             status: 'Refund Amount for Order Return',
-                            date: Date.now()
+                            date: Date.now(),
+                            orderId: id
                         }
                     }
                 }
@@ -260,7 +262,8 @@ const cancelOneProduct = async (req, res) => {
                         history: {
                             amount: productprice,
                             status: `Refund Amount for Cancel ${result.product[0].name}`,
-                            date: Date.now()
+                            date: Date.now(), 
+                            orderId: id
                         }
                     }
                 }
@@ -331,7 +334,8 @@ const returnOneProduct = async (req, res) => {
                         history: {
                             amount: newTotal,
                             status: `Refund Amount for Return ${result.product[0].name}`,
-                            date: Date.now()
+                            date: Date.now(),
+                            orderId: id
                         }
                     }
                 }
@@ -349,7 +353,8 @@ const returnOneProduct = async (req, res) => {
                         history: {
                             amount: productprice,
                             status: `[return] ${result.product[0].name}`,
-                            date: Date.now()
+                            date: Date.now(),
+                            orderId: id
                         }
                     }
                 }

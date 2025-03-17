@@ -11,7 +11,8 @@ const {loadBanner,addBanner,addBannerPost,editBanner,deleteBanner, updateBannerP
 const{ productOfferPage, addProductOfferPage, addProductOffer, editProductOfferPage, editProductOffer, deleteProductOffer, categoryOfferPage, addCategoryOfferPage, addCategoryOffer, editCategoryOfferPage, editCategoryOffer, deleteCategoryOffer } = require('../controllers/adminController/offerManagement');
 const {  loadDashboard, getSales,getChartData}=require('../controllers/adminController/dashBoardManagement');
 const { isLogin, isLogout } = require("../middleware/adminAuth")
-const store = require('../middleware/multer')
+const store = require('../middleware/multer');
+const { walletManagement, transactionDetails } = require('../controllers/adminController/walletManagement');
 
 // Admin Login & Logout
 
@@ -94,6 +95,11 @@ router.get('/admin/edit_banner/:id' ,editBanner)
 router.post('/admin/edit_banner/:id' , store.single('image'),  updateBannerPost )
 
 router.get('/admin/reviews' ,loadReviews)
+
+//wallet
+
+router.get('/admin/wallet' , walletManagement)
+router.get('/admin/wallet/:transactionId', transactionDetails);
 
 module.exports = router
 

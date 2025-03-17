@@ -100,7 +100,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {{#each orderedProDet}}
+                                                            {{!-- {{#each orderedProDet}}
                                                             <tr>
                                                                 <td>
                                                                     <a class="itemside" href="#">
@@ -156,53 +156,143 @@
                                                                     {{/singlestatuchecker}}
                                                                 </td>
                                                             </tr>
-                                                            {{/each}}
+                                                            {{/each}} --}}
+{{#each orderedProDet}}
+<tr>
+    <td>
+        <a class="itemside" href="#">
+            <div class="left">
+                <img src="/assets/imgs/products/{{this.product.image}}" width="40" height="40" class="img-xs" alt="Item">
+            </div>
+            <div class="info">{{this.product.name}}</div>
+        </a>
+    </td>
+    <td>
+        ₹{{#ifeq this.product.discountPrice undefined}}{{this.product.price}}{{else}}{{this.product.discountPrice}}{{/ifeq}}
+    </td>
+    <td>{{this.product.quantity}}</td>
+    <td>
+        ₹{{#ifeq this.product.discountPrice undefined}}
+            {{this.product.quantity}} × {{this.product.price}}
+        {{else}}
+            {{this.product.quantity}} × {{this.product.discountPrice}}
+        {{/ifeq}}
+    </td>
+    <td class="text-end">
+
+        {{#ifeq this.product.isCancelled true}}
+            <!-- Product is cancelled, show only "Cancelled" button -->
+            <button class="btn btn-primary btn-sm cancel-btn" 
+                    style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" 
+                    disabled>
+                Cancelled
+            </button>
+        {{else}}
+
+            {{#ifeq this.product.isReturned true}}
+                <!-- Product is returned, show only "Returned" button -->
+                <button class="btn btn-primary btn-sm return-btn" 
+                        style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" 
+                        disabled>
+                    Returned
+                </button>
+            {{else}}
+
+                {{#ifeq ../myOrderDetails.status 'Delivered'}}
+                    <!-- Order is delivered: show "Return" button -->
+                    <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" 
+                            data-order-id="{{../myOrderDetails._id}}" 
+                            data-prod-id="{{this.product._id}}">
+                        Return
+                    </button>
+                {{else}}
+                    <!-- Order is NOT delivered: show "Cancel" button -->
+                    <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" 
+                            data-order-id="{{../myOrderDetails._id}}" 
+                            data-prod-id="{{this.product._id}}">
+                        Cancel
+                    </button>
+                {{/ifeq}}
+
+            {{/ifeq}}
+        {{/ifeq}}
+
+    </td>
+</tr>
+{{/each}}
+
+
+
+
+
+
                                                             <tr>
-                                                                <td colspan="5">
-                                                                    <!-- Modified section for horizontal alignment -->
-                                                                    <div class="d-flex justify-content-end align-items-start w-100">
-                                                                        <article class="text-end">
-                                                                            <dl class="dlist">
-                                                                                <dt>Delivery:</dt>
-                                                                                <dd>
-                                                                                    <span class="text-danger">+₹ 50</span>
-                                                                                </dd>
-                                                                            </dl>
-                                                                            <dl class="dlist">
-                                                                                <dt>Discount:</dt>
-                                                                                <dd>{{#if myOrderDetails.discountAmt}}
-                                                                                    <span class="text-success">-₹ {{myOrderDetails.discountAmt}}</span>
-                                                                                    {{else}}
-                                                                                    <span class="text-success">-₹ 0</span>
-                                                                                    {{/if}}
-                                                                                </dd>
-                                                                            </dl>
-                                                                            <dl class="dlist">
-                                                                                <dt>Grand Total:</dt>
-                                                                                {{#if myOrderDetails.discountAmt}}
-                                                                                    <dd>
-                                                                                        <b id="grandTotal" class="h5">₹{{myOrderDetails.amountAfterDscnt}}</b>
-                                                                                    </dd>
-                                                                                {{else}}
-                                                                                    <dd>
-                                                                                        <b id="grandTotal" class="h5">₹{{add myOrderDetails.total 0}}</b>
-                                                                                    </dd>
-                                                                                {{/if}}
-                                                                            </dl>
-                                                                            <dl class="dlist">
-                                                                                <dt class="text-muted">Status:</dt>
-                                                                                <dd>
-                                                                                    <span class="badge rounded-pill alert-success text-success">{{myOrderDetails.status}}</span>
-                                                                                </dd>
-                                                                            </dl>
-                                                                            
-                                                                            {{#statuchecker myOrderDetails}}
-                                                                            {{else}}
-                                                                            {{/statuchecker}}
-                                                                        </article>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
+    <td colspan="5">
+        <!-- Order Summary Card -->
+        <div class="card mt-3 mb-3 shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Order Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- Order tracking or other info could go here -->
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-end">
+                            <article class="text-end w-100">
+                                <table class="table table-borderless table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-end pe-3">Subtotal:</td>
+                                            <td class="text-end fw-bold">₹{{myOrderDetails.total}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-end pe-3">Delivery:</td>
+                                            <td class="text-end text-danger">+₹ 50</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-end pe-3">Discount:</td>
+                                            <td class="text-end text-success">
+                                                {{#if myOrderDetails.discountAmt}}
+                                                    -₹ {{myOrderDetails.discountAmt}}
+                                                {{else}}
+                                                    -₹ 0
+                                                {{/if}}
+                                            </td>
+                                        </tr>
+                                        <tr class="border-top">
+                                            <td class="text-end pe-3 pt-2">
+                                                <span class="h6">Grand Total:</span>
+                                            </td>
+                                            <td class="text-end pt-2">
+                                                {{#if myOrderDetails.discountAmt}}
+                                                    <b id="grandTotal" class="h5">₹{{myOrderDetails.amountAfterDscnt}}</b>
+                                                {{else}}
+                                                    <b id="grandTotal" class="h5">₹{{add myOrderDetails.total 0}}</b>
+                                                {{/if}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-end pe-3">Status:</td>
+                                            <td class="text-end">
+                                                <span class="badge rounded-pill alert-success text-success">{{myOrderDetails.status}}</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                                {{#statuchecker myOrderDetails}}
+                                {{else}}
+                                {{/statuchecker}}
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </td>
+</tr>
                                                         </tbody>
                                                     </table>
                                                 </div>

@@ -1,0 +1,67 @@
+{{#each orderedProDet}}
+<tr>
+    <td>
+        <a class="itemside" href="#">
+            <div class="left">
+                <img src="/assets/imgs/products/{{this.product.image}}" width="40" height="40" class="img-xs" alt="Item">
+            </div>
+            <div class="info">{{this.product.name}}</div>
+        </a>
+    </td>
+    <td>
+        ₹{{#ifeq this.product.discountPrice undefined}}{{this.product.price}}{{else}}{{this.product.discountPrice}}{{/ifeq}}
+    </td>
+    <td>{{this.product.quantity}}</td>
+    <td>
+        ₹{{#ifeq this.product.discountPrice undefined}}
+            {{this.product.quantity}} × {{this.product.price}}
+        {{else}}
+            {{this.product.quantity}} × {{this.product.discountPrice}}
+        {{/ifeq}}
+    </td>
+    <td class="text-end">
+        {{#ifeq this.product.isCancelled true}}
+            <!-- Product is cancelled, show disabled Cancel button -->
+            <button class="btn btn-primary btn-sm cancel-btn" 
+                    style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" 
+                    disabled>
+                Cancelled
+            </button>
+        {{else}}
+            {{#ifeq ../myOrderDetails.status 'Cancelled'}}
+                <!-- Entire order is cancelled, disable the cancel button -->
+                <button class="btn btn-primary btn-sm cancel-btn" 
+                        style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" 
+                        disabled>
+                    Cancel
+                </button>
+            {{else}}
+                <!-- Enable cancel button for active products -->
+                <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" 
+                        data-order-id="{{../myOrderDetails._id}}" 
+                        data-prod-id="{{this.product._id}}">
+                    Cancel
+                </button>
+            {{/ifeq}}
+        {{/ifeq}}
+
+        {{#ifeq this.product.isReturned true}}
+            <!-- Product is already returned, show disabled Return button -->
+            <button class="btn btn-primary btn-sm return-btn" 
+                    style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" 
+                    disabled>
+                Returned
+            </button>
+        {{else}}
+            {{#ifeq ../myOrderDetails.status 'Delivered'}}
+                <!-- Enable Return button for delivered items -->
+                <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" 
+                        data-order-id="{{../myOrderDetails._id}}" 
+                        data-prod-id="{{this.product._id}}">
+                    Return
+                </button>
+            {{/ifeq}}
+        {{/ifeq}}
+    </td>
+</tr>
+{{/each}}

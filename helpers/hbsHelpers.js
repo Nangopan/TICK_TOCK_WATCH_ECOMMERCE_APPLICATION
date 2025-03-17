@@ -102,6 +102,8 @@ function singleIsCancelled(Handlebars) {
 }
 
 
+
+
 function statushelper(Handlebars){
   Handlebars.registerHelper('ifeq', function (a, b, options) {
       if (a == b) { return options.fn(this); }

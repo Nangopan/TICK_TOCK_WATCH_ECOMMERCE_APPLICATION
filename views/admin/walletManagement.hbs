@@ -1,0 +1,82 @@
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="content-header">
+            <h2 class="content-title">Wallet Transactions</h2>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Transaction ID</th>
+                                <th class="text-center">User Name</th>
+                                <th class="text-center">Transaction Type</th>
+                                <th class="text-center">Date</th>
+                                 <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        {{#if transactions.length}}
+                        <tbody>
+                            {{#each transactions}}
+                            <tr>
+                                <td class="text-center">{{this.transactionId}}</td>
+                                <td class="text-center">{{this.user.name}}</td>
+                                <td class="text-center">
+                                    {{#if (eq this.transactionType "Credit")}}
+                                        <span class="badge rounded-pill alert-success">Credit</span>
+                                    {{else}}
+                                        <span class="badge rounded-pill alert-danger">Debit</span>
+                                    {{/if}}
+                                </td>
+                                <td class="text-center">{{this.transactionDate}}</td>
+                                 <td class="text-center">
+                                    <a href="/admin/wallet/{{this.transactionId}}" 
+                                        class="btn btn-sm font-sm rounded btn-brand">
+                                        <i class="material-icons md-visibility"></i> View Details
+                                    </a>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                        {{else}}
+                        <tbody>
+                            <tr>
+                                <td colspan="4" class="text-center">No Transactions Found</td>
+                            </tr>
+                        </tbody>
+                        {{/if}}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination Section -->
+        <div class="pagination-area mt-15 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start">
+                    {{#each pages}}
+                    <li class="page-item active"><a class="page-link" href="?page={{this}}">{{this}}</a></li>
+                    {{/each}}
+                </ul>
+            </nav>
+        </div>
+
+    </section>
+
+    <footer class="main-footer font-xs">
+        <div class="row pb-30 pt-15">
+            <div class="col-sm-6">
+                <script>
+                    document.write(new Date().getFullYear())
+                </script> ©, Tick Tock.
+            </div>
+            <div class="col-sm-6">
+                <div class="text-sm-end">
+                    All rights reserved
+                </div>
+            </div>
+        </div>
+    </footer>
+</main>

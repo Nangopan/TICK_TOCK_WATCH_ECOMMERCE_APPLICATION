@@ -11,6 +11,7 @@ const HttpStatus = require('../../httpStatus');
 const referralSchema = require("../../model/referralSchema")
 
 const mongoose = require("mongoose");
+const { isCancelled } = require("../../helpers/hbsHelpers");
 //const ObjectId = require('mongoose')
 const {
   Types: { ObjectId },
@@ -280,6 +281,8 @@ const orderDetails = async (req, res) => {
                     image: "$product.image",
                     quantity: "$product.quantity",
                     price: "$product.price", // Original price
+                    isCancelled: "$product.isCancelled",
+                    isReturned: "$product.isReturned",
                     discountPrice: {
                         $cond: {
                             if: { $gt: ["$productOffer.discountPrice", 0] }, // Discount price exists
@@ -303,7 +306,7 @@ const orderDetails = async (req, res) => {
 
       console.log("myOrderDetails:", myOrderDetails);
       offerprice-=(myOrderDetails.total)
-
+      console.log(orderedProDet)
       res.render('user/orderDetails', {offerprice, address,orderedProDet, myOrderDetails, userData });
   } catch (error) {
       console.error("Error fetching order details:", error.message);

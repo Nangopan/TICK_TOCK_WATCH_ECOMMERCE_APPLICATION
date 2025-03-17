@@ -36,15 +36,11 @@
                                                 <button id="outofstock-btn" class="btn btn-md" style="background-color: #dc3545;">Out of stock</button>
                                             </span>
                                         {{else}}
-                                            {{#if this.ProductExistInCart}}
-                                            <span id="gocart">
-                                                <button id="addcart-btn" onclick="window.location.href='/cart'" class="button button-add-to-cart">Go to cart</button>
-                                            </span>
-                                            {{else}}
+                                           
                                             <span id="addcart">
                                                 <button id="addcart-btn" data-product-id="{{this.productId}}" class="button button-add-to-cart">Add to cart</button>
                                             </span>
-                                            {{/if}}
+                                            
                                         {{/if}}
                                     </td>
                                     <td class="rem action" data-whishlist-id="{{this._id}}" data-product-id="{{this.productId}}" data-title="Remove"><a href="#"><i class="fi-rs-trash"></i></a></td>
@@ -127,8 +123,7 @@
                         showConfirmButton: false,
                         timer: 1500
                     });
-                    $('#addcart').html('<button id="addcart-btn" onclick="window.location.href=\'/cart\'" class="button button-add-to-cart">Go to cart</button>');
-                    
+                
                     // Trigger the custom event to update cart count
                     $(document).trigger('cart-wishlist-updated');
                 } else {

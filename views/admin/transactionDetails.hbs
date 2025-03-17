@@ -1,0 +1,58 @@
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="content-header">
+            <h2 class="content-title">Transaction Details</h2>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th>Transaction ID:</th>
+                        <td>{{transaction.transactionId}}</td>
+                    </tr>
+                    <tr>
+                        <th>Transaction Date:</th>
+                        <td>{{transaction.transactionDate}}</td>
+                    </tr>
+                    <tr>
+                        <th>User Name:</th>
+                        <td>{{transaction.user.name}}</td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td>{{transaction.user.email}}</td>
+                    </tr>
+                    <tr>
+                        <th>Transaction Type:</th>
+                        <td>
+                            {{#if (eq transaction.transactionType "Credit")}}
+                                <span class="badge rounded-pill alert-success">Credit</span>
+                            {{else}}
+                                <span class="badge rounded-pill alert-danger">Debit</span>
+                            {{/if}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Amount:</th>
+                        <td>${{transaction.amount}}</td>
+                    </tr>
+                    <tr>
+                        <th>Transaction Source:</th>
+                        <td>{{transaction.status}}</td>
+                    </tr>
+                    {{#if transaction.orderId}}
+                    <tr>
+                        <th>Related Order:</th>
+                        <td>
+                            <a href="/admin/order_details/{{transaction.orderId}}" class="btn btn-sm btn-info">
+                                View Order Details
+                            </a>
+                        </td>
+                    </tr>
+                    {{/if}}
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
