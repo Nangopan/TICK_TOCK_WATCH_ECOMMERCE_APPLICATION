@@ -24,11 +24,10 @@ const showCategoryPage = async (req, res) => {
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
     const catSaveMsg = req.session.catSave ? "Category added successfully..!!" : null;
-    //const catExistMsg = req.session.catExist ? "Category already exists..!!" : null;
-
-    // Reset the session messages
+  
+    
     req.session.catSave = false;
-    //req.session.catExist = false;
+    
 
     res.render("admin/show_category", {
       admin: true,
@@ -36,7 +35,6 @@ const showCategoryPage = async (req, res) => {
       currentPage: page,
       category,
       catSaveMsg,
-      //catExistMsg,
       layout: "adminLayout",
     });
   } catch (error) {
@@ -93,24 +91,24 @@ const addNewCategory = async (req, res) => {
 // Unlist Category
 const unListCategory = async (req, res) => {
   try {
-    const { id } = req.body; // Category ID
+    const { id } = req.body; 
     let category = await Category.findById(id);
       console.log(category)
     if (!category) {
       return res.status(404).send("Category not found");
     }
 
-    let newListed = category.isListed; // Toggle isListed
+    let newListed = category.isListed; 
 
-    // Update category status
+    
     await Category.findByIdAndUpdate(id, { $set: { isListed: !newListed } }, { new: true });
 
     console.log(`Category ${id} updated. New isListed value: ${newListed}`);
 
-    // Block or unblock products associated with this category
+    
     const updateResult = await Product.updateMany(
-      { category: category._id },  // Find products of this category
-      { $set: { isBlocked: newListed } } // Block if category is unlisted, unblock if listed
+      { category: category._id },  
+      { $set: { isBlocked: newListed } } 
     );
 
     console.log(`Products updated: ${updateResult.modifiedCount}`);
@@ -123,8 +121,6 @@ const unListCategory = async (req, res) => {
 };
 
 
-
-//Load Edit Category Page
 const showEditCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;

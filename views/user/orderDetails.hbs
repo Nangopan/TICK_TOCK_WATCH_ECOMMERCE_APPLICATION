@@ -100,63 +100,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {{!-- {{#each orderedProDet}}
-                                                            <tr>
-                                                                <td>
-                                                                    <a class="itemside" href="#">
-                                                                        <div class="left">
-                                                                            <img src="/assets/imgs/products/{{this.product.image}}"
-                                                                                width="40" height="40" class="img-xs"
-                                                                                alt="Item">
-                                                                        </div>
-                                                                        <div class="info">{{this.product.name}}</div>
-                                                                    </a>
-                                                                </td>
-                                                                <td>
-                                                                    <!-- Display discount price if available, otherwise show the original price -->
-                                                                    ₹{{#if this.product.discountPrice}}{{this.product.discountPrice}}{{else}}{{this.product.price}}{{/if}}
-                                                                </td>
-                                                                <td>{{this.product.quantity}}</td>
-                                                                <td>
-                                                                    <!-- Multiply quantity with either discount price or original price -->
-                                                                    ₹{{#if this.product.discountPrice}}
-                                                                        {{multiply this.product.quantity this.product.discountPrice}}
-                                                                    {{else}}
-                                                                        {{multiply this.product.quantity this.product.price}}
-                                                                    {{/if}}
-                                                                </td>
-
-                                                                <td class="text-end">                                                                    
-                                                                    {{#singlestatuchecker this.product}}
-                                                                        {{#ifCond ../myOrderDetails.status '==' 'Delivered'}}
-                                                                            {{#if (eq ../orderedProDet.length 1)}}
-                                                                                <!-- Disable the return button if only one product exists -->
-                                                                                <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Return</button>
-                                                                            {{else}}
-                                                                                <!-- Enable the return button if there are multiple products -->
-                                                                                <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}">Return</button>
-                                                                            {{/if}}
-                                                                        {{else}} 
-                                                                            {{#ifCond ../myOrderDetails.status '==' 'Payment Failed'}}
-                                                                                <button id="retryPayment" class="btn btn-primary btn-sm retry-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Retry Payment</button>
-                                                                            {{else}}
-                                                                                {{#ifCond ../myOrderDetails.status '==' 'Cancelled'}}
-                                                                                    <!-- Disable the cancel button for each product if the entire order is cancelled -->
-                                                                                    <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Cancel</button>
-                                                                                {{else}}
-                                                                                    {{#if (eq ../orderedProDet.length 1)}}
-                                                                                        <!-- Disable the cancel button if only one product exists -->
-                                                                                        <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Cancel</button>
-                                                                                    {{else}}
-                                                                                        <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}">Cancel</button>
-                                                                                    {{/if}}
-                                                                                {{/ifCond}}
-                                                                            {{/ifCond}}
-                                                                        {{/ifCond}}
-                                                                    {{/singlestatuchecker}}
-                                                                </td>
-                                                            </tr>
-                                                            {{/each}} --}}
+                                                         
 {{#each orderedProDet}}
 <tr>
     <td>
@@ -172,11 +116,11 @@
     </td>
     <td>{{this.product.quantity}}</td>
     <td>
-        ₹{{#ifeq this.product.discountPrice undefined}}
-            {{this.product.quantity}} × {{this.product.price}}
-        {{else}}
-            {{this.product.quantity}} × {{this.product.discountPrice}}
-        {{/ifeq}}
+        ₹{{#if this.product.discountPrice}}
+                                                                        {{multiply this.product.quantity this.product.discountPrice}}
+                                                                    {{else}}
+                                                                        {{multiply this.product.quantity this.product.price}}
+                                                                    {{/if}}
     </td>
     <td class="text-end">
 
@@ -243,10 +187,7 @@
                             <article class="text-end w-100">
                                 <table class="table table-borderless table-sm">
                                     <tbody>
-                                        <tr>
-                                            <td class="text-end pe-3">Subtotal:</td>
-                                            <td class="text-end fw-bold">₹{{myOrderDetails.total}}</td>
-                                        </tr>
+
                                         <tr>
                                             <td class="text-end pe-3">Delivery:</td>
                                             <td class="text-end text-danger">+₹ 50</td>
@@ -580,7 +521,7 @@ console.log('Grand Total:', amount);
             "key": "rzp_test_OsDtnewxAfAwm0", 
             "amount": parseInt(amount),
             "currency": "INR",
-            "name": "Mobile Bazaar",
+            "name": "Tick Tock",
             "order_id": undefined,
             "handler": function (response) {
                 retryPayment(orderId, 'Pending');

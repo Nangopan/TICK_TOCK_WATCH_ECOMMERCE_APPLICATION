@@ -51,6 +51,8 @@ const salesReportTemplate = `
           <tr>
             <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Date</th>
             <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Order id</th>
+             <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Transaction id</th>
+              <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Transaction date</th>
             <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Payment Method</th>
             <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Coupon</th>
             <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Coupon Used</th>
@@ -63,6 +65,8 @@ const salesReportTemplate = `
             <tr style="border-bottom: 1px solid #ddd;">
               <td style="padding: 10px 15px; text-align: center;">{{this.date}}</td>
               <td style="padding: 10px 15px; text-align: center;">{{this.orderId}}</td>
+              <td style="padding: 10px 15px; text-align: center;">{{this.transactionId}}</td>
+              <td style="padding: 10px 15px; text-align: center;">{{this.transactionDate}}</td>
               <td style="padding: 10px 15px; text-align: center;">{{this.payMethod}}</td>
               <td style="padding: 10px 15px; text-align: center;">{{this.coupon}}</td>
               <td style="padding: 10px 15px; text-align: center;">{{this.couponUsed}}</td>

@@ -10,9 +10,9 @@ const HttpStatus = require('../../httpStatus');
 
 
 let months = [];
-let odersByMonth = [];
-let revnueByMonth = [];
-let totalRevnue = 0;
+let ordersByMonth = [];
+let revenueByMonth = [];
+let totalRevenue = 0;
 let totalSales = 0;
 let categories = [];
 let revenues = [];
@@ -94,20 +94,20 @@ const loadDashboard = async (req, res) => {
         console.log(chartData);
 
         months = [];
-        odersByMonth = [];
-        revnueByMonth = [];
-        totalRevnue = 0;
+        ordersByMonth = [];
+        revenueByMonth = [];
+        totalRevenue = 0;
         totalSales = 0;
 
         chartData.forEach((data) => {
             months.push(data.month);
-            odersByMonth.push(data.totalOrders);
-            revnueByMonth.push(data.totalRevenue);
-            totalRevnue += Number(data.totalRevenue);
+            ordersByMonth.push(data.totalOrders);
+            revenueByMonth.push(data.totalRevenue);
+            totalRevenue += Number(data.totalRevenue);
             totalSales += Number(data.totalOrders);
         });
 
-        const thisMonthOrder = odersByMonth.length > 0 ? odersByMonth[odersByMonth.length - 1] : 0;
+        const thisMonthOrder = ordersByMonth.length > 0 ? ordersByMonth[odersByMonth.length - 1] : 0;
         const thisMonthSales = revnueByMonth.length > 0 ? revnueByMonth[revnueByMonth.length - 1] : 0;
 
         let bestSellings = await Product.find().sort({ bestSelling: -1 }).limit(5).lean();
@@ -117,13 +117,13 @@ const loadDashboard = async (req, res) => {
 
         res.render('admin/dashBoard', {
             categoryCount,
-            revnueByMonth,
+            revenueByMonth,
             bestSellingCategory,
             bestSellings,
             popuarProducts,
             months,
-            odersByMonth,
-            totalRevnue,
+            ordersByMonth,
+            totalRevenue,
             categoryRevenue,
             totalSales,
             thisMonthOrder,
@@ -165,10 +165,16 @@ const getSales = async (req, res) => {
 
         let grandTotal = 0;
 
+        const generateTransactionId = () => {
+            return Math.floor(10000000 + Math.random() * 90000000).toString();
+        };
+
         formattedOrders.forEach((element) => {
             salesData.push({
                 date: element.date,
                 orderId: element.orderId,
+                 transactionId: generateTransactionId(),
+                 transactionDate: moment(element.date).format('YYYY-MM-DD'),
                 total: element.total,
                 payMethod: element.paymentMethod,
                 coupon: element.coupon,           
@@ -198,8 +204,8 @@ const getChartData = (req, res) => {
     try {
         res.json({
             months: months,
-            revnueByMonth: revnueByMonth,
-            odersByMonth: odersByMonth,
+            revenueByMonth: revenueByMonth,
+            ordersByMonth: ordersByMonth,
             cat: categories,
             revenue: revenues
         });
@@ -207,7 +213,7 @@ const getChartData = (req, res) => {
         console.error('Error fetching chart data:', error);
         res.status(500).send('Internal Server Error');
     }
-};
+};      
 
 
 module.exports = {

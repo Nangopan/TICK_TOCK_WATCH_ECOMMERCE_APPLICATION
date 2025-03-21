@@ -14,104 +14,7 @@ const ObjectId = require("mongoose");
 
 
 
-// const loadCheckoutPage = async (req, res) => {
-//   try {
-//     let userData = await User.findById(req.session.user._id).lean();
-//     const ID = new mongoose.Types.ObjectId(userData._id);
 
-//     const addressData = await Address.find({ userId: userData._id }).lean();
-//     let coupon = await Coupon.find().lean();
-
-//     const subTotal = await Cart.aggregate([
-//       {
-//         $match: {
-//           userId: ID,
-//         },
-//       },
-//       {
-//         $group: {
-//           _id: null,
-//           total: { $sum: "$subTotal" },
-//         },
-//       },
-//       {
-//         $project: {
-//           _id: 0,
-//           total: 1,
-//         },
-//       },
-//     ]);
-
-//     let cart = await Cart.aggregate([
-//       {
-//         $match: {
-//           userId: ID,
-//         },
-//       },
-//       {
-//         $lookup: {
-//           from: "products",
-//           foreignField: "_id",
-//           localField: "product_Id",
-//           as: "productData",
-//         },
-//       },
-//       {
-//         $unwind: {
-//           path: "$productData",
-//           preserveNullAndEmptyArrays: true,
-//         },
-//       },
-//       {
-//         $lookup: {
-//           from: "productoffers", 
-//           localField: "productData._id",
-//           foreignField: "productId",
-//           as: "productOffer",
-//         },
-//       },
-//       {
-//         $unwind: {
-//           path: "$productOffer",
-//           preserveNullAndEmptyArrays: true,
-//         },
-//       },
-//       {
-//         $project: {
-//           _id: 1,
-//           userId: 1,
-//           quantity: 1,
-//           value: 1,
-//           productName: "$productData.name",
-//           productPrice: {
-//             $cond: {
-//               if: { $gt: [{ $ifNull: ["$productOffer.discountPrice", 0] }, 0] },
-//               then: "$productOffer.discountPrice",
-//               else: "$productData.price",
-//             },
-//           },
-//           productDescription: "$productData.description",
-//           productImage: "$productData.imageUrl",
-//         },
-//       },
-//     ]);
-
-//     console.log("final->.......",cart);
-//     console.log("Subtotal:", subTotal);
-//     const cartData = await Cart.find({ userId: ID }).lean();
-//     console.log("Cart Data:", cartData);~
-//     res.render("user/checkout", {
-//       userData,
-//       addressData,
-//       subTotal: subTotal[0]?.total || 0, 
-//       cart,
-//       coupon,
-//     });
-//   } catch (error) {
-//     console.log(error.message);
-//     res.status(HttpStatus.InternalServerError).send("Internal Server Error");
-//   }
-// };
 
 const loadCheckoutPage = async (req, res) => {
   try {
@@ -119,25 +22,24 @@ const loadCheckoutPage = async (req, res) => {
     let userData = await User.findById(userId).lean();
     const ID = new mongoose.Types.ObjectId(userId);
 
-    // Fetch user address data
+    
     const addressData = await Address.find({ userId }).lean();
 
-    // Fetch available coupons
-    // Fetch only usable coupons (not used by the current user)
+    
     const coupon = await Coupon.find({
       $or: [
-        { usedBy: { $ne: userData._id } }, // Not used by this user
-        { usedBy: { $exists: false } },    // Not assigned to any user
-        { isUsed: false }                  // If you track usage with a boolean field
+        { usedBy: { $ne: userData._id } }, 
+        { usedBy: { $exists: false } },    
+        { isUsed: false }                  
       ]
     }).lean();
 
-    // Get the cart data to match product IDs and quantities
+    
   const cartItems = await Cart.find({ userId: ID }).lean();
 
     const cartItemtoRender = await Cart.find({ userId: ID })
   .populate({
-    path: "product_Id", // Populate product details
+    path: "product_Id", 
     model: "Product",
   })
   .lean(); 
@@ -146,7 +48,7 @@ const loadCheckoutPage = async (req, res) => {
   
   console.log("cartItems_______________________________",cartItemtoRender)
 
-    // If no items in cart, return an empty response for cart details
+    
     if (!cartItems.length) {
       return res.render("user/checkout", {
         userData,
@@ -157,7 +59,7 @@ const loadCheckoutPage = async (req, res) => {
       });
     }
 
-    // Fetch all products that are in the user's cart from the Product collection
+    
     const productIds = cartItems.map((item) => item.product_Id);
     const products = await Product.aggregate([
       {
@@ -165,7 +67,7 @@ const loadCheckoutPage = async (req, res) => {
       },
       {
         $lookup: {
-          from: "productoffers", // Match product offers
+          from: "productoffers", 
           localField: "_id",
           foreignField: "productId",
           as: "productOffer",
@@ -174,7 +76,7 @@ const loadCheckoutPage = async (req, res) => {
       {
         $unwind: {
           path: "$productOffer",
-          preserveNullAndEmptyArrays: true, // Include products without offers
+          preserveNullAndEmptyArrays: true, 
         },
       },
       {
@@ -195,7 +97,7 @@ const loadCheckoutPage = async (req, res) => {
       },
     ]);
 
-    // Combine cart quantities and product data
+    
     const cart = cartItems.map((cartItem) => {
       const product = products.find((p) => p._id.equals(cartItem.product_Id));
       return {
@@ -209,7 +111,7 @@ const loadCheckoutPage = async (req, res) => {
       };
     });
 
-    // Calculate the subtotal
+  
     const subTotal = cart.reduce((total, item) => total + item.value, 0);
 
     console.log("Final Cart:", cart);
@@ -332,7 +234,7 @@ const placeorder = async (req, res) => {
 
     console.log("stock...........>",'product.stock')
 
-    // Apply coupon if present
+    
     let finalTotal = totalamount;
     let discountAmt = 0;
 
@@ -380,7 +282,7 @@ const placeorder = async (req, res) => {
 
     })
 
-    // Mark the coupon as used after the order is placed
+    
     if (req.body.couponData) {
       await Coupon.updateOne(
         { code: req.body.couponName },
@@ -395,7 +297,7 @@ const placeorder = async (req, res) => {
 
       console.log(deletedCart, "deletedCart");
     };
-//save order ends
+
     if (addressId) {
       if (payMethod === "cash-on-delivery") {
         console.log("CASH ON DELIVERY");

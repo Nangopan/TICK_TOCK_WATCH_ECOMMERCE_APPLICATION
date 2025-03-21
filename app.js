@@ -60,6 +60,17 @@ runtimeOptions: {
   allowProtoPropertiesByDefault: true
   allowProtoMethodsByDefault: true
     }
+
+app.use(function(req,res,next){
+  res.status(404).render('404',{ layout: "empty",})
+})
+
+//error handler middleware
+app.use(function(err,req,res,next){
+  res.status(500)
+  res.render('error',{error:err},{ layout: "empty",})
+})
+
 const PORT = process.env.PORT
 
 app.listen(PORT, (req, res) => {

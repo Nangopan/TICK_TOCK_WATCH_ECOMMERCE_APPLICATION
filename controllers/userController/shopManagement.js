@@ -52,7 +52,7 @@ const searchAndSort = async (req, res) => {
     matchStage.$match.category = new mongoose.Types.ObjectId(categoryFilter);
   }
 
-  // Construct the sort stage
+
   const sortStage = { $sort: {} };
   switch (sortOption) {
     case "priceAsc":

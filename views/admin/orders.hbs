@@ -60,15 +60,7 @@
                                     <form action="/admin/change_status/{{this._id}}" method="post"
                                         onsubmit="return submitform(this);" class="order-status-form">
                                         <div class="d-flex w-50 ml-30">
-                                            {{!-- <div class="col-lg-2 col-6 col-md-3 w-100 mr-15">
-                                                <select name="status" class="form-select"
-                                                    aria-label="Default select example">
-                                                    <option selected disabled hidden>Change order status</option>
-                                                    <option value="Shipped" {{#ifCond this.status '==' 'Shipped'}}disabled{{/ifCond}} 
-                                                    {{#ifCond this.status '==' 'Delivered'}}disabled{{/ifCond}}>Shipped</option>
-                                                    <option value="Delivered" {{#ifCond this.status '==' 'Delivered'}}disabled{{/ifCond}}>Delivered</option>
-                                                </select>
-                                            </div> --}}
+                                           
                                             <div class="col-lg-2 col-6 col-md-3 w-100 mr-15">
                                                 <select name="status" class="form-select" aria-label="Default select example">
                                                     <option selected disabled hidden>Change order status</option>

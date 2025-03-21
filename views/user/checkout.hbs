@@ -1,5 +1,18 @@
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <style>
+    .copy-btn {
+        background-color: white;
+        border: 2px solid rgba(0, 0, 0, 0.6);
+        color: black;
+        font-weight: bold;
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+    .copy-btn:hover {
+        background-color: #f8f8f8;
+    }
+</style>
 </head>
 <main class="main">
         <div class="page-header breadcrumb-wrap">
@@ -100,57 +113,39 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4">
+      <div class="col-lg-4">
+    <button type="button" class="btn btn-fill-out btn-block" data-bs-toggle="collapse" data-bs-target="#couponList" aria-expanded="false" aria-controls="couponList">
+        <i class="fi-rs-label mr-10"></i> Show Available Coupons
+    </button>
 
-                                <button type="button" class="btn btn-fill-out btn-block " data-bs-toggle="collapse" data-bs-target="#couponList" aria-expanded="false" aria-controls="couponList"> <i class="fi-rs-label mr-10"></i> Show Available Coupons</button>
-
-                                <div class="panel-collapse1 collapse coupon_form " id="couponList">
-                                    <div class="panel-body">
-                                        {{!-- <div class="mb-25">
-                                            <h4>Address Form</h4>
-                                        </div> --}}
-                                        {{#each coupon}}
-                                        <article class="itemlist">
-                                            <div class="row align-items-center">
-                                                {{!-- <div class="col col-check flex-grow-0">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" value="">
-                                                    </div>
-                                                </div> --}}
-
-                                                <div
-                                                    class="col-lg-2 col-sm-2 col-2 flex-grow-1 col-name text-align-center">
-                                                    <a class="itemside">
-
-                                                        <div class="info">
-                                                            <h6 class="mb-2">{{this.code}}</h6>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                                <div
-                                                    class="col-lg-2 col-sm-2 col-2 flex-grow-1 col-name text-align-center">
-                                                    <a class="itemside">
-
-                                                        <div class="info">
-                                                            <h6 class="mb-0">{{this.discount}}%</h6>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                                {{!-- <div class="col-lg-2 col-sm-2 col-4 col-price">
-                                                    <span>$76.99</span>
-                                                </div> --}}
-
-
-
-
-
-
-                                            </div> <!-- row .// -->
-                                        </article>
-                                        {{/each}}
-                                    </div>
-                                </div>
+    <div class="panel-collapse1 collapse coupon_form" id="couponList">
+        <div class="panel-body">
+            {{#each coupon}}
+            <article class="itemlist">
+                <div class="row align-items-center">
+                    <div class="col-lg-2 col-sm-2 col-2 flex-grow-1 col-name text-align-center">
+                        <a class="itemside">
+                            <div class="info">
+                                <h6 class="mb-2" id="couponCode-{{@index}}">{{this.code}}</h6>
                             </div>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-sm-2 col-2 flex-grow-1 col-name text-align-center">
+                        <a class="itemside">
+                            <div class="info">
+                                <h6 class="mb-0">{{this.discount}}%</h6>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-sm-2 col-2 flex-grow-1 col-name text-align-center">
+                        <button class="btn btn-sm copy-btn" onclick="copyCoupon('{{this.code}}')">Copy</button>
+                    </div>
+                </div> <!-- row .// -->
+            </article>
+            {{/each}}
+        </div>
+    </div>
+</div>
                         </div>
                             <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                             <div class="payment_method">
@@ -543,7 +538,7 @@
             "currency": "INR",
             "image": "/images/logo/Logo_CH.png",
 
-            "name": "Mobile Bazaar", //your business name
+            "name": "Tick Tock", //your business name
             /*"description": "Test Transaction",
             "image": "https://example.com/your_logo",*/
 
@@ -713,6 +708,11 @@ function verifyPayment(response, order) {
             pincodeError.innerText = '';
         }
     });
+       function copyCoupon(code) {
+        navigator.clipboard.writeText(code).catch(err => {
+            console.error('Failed to copy coupon: ', err);
+        });
+    }
 </script>
 
 

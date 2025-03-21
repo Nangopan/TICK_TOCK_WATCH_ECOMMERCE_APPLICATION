@@ -131,8 +131,8 @@
             errors.push('Invalid coupon code');
         }
 
-        if (discount <= 0 || discount > 100) {
-            discounterr.innerHTML = 'Discount should be between 1 and 100';
+        if (discount <= 1 || discount > 95) {
+            discounterr.innerHTML = 'Discount should be between 1% to 95%';
             errors.push('Invalid discount');
         }
 

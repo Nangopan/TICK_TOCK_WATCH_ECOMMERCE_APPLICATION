@@ -12,7 +12,7 @@ const referralSchema = require("../../model/referralSchema")
 
 const mongoose = require("mongoose");
 const { isCancelled } = require("../../helpers/hbsHelpers");
-//const ObjectId = require('mongoose')
+
 const {
   Types: { ObjectId },
 } = mongoose;
@@ -72,7 +72,6 @@ const updateUserProfile = async (req, res) => {
         $set: {
           name: req.body.name,
           mobile: req.body.mobile,
-          /*email: req.body.email*/
           image: imageFileName,
         },
       },
@@ -113,7 +112,6 @@ const updatePassword = async (req, res) => {
     const passwordMatch = await argon2.verify(findUser.password, oldPass);
 
     if (passwordMatch) {
-      //const saltRounds = 10;
       const hashedPassword = await argon2.hash(newPass)
       console.log("Hashed Password:", hashedPassword);
       await User.updateOne(
@@ -140,7 +138,7 @@ const updatePassword = async (req, res) => {
 
 
 
-const my_Orders = async (req, res) => {
+const myOrders = async (req, res) => {
   try {
     const user = req.session.user;
     const id = user._id;
@@ -243,25 +241,14 @@ const orderDetails = async (req, res) => {
       if (!myOrderDetails) {
           return res.status(404).send("Order not found");
       }
-
-      // const orderedProDet = await Order.aggregate([
-      //     { $match: { _id: new mongoose.Types.ObjectId(orderId) } },
-      //     { $unwind: "$product" },
-      //     {
-      //         $project: {
-      //             _id: 1,
-      //             product: 1
-      //         }
-      //     }
-      // ]);
       
       const orderedProDet = await Order.aggregate([
         { $match: { _id: new mongoose.Types.ObjectId(orderId) } },
         { $unwind: "$product" },
         {
             $lookup: {
-                from: "productoffers", // Collection for product offers
-                localField: "product.productId", // Match the product ID
+                from: "productoffers", 
+                localField: "product.productId", 
                 foreignField: "productId",
                 as: "productOffer",
             },
@@ -269,7 +256,7 @@ const orderDetails = async (req, res) => {
         {
             $unwind: {
                 path: "$productOffer",
-                preserveNullAndEmptyArrays: true, // Allow products without offers
+                preserveNullAndEmptyArrays: true, 
             },
         },
         {
@@ -452,7 +439,7 @@ module.exports = {
   updateUserProfile,
   changePassword,
   updatePassword,
-  my_Orders,
+  myOrders,
   orderDetails,
   verify,
   walletpage,

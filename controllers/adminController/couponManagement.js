@@ -118,7 +118,7 @@ const editCouponPage = async (req, res) => {
             return res.status(404).send("Coupon not found");
         }
         if (coupon) {
-            // Format expiry date before passing to the view
+            
             coupon.expiryDate = moment(coupon.expiryDate).format('YYYY-MM-DD');
         }
         res.render("admin/editCoupon", { coupon, title: "Edit Coupon", layout: "adminLayout" });

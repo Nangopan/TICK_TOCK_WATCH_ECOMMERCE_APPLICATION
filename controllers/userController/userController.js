@@ -156,19 +156,19 @@ const doLogin = async (req, res) => {
           res.redirect("/");
         } else {
           req.session.blockMsg = true;
-          req.session.enteredEmail = email; // Store entered email
+          req.session.enteredEmail = email; 
           req.session.enteredPassword = password;
           res.redirect("/login");
         }
       } else {
         req.session.mailErr = true;
-        req.session.enteredEmail = email; // Store entered email
+        req.session.enteredEmail = email; 
         req.session.enteredPassword = password;
         res.redirect("/login");
       }
     } else {
       req.session.mailErr = true;
-      req.session.enteredEmail = email; // Store entered email
+      req.session.enteredEmail = email; 
       req.session.enteredPassword = password;
       res.redirect("/login");
     }
@@ -202,11 +202,11 @@ const cartAndWishlistCount = async (req, res) => {
 
     const userId = req.session.user._id;
 
-    // Get cart count (sum of quantity instead of counting documents)
+    
     const cartItems = await Cart.find({ userId });
     const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0); 
 
-    // Get wishlist count safely
+    
     const wishlist = await Wishlist.findOne({ user: userId });
     const wishlistCount = wishlist && Array.isArray(wishlist.productId) ? wishlist.productId.length : 0;
 
@@ -350,7 +350,7 @@ const submitOtp = async (req, res) => {
           }
         )
       }
-      const generateReferalCode=uuidv4()//generate a unique identifier in the version 4 format.
+      const generateReferalCode=uuidv4()
       const referalCollection=new Referral({
         userId:user._id,
         referralCode:generateReferalCode

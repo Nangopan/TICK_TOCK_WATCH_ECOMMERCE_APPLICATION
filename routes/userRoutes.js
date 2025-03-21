@@ -3,7 +3,7 @@ const router = express.Router()
 const { logedout, logedin, isBlocked } = require('../middleware/usersAuth')
 const { getHome, getLogin, getSignup, doSignup, getOtp, verifyReferelCode,  loadReferalPage ,submitOtp, resendOtp, doLogin, doLogout , googleCallback, productDetails, aboutpage, cartAndWishlistCount } = require("../controllers/userController/userController")
 const { submitMail, submitMailPost, forgotOtppage, forgotOtpSubmit, resetPasswordPage, resetPassword } = require('../controllers/userController/forgotPassword')
-const { viewUserProfile, EditUserProfile, updateUserProfile, changePassword, updatePassword, my_Orders, orderDetails, verify, walletpage, retryPayment } = require('../controllers/userController/profile')
+const { viewUserProfile, EditUserProfile, updateUserProfile, changePassword, updatePassword, myOrders, orderDetails, verify, walletpage, retryPayment } = require('../controllers/userController/profile')
 const { addAddress, addAddressPost, manageAddress, editAddress, editAddressPost, deleteAddress } = require('../controllers/userController/addressManagement')
 const { loadCartPage, addToCart, removeFromCart, updateCart, checkOutOfStock } = require('../controllers/userController/cart')
 const { loadCheckoutPage, placeorder, orderSuccess, validateCoupon, applyCoupon, removeCoupon } = require('../controllers/userController/checkoutManagement')
@@ -12,7 +12,6 @@ const { showWishlistPage, addToWishList, removeFromWishList } = require('../cont
 const { addMoneyToWallet , verifyPayment }= require('../controllers/userController/walletManagement')
 const { payment_failed, cancelOrder,returnOrder, cancelOneProduct , returnOneProduct, getInvoice }= require('../controllers/userController/orderManagement')
 require('../middleware/googleAuth')
-const {editReviewPost,editReview,addNewReviewPost}=require("../controllers/userController/review")
 const passport = require('passport');
 const store = require("../middleware/multer")
 
@@ -34,7 +33,10 @@ router.get("/login", logedout, getLogin)
 router.post('/login', doLogin)
 router.get('/logout', doLogout)
 
+// Cart and wishlist count
+
 router.get("/cart-wishlist-count",logedin,cartAndWishlistCount)
+
 // Signup
 
 router.get("/signup", logedout, getSignup)
@@ -91,7 +93,7 @@ router.get('/delete_address/:id', logedin, isBlocked, deleteAddress)
 
 // Order Page
 
-router.get('/myOrders', logedin, isBlocked, my_Orders)
+router.get('/myOrders', logedin, isBlocked, myOrders)
 router.get('/orderDetails/:id', logedin, isBlocked, orderDetails)
 router.post('/verifyPayment', logedin, isBlocked, verify)
 router.post('/retry-payment/:id',logedin, isBlocked, retryPayment)
@@ -106,6 +108,7 @@ router.post('/checkOutOfStock', logedin, isBlocked, checkOutOfStock);
 
 
 //wallet
+
 router.get('/wallet', logedin, isBlocked,walletpage)
 router.post('/addmoneytowallet', logedin, isBlocked,addMoneyToWallet)
 router.post('/verify_Payment', logedin, isBlocked,verifyPayment)
@@ -131,22 +134,21 @@ router.get('/wishlist', logedin, isBlocked, showWishlistPage)
 router.post('/addtowishlist', logedin, isBlocked, addToWishList)
 router.post('/removeFromWishList', logedin, isBlocked, removeFromWishList)
 
+// cancellation of order
 
 router.put('/cancel-order/:id', logedin, isBlocked, cancelOrder);
-
 router.put('/return-order/:id', logedin, isBlocked, returnOrder);
-
 router.put('/cancel-one-product', logedin, isBlocked, cancelOneProduct);
-
 router.put('/return-one-product', logedin, isBlocked, returnOneProduct);
+
+// Invoice
 
 router.get('/get_invoice', logedin, isBlocked, getInvoice)
 
 
 router.get('/about', aboutpage)
 
-router.post('/addReview', logedin, isBlocked, addNewReviewPost)
-router.post('/editReview/:id', logedin, isBlocked, editReviewPost)
+
 
 
 

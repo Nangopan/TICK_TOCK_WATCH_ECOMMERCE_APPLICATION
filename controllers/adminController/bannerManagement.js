@@ -58,16 +58,15 @@ const loadBanner = async (req, res) => {
 
   const updateBannerPost = async (req, res) => {
     try {
-      const { id } = req.params; // Get banner ID from request params
+      const { id } = req.params;
       const { line1, line2, line3, line4 } = req.body;
       let updatedData = { line1, line2, line3, line4 };
   
-      // Check if a new file was uploaded
+      
       if (req.file) {
         updatedData.image = req.file.filename;
       }
-  
-      // Find and update the banner
+
       const banner = await Banner.findByIdAndUpdate(id, updatedData, { new: true });
   
       if (!banner) {
@@ -92,6 +91,7 @@ const loadBanner = async (req, res) => {
       res.redirect("/admin/banners");
     } catch (error) {
       console.log(error);
+      res.status(500).send("Internal Server Error")
     }
   };
 

@@ -86,7 +86,6 @@ const addProduct = async (req, res) => {
       description: req.body.description,
       category: req.body.category,
       stock: req.body.stock,
-      //imageUrl: req.body.image
       imageUrl: images,
     });
     await newProduct

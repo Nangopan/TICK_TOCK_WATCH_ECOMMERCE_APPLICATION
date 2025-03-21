@@ -59,6 +59,7 @@ router.post('/admin/change_status/:id', isLogin, changeStatus)
 
 
 // coupon
+
 router.get('/admin/coupons',isLogin,couponPage)
 router.get('/admin/addcoupon',isLogin,addCouponPage)
 router.post('/admin/add_coupon', isLogin, addCouponPost)
@@ -67,7 +68,7 @@ router.post('/admin/editcoupon/:id', editCouponPost);
 router.delete('/admin/delete_coupon',isLogin,deleteCoupon)
 
 
-
+// product offer
 
 router.get('/admin/productOffers', isLogin, productOfferPage)
 router.get('/admin/addProOffers', isLogin, addProductOfferPage)
@@ -76,6 +77,8 @@ router.get('/admin/editProductOffer/:id', isLogin, editProductOfferPage)
 router.post("/admin/editProductOffer/:id", isLogin, editProductOffer);
 router.delete('/admin/deleteProOffer/:id', isLogin, deleteProductOffer)
 
+// category offer
+
 router.get('/admin/categoryOffers', isLogin, categoryOfferPage)
 router.get('/admin/addCatOffers', isLogin, addCategoryOfferPage)
 router.post('/admin/addCatOffers', isLogin, addCategoryOffer)
@@ -83,9 +86,13 @@ router.get('/admin/editCategoryOffer/:id', isLogin, editCategoryOfferPage)
 router.post("/admin/editCategoryOffer/:id", isLogin, editCategoryOffer);
 router.delete('/admin/deleteCatOffer/:id', isLogin, deleteCategoryOffer)
 
+// dashboard sales report and chart
 
 router.get('/admin/get_sales',isLogin, getSales)
 router.get('/admin/get_chart_data',isLogin, getChartData)
+
+
+// banners
 
 router.get('/admin/banners', loadBanner)
 router.get('/admin/add_banner', addBanner)
@@ -94,9 +101,9 @@ router.get('/admin/delete_banner',deleteBanner)
 router.get('/admin/edit_banner/:id' ,editBanner)
 router.post('/admin/edit_banner/:id' , store.single('image'),  updateBannerPost )
 
-router.get('/admin/reviews' ,loadReviews)
 
-//wallet
+
+//wallet 
 
 router.get('/admin/wallet' , walletManagement)
 router.get('/admin/wallet/:transactionId', transactionDetails);

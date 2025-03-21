@@ -77,7 +77,7 @@ const cancelOrder = async (req, res) => {
 
         if (['wallet', 'razorpay'].includes(canceledOrder.paymentMethod)) {
             for (const data of canceledOrder.product) {
-                //await Product.updateOne({ _id: data._id }, { $inc: { stock: data.quantity } });
+                
                 await User.updateOne(
                     { _id: req.session.user._id },
                     { $inc: { wallet: (data.price * data.quantity) - couponAmountEach } }
@@ -156,7 +156,6 @@ const returnOrder = async (req, res) => {
 
         if (['wallet', 'razorpay'].includes(returnedOrder.paymentMethod)) {
             for (const data of returnedOrder.product) {
-                //await Product.updateOne({ _id: data._id }, { $inc: { stock: data.quantity } });
                 await User.updateOne(
                     { _id: req.session.user._id },
                     { $inc: { wallet: (data.price * data.quantity) - couponAmountEach } }
@@ -418,7 +417,6 @@ const getInvoice = async (req, res) => {
             marginRight: 25,
             marginLeft: 25,
             marginBottom: 25,
-            // background: 'https://public.easyinvoice.cloud/img/watermark-draft.jpg',
             sender: {
                 company: 'MobileBazaar',
                 address: 'Park Avenue',

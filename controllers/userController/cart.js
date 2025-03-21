@@ -259,18 +259,7 @@ const updateCart = async (req, res) => {
     const finalPrice = existingOffer && existingOffer.discountPrice > 0 
       ? existingOffer.discountPrice : latestPrice;
 
-    //const newValue = req.body.newValue * price;
-
-    // Fetch the stock for the product associated with the cart item
-    // let cartquant = await Product.findOne(
-    //   { _id: oldCart.product_Id },
-    //   { stock: 1, _id: 0 }
-    // ).lean();
-    // console.log(
-    //   cartquant.stock,
-    //   "cartquant--------------------------------------------------------------"
-    // );
-
+    
     if (newValue > latestStock) {
       return res.json({
         success: false,
@@ -288,7 +277,7 @@ const updateCart = async (req, res) => {
 
     
 
-    // Calculate the new total value for the cart item based on the new quantity
+    
       const updatedValue = newValue * finalPrice;
       console.log(cartIdForUpdate, updatedValue);
 
@@ -298,12 +287,12 @@ const updateCart = async (req, res) => {
     );
     console.log(updatedcartvalue);
 
-    // Fetch the updated cart data
+    
     const updatedCart = await Cart.find({
       _id: cartIdForUpdate,
     }).lean();
 
-    // Calculate the subtotal for the user's cart
+    
     const subTotal = await Cart.aggregate([
       {
         $match: {
@@ -325,7 +314,7 @@ const updateCart = async (req, res) => {
     ]);
     console.log(subTotal, "SUBTOTAL");
 
-    // Prepare the updated cart data to return to the user
+    
     const newData = [];
 
     updatedCart.forEach((data) => {

@@ -21,15 +21,15 @@ const showWishlistPage = async (req, res) => {
     try {
         const userId = userData._id;
 
-        // Find the user's wishlist
+        
         const wishlist = await Wishlist.findOne({ user: new mongoose.Types.ObjectId(userId) });
         const wishlistCount = wishlist ? (wishlist.productId ? wishlist.productId.length : 0) : 0;
 
-        // Fetch the cart items
+        
         const cartItems = await Cart.find({ userId: new mongoose.Types.ObjectId(userId) });
         const cartProductIds = cartItems.map(item => item.product_Id.toString());
 
-        // Aggregate the wishlist products
+        
         const WishListProd = await Wishlist.aggregate([
             {
                 $match: { user: new mongoose.Types.ObjectId(userId) }

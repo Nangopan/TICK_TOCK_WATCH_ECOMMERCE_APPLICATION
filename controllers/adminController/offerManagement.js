@@ -38,7 +38,7 @@ const productOfferPage = async (req,res)=>{
         })
         console.log(productOfferData)
 
-        //sending the formatted date to the page
+        
         productOfferData = productOfferData.map((data) => {
             data.startDate = moment(data.startDate).format("YYYY-MM-DD");
             data.endDate = moment(data.endDate).format("YYYY-MM-DD");
@@ -113,7 +113,7 @@ const addProductOffer = async (req, res) => {
         console.log("Product offer saved:", proOffer);
 
 
-        //await product.save();
+        
 
         return res.status(HttpStatus.OK).json({ message: "Product offer added successfully!" });
 
@@ -161,7 +161,7 @@ const editProductOffer = async (req, res) => {
         // Check for any other active product offer for the same product, excluding the current one
         const existingActiveOffer = await productOffer.findOne({
             productId: product._id,
-            _id: { $ne: offerId }, // Exclude the current offer being edited
+            _id: { $ne: offerId }, 
             currentStatus: true
         });
 
@@ -339,7 +339,6 @@ const addCategoryOffer = async (req, res) => {
 
         }
 
-        //res.redirect("/admin/categoryOffers");
         return res.status(HttpStatus.OK).json({ message: "Category offer added successfully!" });
 
     } catch (error) {
