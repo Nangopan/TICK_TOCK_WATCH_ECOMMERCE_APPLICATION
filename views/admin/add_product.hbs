@@ -201,9 +201,10 @@
         let Qty = document.getElementById("Qty").value;
         let price = document.getElementById("price").value;
 
-        let productNameRegex = /^[a-zA-Z0-9\s\(\)\-\+]{4,}$/;
+        // Modified regex patterns to accept non-alphabetical characters
+        let productNameRegex = /^.{4,}$/; // At least 4 characters, accepts any character
         let number = /^[1-9]\d*$/;
-        let descriptionRegex = /^(?!\s*$)[\s\S]{1,100}$/
+        let descriptionRegex = /^(?!\s*$)[\s\S]{1,}$/; // Any non-empty string
 
         let productNameAlert = document.getElementById("productNameAlert");
         let qtyAlert = document.getElementById("qtyAlert");
@@ -212,7 +213,7 @@
         let imgAlert = document.getElementById('imgAlert');
 
         if (!productName.match(productNameRegex)) {
-            errors.push("Name Not Valid");
+            errors.push("Name must be at least 4 characters");
         }
 
         if (!Qty.match(number)) {
@@ -224,7 +225,7 @@
         }
 
         if (!longdescription.match(descriptionRegex)) {
-            errors.push("Please Check about Again");
+            errors.push("Description cannot be empty");
         }
         
         if (fileInput.files.length === 0) {
@@ -233,10 +234,10 @@
     
         // Display all error messages
         if (errors.length > 0) {
-            productNameAlert.innerHTML = errors.includes("Name Not Valid") ? "Name Not Valid" : "";
+            productNameAlert.innerHTML = errors.includes("Name must be at least 4 characters") ? "Name must be at least 4 characters" : "";
             qtyAlert.innerHTML = errors.includes("Please Check Qty Again") ? "Please Check Qty Again" : "";
             priceAlert.innerHTML = errors.includes("Please Check Price Again") ? "Please Check Price Again" : "";
-            longAlert.innerHTML = errors.includes("Please Check about Again") ? "Please Check about Again" : "";
+            longAlert.innerHTML = errors.includes("Description cannot be empty") ? "Description cannot be empty" : "";
             imgAlert.innerHTML = errors.includes("Please choose an image") ? "Please choose an image" : "";
 
             return false; // Prevent form submission
