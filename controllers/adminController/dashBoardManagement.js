@@ -10,9 +10,9 @@ const HttpStatus = require('../../httpStatus');
 
 
 let months = [];
-let ordersByMonth = [];
-let revenueByMonth = [];
-let totalRevenue = 0;
+let odersByMonth = [];
+let revnueByMonth = [];
+let totalRevnue = 0;
 let totalSales = 0;
 let categories = [];
 let revenues = [];
@@ -94,21 +94,21 @@ const loadDashboard = async (req, res) => {
         console.log(chartData);
 
         months = [];
-        ordersByMonth = [];
-        revenueByMonth = [];
-        totalRevenue = 0;
+        odersByMonth = [];
+        revnueByMonth = [];
+        totalRevnue = 0;
         totalSales = 0;
 
         chartData.forEach((data) => {
             months.push(data.month);
-            ordersByMonth.push(data.totalOrders);
-            revenueByMonth.push(data.totalRevenue);
-            totalRevenue += Number(data.totalRevenue);
+            odersByMonth.push(data.totalOrders);
+            revnueByMonth.push(data.totalRevenue);
+            totalRevnue += Number(data.totalRevenue);
             totalSales += Number(data.totalOrders);
         });
 
-        const thisMonthOrder = ordersByMonth.length > 0 ? ordersByMonth[ordersByMonth.length - 1] : 0;
-        const thisMonthSales = revenueByMonth.length > 0 ? revenueByMonth[revenueByMonth.length - 1] : 0;
+        const thisMonthOrder = odersByMonth.length > 0 ? odersByMonth[odersByMonth.length - 1] : 0;
+        const thisMonthSales = revnueByMonth.length > 0 ? revnueByMonth[revnueByMonth.length - 1] : 0;
 
         let bestSellings = await Product.find().sort({ bestSelling: -1 }).limit(5).lean();
         let popuarProducts = await Product.find().sort({ popularity: -1 }).limit(5).lean();
@@ -117,13 +117,13 @@ const loadDashboard = async (req, res) => {
 
         res.render('admin/dashBoard', {
             categoryCount,
-            revenueByMonth,
+            revnueByMonth,
             bestSellingCategory,
             bestSellings,
             popuarProducts,
             months,
-            ordersByMonth,
-            totalRevenue,
+            odersByMonth,
+            totalRevnue,
             categoryRevenue,
             totalSales,
             thisMonthOrder,
@@ -165,16 +165,10 @@ const getSales = async (req, res) => {
 
         let grandTotal = 0;
 
-        const generateTransactionId = () => {
-            return Math.floor(10000000 + Math.random() * 90000000).toString();
-        };
-
         formattedOrders.forEach((element) => {
             salesData.push({
                 date: element.date,
                 orderId: element.orderId,
-                 transactionId: generateTransactionId(),
-                 transactionDate: moment(element.date).format('YYYY-MM-DD'),
                 total: element.total,
                 payMethod: element.paymentMethod,
                 coupon: element.coupon,           
@@ -200,24 +194,25 @@ const getSales = async (req, res) => {
 };
 
 
+
 const getChartData = (req, res) => {
     try {
         res.json({
             months: months,
-            revenueByMonth: revenueByMonth,
-            ordersByMonth: ordersByMonth,
+            revnueByMonth: revnueByMonth,
+            odersByMonth: odersByMonth,
             cat: categories,
             revenue: revenues
         });
     } catch (error) {
         console.error('Error fetching chart data:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(HttpStatus.InternalServerError).send('Internal Server Error');
     }
-};      
-
+};
 
 module.exports = {
     loadDashboard,
     getSales,
-    getChartData,
+    getChartData
 };
+
