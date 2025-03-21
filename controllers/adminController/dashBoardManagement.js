@@ -107,8 +107,8 @@ const loadDashboard = async (req, res) => {
             totalSales += Number(data.totalOrders);
         });
 
-        const thisMonthOrder = ordersByMonth.length > 0 ? ordersByMonth[odersByMonth.length - 1] : 0;
-        const thisMonthSales = revnueByMonth.length > 0 ? revnueByMonth[revnueByMonth.length - 1] : 0;
+        const thisMonthOrder = ordersByMonth.length > 0 ? ordersByMonth[ordersByMonth.length - 1] : 0;
+        const thisMonthSales = revenueByMonth.length > 0 ? revenueByMonth[revenueByMonth.length - 1] : 0;
 
         let bestSellings = await Product.find().sort({ bestSelling: -1 }).limit(5).lean();
         let popuarProducts = await Product.find().sort({ popularity: -1 }).limit(5).lean();
