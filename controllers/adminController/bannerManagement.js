@@ -6,8 +6,9 @@ const Banner=require("../../model/bannerSchema")
 const loadBanner = async (req, res) => {
     try {
       const bannerData = await Banner.find().lean()
+      console.log("From banner controller")
       console.log(bannerData)
-      res.render('admin/banners', { bannerData, layout: 'adminlayout' })
+      res.render('admin/banners', { bannerData, layout: 'adminLayout' })
     } catch (error) {
       console.log(error)
     }
@@ -16,7 +17,7 @@ const loadBanner = async (req, res) => {
   const addBanner = (req, res) => {
     try {
   
-      res.render('admin/add_banner', { layout: 'adminlayout' })
+      res.render('admin/add_banner', { layout: 'adminLayout' })
     } catch (error) {
       console.log(error);
     }
@@ -49,7 +50,7 @@ const loadBanner = async (req, res) => {
       const id = req.params.id
       const bannerData = await Banner.findById({ _id: id }).lean()
   
-      res.render("admin/editBanner", { bannerData, layout: 'adminlayout' })
+      res.render("admin/editBanner", { bannerData, layout: 'adminLayout' })
   
     } catch (error) {
   

@@ -33,7 +33,7 @@ const walletManagement = async (req, res) => {
         res.render("admin/walletManagement", {transactions: paginatedTransactions,currentPage: page,
             totalPages: totalPages,
             pages: pages, 
-            layout: 'adminlayout'
+            layout: 'adminLayout'
         });
 
     } catch (error) {
@@ -71,7 +71,7 @@ const transactionDetails = async (req, res) => {
 
         res.render("admin/transactionDetails", {
             transaction: transactionDetails,
-            layout: 'adminlayout'
+            layout: 'adminLayout'
         });
 
     } catch (error) {
