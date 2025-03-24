@@ -418,7 +418,7 @@ const getInvoice = async (req, res) => {
             marginLeft: 25,
             marginBottom: 25,
             sender: {
-                company: 'MobileBazaar',
+                company: 'Tick Tock',
                 address: 'Park Avenue',
                 zip: '600034',
                 city: 'Chennai',
