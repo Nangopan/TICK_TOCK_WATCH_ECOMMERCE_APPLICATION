@@ -104,44 +104,34 @@ const showWishlistPage = async (req, res) => {
 
 
 const addToWishList = async (req, res) => {
-    try {
-        let { id } = (req.body)
-        const userId = req.session.user
-        let productData = await Product.findById(id).lean()
-        console.log(productData._id)
-        const productId = new mongoose.Types.ObjectId(id);
+  try {
+      let { id } = req.body;
+      const userId = req.session.user;
 
+      if (!userId) {
+          return res.json({ success: false, message: "Login Required" });
+      }
 
-        let wishlistData = await Wishlist.updateOne(
-            {
-                user: userId
-            },
-            {
-                $addToSet: {
-                    productId: productId,
+      let productData = await Product.findById(id).lean();
+      const productId = new mongoose.Types.ObjectId(id);
 
-                }
+      let wishlistData = await Wishlist.updateOne(
+          { user: userId._id }, // Ensure userId._id is used
+          { $addToSet: { productId: productId } },
+          { upsert: true, new: true }
+      );
 
-            },
-            {
-                upsert: true,
-                new: true
-            }
-        )
-        if (wishlistData.modifiedCount > 0) {
-            res.json({ success: true });
-        } else {
-            res.json({ success: false });
-        }
+      if (wishlistData.modifiedCount > 0) {
+          res.json({ success: true });
+      } else {
+          res.json({ success: false });
+      }
+  } catch (error) {
+      console.log(error.message);
+      res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+  }
+};
 
-
-        console.log(wishlistData)
-    } catch (error) {
-        console.log(error.message);
-        res.status(HttpStatus.InternalServerError).send("Internal Server Error");
-    }
-
-}
 
 
 

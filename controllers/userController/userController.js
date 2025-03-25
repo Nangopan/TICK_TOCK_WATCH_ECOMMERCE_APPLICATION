@@ -500,11 +500,11 @@ const productDetails = async (req, res) => {
       }
 
       const ProductExist1 = await Wishlist.find({
-        userId: userData._id,
-        product_Id: productID,
+        user: new ObjectId(userData._id),
+        productId: new ObjectId(productID),
       });
 
-      console.log(ProductExist1);
+      console.log('ProductExist1', ProductExist1);
       if (ProductExist1.length===0) {
         productExistInWishlist = false;
       } else {
