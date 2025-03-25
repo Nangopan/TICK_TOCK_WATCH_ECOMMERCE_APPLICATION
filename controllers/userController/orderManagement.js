@@ -426,7 +426,7 @@ const getInvoice = async (req, res) => {
             },
             client: {
                 company: user.name,
-                address: address.adressLine1,
+                address: address.addressLine1,
                 zip: address.pin,
                 city: address.city,
                 country: 'India',

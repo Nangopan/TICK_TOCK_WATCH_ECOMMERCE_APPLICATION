@@ -143,14 +143,11 @@
  $(document).ready(function () {
     $('.button.button-add-to-cart').on('click', function (e) {
         var prodId = $(this).data('product-id');
-        //Suppose Need Input Field before Add to Cart Button in the product detail Page Use this
-        //var quantity = $('.order__quantity--input').length ? $('.order__quantity--input').val() : 1;
         var quantity = 1;
 
         $.ajax({
             url: '/addtocart/' + prodId,
             method: 'POST',
-            // contentType: 'application/json',
             data: { prodId: prodId, quantity: quantity },
             success: function (result) {
                 if (result.success) {
@@ -162,10 +159,7 @@
                         timer: 1500
                     })
                     $('#addcart').html('<button id="addcart-btn" onclick="window.location.href=\'/cart\'" class="button button-add-to-cart">Go to cart</button>');
-                    
-                    // Trigger the custom event to update cart count
                     $(document).trigger('cart-wishlist-updated');
-
                 } else {
                     if (result.message) {
                         Swal.fire({
@@ -201,7 +195,6 @@
 $(document).ready(function () {
     const userId = ""; 
 
-    // Add to Wishlist
     $('#addwishlist-btn').on('click', function (e) {
         e.preventDefault();
         
@@ -213,17 +206,39 @@ $(document).ready(function () {
             contentType: 'application/json',
             data: JSON.stringify({ id: prodId, userId: userId }),
             success: function (response) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Product added to your Wishlist.',
-                    icon: 'success',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                $('#wishlist').html('<button id="wishlist-btn" onclick="window.location.href=\'/wishlist\'" class="button button-add-to-wishlist">Go to Wishlist</button>');
-                
-                // Trigger the custom event to update wishlist count
-                $(document).trigger('cart-wishlist-updated');
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Product added to your Wishlist.',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    $('#wishlist').html('<button id="wishlist-btn" onclick="window.location.href=\'/wishlist\'" class="button button-add-to-wishlist">Go to Wishlist</button>');
+                    $(document).trigger('cart-wishlist-updated');
+                } else {
+                    if (response.message) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: response.message,
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Login Required',
+                            showCancelButton: true,
+                            confirmButtonText: 'Login',
+                            confirmButtonColor: "#088178",
+                            cancelButtonColor: "#d33",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/login';
+                            }
+                        })
+                    }
+                }
             },
             error: function (xhr, status, error) {
                 Swal.fire({

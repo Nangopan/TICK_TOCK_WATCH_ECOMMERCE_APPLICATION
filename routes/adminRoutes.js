@@ -97,7 +97,7 @@ router.get('/admin/get_chart_data',isLogin, getChartData)
 router.get('/admin/banners', loadBanner)
 router.get('/admin/add_banner', addBanner)
 router.post('/admin/add_banner', store.single('image'),addBannerPost)
-router.get('/admin/delete_banner',deleteBanner)
+router.get('/admin/toggle_banner',deleteBanner)
 router.get('/admin/edit_banner/:id' ,editBanner)
 router.post('/admin/edit_banner/:id' , store.single('image'),  updateBannerPost )
 
