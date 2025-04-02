@@ -194,7 +194,7 @@ console.log('Grand Total:', amount);
 
     const getInvoice = async (id) => {
   try {
-    const response = await fetch(`/invoice?id=${id}`, {
+    const response = await fetch(`/get_invoice?id=${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/pdf'

@@ -440,6 +440,7 @@ const returnOneProduct = async (req, res) => {
 
 
 
+
 const getInvoice = async (req, res) => {
     try {
         const orderId = req.query.id;
@@ -449,7 +450,7 @@ const getInvoice = async (req, res) => {
             return res.status(HttpStatus.NotFound).send({ message: 'Order not found' });
         }
 
-        const { userId, address: addressId } = order;
+        const { userId, address: addressId, discountAmt = 0 } = order;
         const [user, address] = await Promise.all([
             User.findById(userId),
             Address.findById(addressId),
@@ -459,22 +460,35 @@ const getInvoice = async (req, res) => {
             return res.status(HttpStatus.NotFound).send({ message: 'User or address not found' });
         }
 
-        const products = order.product.map((product) => ({
+        let products = order.product.map((product) => ({
             quantity: product.quantity.toString(),
             description: product.name,
             tax: product.tax,
             price: product.price,
         }));
 
+        // Add delivery charge
         products.push({
             quantity: '1', 
             description: 'Delivery Charge',
             tax: 0, 
             price: 50, 
+            
         });
-        
+
+        // Add discount as a separate item
+        if (discountAmt > 0) {
+            products.push({
+                quantity: '1',
+                description: 'Discount Applied',
+                tax: 0,
+                price: `-${discountAmt}`,
+                  // Ensure discount is negative
+            });
+        }
+
         const date = moment(order.date).format('MMMM D, YYYY');
-        
+
         const data = {
             mode: "development",
             currency: 'INR',
@@ -483,6 +497,7 @@ const getInvoice = async (req, res) => {
             marginRight: 25,
             marginLeft: 25,
             marginBottom: 25,
+          
             sender: {
                 company: 'Tick Tock',
                 address: 'Park Avenue',
@@ -492,16 +507,16 @@ const getInvoice = async (req, res) => {
             },
             client: {
                 company: user.name,
-                address: address.addressLine1,
+                address: address.adressLine1,
                 zip: address.pin,
                 city: address.city,
                 country: 'India',
             },
             information: {
-                number: `INV-${orderId}`,
                 date: date,
             },
             products: products,
+            bottomNotice: "Thank you for your purchase!", // Add a bottom note
         };
 
         easyinvoice.createInvoice(data, function (result) {
@@ -517,6 +532,8 @@ const getInvoice = async (req, res) => {
         res.status(HttpStatus.InternalServerError).send('Internal Server Error');
     }
 };
+
+
 
 const checkAddressPost = async (req, res) => {
     try {
