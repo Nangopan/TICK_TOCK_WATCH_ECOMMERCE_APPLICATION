@@ -143,7 +143,7 @@ const myOrders = async (req, res) => {
     const user = req.session.user;
     const id = user._id;
     const userData = await User.findById(id).lean();
-    // const userDataObject = userData.toObject();
+    
     let page = 1;
     if (req.query.page) {
       page = req.query.page;
@@ -361,7 +361,7 @@ const walletpage = async (req, res) => {
               $unwind: "$history"
           },
           {
-              $sort: { "history.date": -1 } // Sort the history array by date in descending order
+              $sort: { "history.date": -1 } 
           },
           {
               $group: {

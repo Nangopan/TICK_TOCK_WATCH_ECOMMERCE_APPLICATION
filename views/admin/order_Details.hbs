@@ -1,108 +1,303 @@
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+    }
 
-    <main class="main-wrap">
-    
+    .card {
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        background: #fff;
+        overflow: hidden;
+    }
 
-        <section class="content-main">
-<div class="container-fluid">
-    <div class="row flex-wrap">
-     
-        <div class="col py-3 d-flex justify-content-center mt-2">
+    .card-header {
+        font-size: 1.5rem;
+        font-weight: bold;
+        background-color: #f7f8f9;
+        color: black;
+        padding: 15px;
+        text-align: center;
+    }
 
-            <div class="col-xl-8">
-                <!-- Account details card-->
-                <div class="card mb-4 ">
-                    <div class="card-header text-center">Order details</div>
-                    <div class="card-body">
+    .table {
+        margin-bottom: 0;
+    }
 
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="text-center">Name</th>
-                                    <th scope="col" class="text-center">Price</th>
-                                    <th scope="col" class="text-center">Quantity</th>
-                                    <th scope="col" class="text-center">Image</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+    .table th {
+        background-color: #737577;
+        color: black;
+        text-align: center;
+    }
 
-                                {{#each orderedProDet}}
-                                <tr>
-                                    <td scope="row" class="text-center">{{this.product.name}}</td>
-                                    <td class="text-center">₹{{this.product.price}}</td>
-                                    <td class="text-center">{{this.product.quantity}}</td>
-                                    <td class="text-center">
-                                        <img style="width: 50px; height: auto;" src="/assets/imgs/products/{{this.product.image}}"
-                                            alt="product image">
-                                            
-                                    </td>
-                                 
-                                </tr>
-                                {{/each}}
+    .table td {
+        vertical-align: middle;
+        text-align: center;
+    }
 
-                            </tbody>
-                        </table>
+    .order-summary {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
 
+    .btn-primary {
+        background-color: #f2a6a6;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        transition: background 0.3s ease-in-out;
+    }
 
-                        <div class="d-flex justify-content-between border mt-5 p-5" style="color: #000;">
-                            <div class="mt-3 ">
-                                <p class="mb-2">Total amount : ₹<strong>{{myOrderDetails.total}}</strong></p>
-                                
-                                <p class="mb-2">Payment method: {{myOrderDetails.paymentMethod}}</p>
-                                <p class="mb-2">Order status : {{myOrderDetails.status}}</p>
-                                {{#if myOrderDetails.discountAmt}}
-                                <p class="mb-2">Amount after discount :
-                                    ₹<strong>{{myOrderDetails.amountAfterDscnt}}</strong></p>
-                                <p class="mb-2">Discount amount : ₹<strong>{{myOrderDetails.discountAmt}}</strong></p>
-                                <p class="mb-2" style="color: green;">Coupon used: {{myOrderDetails.coupon}}</p>
-                                {{else}}
-                                <p class="mb-2" style="color: green;">No coupon applied</p>
-                                {{/if}}
+    .btn-primary:hover {
+        background-color: #d48c8c;
+    }
 
-                            </div>
+    .badge {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
 
+    .alert-warning {
+        background-color: #ffcc00;
+        color: #333;
+    }
 
+    .alert-info {
+        background-color: #17a2b8;
+        color: white;
+    }
 
-                            <div class="">
-                                <h5 class="border-bottom mb-3">Delivery address</h5>
-                                <p>{{address.name}}</p>
-                                <p>Mobile: {{address.mobile}}</p>
-                                <p>{{address.addressLine1}}</p>
-                                <p>{{address.addressLine2}}</p>
-                                <p>{{address.city}}, {{address.state}},</p>
-                                <p>Pin: {{address.pin}}</p>
+    .alert-success {
+        background-color: #28a745;
+        color: white;
+    }
 
-                            </div>
-                        </div>
+    .alert-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    /* Styled status and reason section */
+    .status-section {
+        text-align: center;
+        padding: 10px;
+    }
+
+    .reason-box {
+        display: inline-block;
+        background: rgba(0, 0, 0, 0.05);
+        padding: 8px 12px;
+        border-radius: 8px;
+        margin-top: 5px;
+        font-size: 0.9rem;
+    }
+
+    .text-danger {
+        font-weight: bold;
+        color: #d9534f;
+    }
+
+    .text-primary {
+        font-weight: bold;
+        color: #0275d8;
+    }
+</style>
+
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-xl-8">
+                    <div class="card mb-4">
+                        <div class="card-header">Order Details</div>
+                        <div class="card-body">
+                            <div class="table-responsive mt-3">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Unit Price</th>
+                                            <th>Quantity</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each orderedProDet}}
+                                        <tr>
+                                            <td>
+                                                <a class="itemside d-flex align-items-center" href="#">
+                                                    <div class="left">
+                                                        <img src="/assets/imgs/products/{{this.product.image}}" 
+                                                             width="40" height="40" class="img-xs rounded" alt="Item">
+                                                    </div>
+                                                    <div class="info ms-2">{{this.product.name}}</div>
+                                                </a>
+                                            </td>
+                                            <td> ₹{{this.product.price}} </td>
+                                            <td>{{this.product.quantity}} </td>
+                                            <td>₹{{multiply this.product.quantity this.product.price }}</td>
+                                           <td class="status-section">
+    {{#if myOrderDetails.cancelReason}}
+        <span class="badge alert-danger">Cancelled</span>
+        <br>
+        <div class="reason-box text-danger">
+            Reason: {{myOrderDetails.cancelReason}}
+        </div>
+    {{else if myOrderDetails.returnReason}}
+        <span class="badge alert-info">Returned</span>
+        <br>
+        <div class="reason-box text-primary">
+            Reason: {{myOrderDetails.returnReason}}
+        </div>
+    {{else}}
+        {{#if (eq orderedProDet.length 1)}}
+            {{#with orderedProDet.[0].product}}
+                {{#if cancelReason}}
+                    <span class="badge alert-danger">Cancelled</span>
+                    <br>
+                    <div class="reason-box text-danger">
+                        Reason: {{cancelReason}}
                     </div>
+                {{else if returnReason}}
+                    <span class="badge alert-info">Returned</span>
+                    <br>
+                    <div class="reason-box text-primary">
+                        Reason: {{returnReason}}
+                    </div>
+                {{else}}
+                    <span class="badge alert-success">{{../myOrderDetails.status}}</span>
+                {{/if}}
+            {{/with}}
+        {{else}}
+            {{#if this.product.cancelReason}}
+                <span class="badge alert-warning">Partially Canceled</span>
+                <br>
+                <div class="reason-box text-danger">
+                    Reason: {{this.product.cancelReason}}
+                </div>
+            {{else if this.product.returnReason}}
+                <span class="badge alert-info">Partially Returned</span>
+                <br>
+                <div class="reason-box text-primary">
+                    Reason: {{this.product.returnReason}}
+                </div>
+            {{else}}
+                <span class="badge alert-success">{{../myOrderDetails.status}}</span>
+            {{/if}}
+        {{/if}}
+    {{/if}}
+</td>
 
-                    <div class="d-flex">
-                        
-                        <div class="m-auto mb-20 p-r-15 p-b-15">
-                            <a href="/admin/orders" class=" btn btn-primary">Back to orders</a>
+                                        </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="order-summary mt-4">
+                                <dl class="dlist text-center">
+                                    <dt>Delivery:</dt>
+                                    <dd><span class="text-danger">+₹50</span></dd>
+                                </dl>
+                                 <dl class="dlist text-center">
+                    <dt>Discount:</dt>
+                    <dd>
+                        <span class="text-danger">
+                             {{#if myOrderDetails.discountAmt}}
+                                                                                        -₹ {{myOrderDetails.discountAmt}}
+                                                                                    {{else}}
+                                                                                        -₹ 0
+                                                                                    {{/if}}
+                        </span>
+                    </dd>
+                </dl>
+                                <dl class="dlist text-center">
+                                    <dt>Grand Total:</dt>
+                                    <dd><b id="grandTotal" class="h5">₹{{add myOrderDetails.total 0}}</b></dd>
+                                </dl>
+                               <dl class="dlist text-center">
+    <dt class="text-muted">Status:</dt>
+    <dd class="status-section">
+        {{#if myOrderDetails.cancelReason}}
+            <span class="badge rounded-pill alert-danger">Cancelled</span>
+            <br>
+            <div class="reason-box text-danger">
+                Reason: {{myOrderDetails.cancelReason}}
+            </div>
+        {{else if myOrderDetails.returnReason}}
+            <span class="badge rounded-pill alert-info">Returned</span>
+            <br>
+            <div class="reason-box text-primary">
+                Reason: {{myOrderDetails.returnReason}}
+            </div>
+        {{else if (eq orderedProDet.length 1)}}
+            {{#with orderedProDet.[0].product}}
+                {{#if cancelReason}}
+                    <span class="badge rounded-pill alert-danger">Cancelled</span>
+                    <br>
+                    <div class="reason-box text-danger">
+                        Reason: {{cancelReason}}
+                    </div>
+                {{else if returnReason}}
+                    <span class="badge rounded-pill alert-info">Returned</span>
+                    <br>
+                    <div class="reason-box text-primary">
+                        Reason: {{returnReason}}
+                    </div>
+                {{else}}
+                    <span class="badge rounded-pill alert-success">{{../myOrderDetails.status}}</span>
+                {{/if}}
+            {{/with}}
+        {{else}}
+            <span class="badge rounded-pill alert-success">{{myOrderDetails.status}}</span>
+        {{/if}}
+    </dd>
+</dl>
+
+                            </div>
+                            <div class="card-body">
+                                    <div class="row mb-4">
+                                        <div class="col-md-4">
+                                            <div class="card p-3 shadow-sm">
+                                                <h6 class="text-muted">Customer</h6>
+                                                <p class="fw-bold">{{address.name}}</p>
+                                                <p>{{address.mobile}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card p-3 shadow-sm">
+                                                <h6 class="text-muted">Order Info</h6>
+                                                <p><b>Shipping:</b> Fargo Express</p>
+                                                <p><b>Payment:</b> {{myOrderDetails.paymentMethod}}</p>
+                                                <p><b>Status:</b> {{myOrderDetails.status}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card p-3 shadow-sm">
+                                                <h6 class="text-muted">Deliver To</h6>
+                                                <p>{{address.city}}, {{address.state}}</p>
+                                                <p>{{address.addressLine1}}</p>
+                                                <p><b>Pin:</b> {{address.pin}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            <div class="text-center p-3">
+                                <a href="/admin/orders" class="btn btn-primary">Back to Orders</a>
+                            </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-        </section> <!-- content-main end// -->
-        <footer class="main-footer font-xs">
-            <div class="row pb-30 pt-15">
-                <div class="col-sm-6">
-                    <script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-                    document.write(new Date().getFullYear())
-                    </script> ©, Tick Tock .
-                </div>
-                <div class="col-sm-6">
-                    <div class="text-sm-end">
-                        All rights reserved
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </main>
+    </section>
+</main>
 
-    
-
-    

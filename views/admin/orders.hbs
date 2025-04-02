@@ -49,55 +49,55 @@
                         </thead>
                         <tbody>
                             {{#each ordersData}}
-                            <tr>
+                          <tr>
+    <td class="text-center">{{formatDate this.date}}</td>
+    <td class="text-center"><b>#{{this.orderId}}</b></td>
+    <td class="text-center"><i class="material-icons md-payment font-xxl text-muted mr-5"></i>{{this.paymentMethod}}</td>
 
-                                <td class="text-center">{{formatDate this.date}}</td>
-                                <td class="text-center"><b>#{{this.orderId}}</b></td>
-                                <td class="text-center"><i class="material-icons md-payment font-xxl text-muted mr-5"></i>{{this.paymentMethod}}</td>
+    <td class="text-center"><span class="badge bg-primary">{{this.status}}</span></td>
+    <td class="text-center">
+        <form action="/admin/change_status/{{this._id}}" method="post"
+            onsubmit="return submitform(this);" class="order-status-form">
+            <div class="d-flex w-50 ml-30">
+                <div class="col-lg-2 col-6 col-md-3 w-100 mr-15">
+                    <select name="status" class="form-select" aria-label="Default select example"
+                        {{#ifCond this.status '==' 'Payment Failed'}}disabled{{/ifCond}}>
+                        <option selected disabled hidden>Change order status</option>
+                        <option value="Shipped" 
+                            {{#ifCond this.status '==' 'Shipped'}}disabled{{/ifCond}} 
+                            {{#ifCond this.status '==' 'Delivered'}}disabled{{/ifCond}}
+                            {{#ifCond this.status '==' 'Returned'}}disabled{{/ifCond}}
+                            {{#ifCond this.status '==' 'Cancelled'}}disabled{{/ifCond}}
+                        >Shipped</option>
+                        
+                        <option value="Delivered" 
+                            {{#ifCond this.status '==' 'Delivered'}}disabled{{/ifCond}} 
+                            {{#ifCond this.status '==' 'Returned'}}disabled{{/ifCond}} 
+                            {{#ifCond this.status '==' 'Cancelled'}}disabled{{/ifCond}}
+                        >Delivered</option>
+                    </select>
+                </div>
 
-                                <td class="text-center"><span class="badge bg-primary">{{this.status}}</span></td>
-                                <td class="text-center">
-                                    <form action="/admin/change_status/{{this._id}}" method="post"
-                                        onsubmit="return submitform(this);" class="order-status-form">
-                                        <div class="d-flex w-50 ml-30">
-                                           
-                                            <div class="col-lg-2 col-6 col-md-3 w-100 mr-15">
-                                                <select name="status" class="form-select" aria-label="Default select example">
-                                                    <option selected disabled hidden>Change order status</option>
-                                                    <option value="Shipped" 
-                                                        {{#ifCond this.status '==' 'Shipped'}}disabled{{/ifCond}} 
-                                                        {{#ifCond this.status '==' 'Delivered'}}disabled{{/ifCond}}
-                                                        {{#ifCond this.status '==' 'Returned'}}disabled{{/ifCond}}
-                                                        {{#ifCond this.status '==' 'Cancelled'}}disabled{{/ifCond}}
-                                                    >Shipped</option>
-                                                    
-                                                    <option value="Delivered" 
-                                                        {{#ifCond this.status '==' 'Delivered'}}disabled{{/ifCond}} 
-                                                        {{#ifCond this.status '==' 'Returned'}}disabled{{/ifCond}} 
-                                                        {{#ifCond this.status '==' 'Cancelled'}}disabled{{/ifCond}}
-                                                    >Delivered</option>
-                                                </select>
-                                            </div>
+                <div>
+                    <button type="submit" id="submitstatus"
+                        class="btn btn-primary btn-sm w-100"
+                        {{#ifCond this.status '==' 'Payment Failed'}}disabled{{/ifCond}}>
+                        Submit
+                    </button>
+                </div>
+            </div>
+        </form>
+    </td>
+    <td class="text-center">
+        <div>
+            <span>
+                <a href="/admin/order_details/{{this._id}}" type="button"
+                   class="btn btn-primary btn-sm "> View Detail</a>
+            </span>
+        </div>
+    </td>
+</tr>
 
-                                            <div>
-                                                <button type="submit" id="submitstatus"
-                                                    class="btn btn-primary btn-sm w-100">Submit</button>
-                                                {{!-- <a type="submit" class="btn btn-primary">Submit</a> --}}
-
-
-                                            </div>
-                                        </div>
-                                    </form>
-                                </td>
-                                <td class="text-center">
-                                    <div>
-                                        <span>
-                                            <a href="/admin/order_details/{{this._id}}" type="button"
-                                        class="btn btn-primary btn-sm "> View Detail</a>
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
                             {{/each}}
 
 

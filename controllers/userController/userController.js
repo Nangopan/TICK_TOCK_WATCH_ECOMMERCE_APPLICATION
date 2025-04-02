@@ -110,7 +110,7 @@ const getLogin = async (req, res) => {
   const successMessage = "Password reset successfully!";
 
   try {
-    const enteredEmail = req.session.enteredEmail || ""; // Retrieve stored email
+    const enteredEmail = req.session.enteredEmail || ""; 
     const enteredPassword = req.session.enteredPassword || "";
     req.session.enteredEmail = "";
     req.session.enteredPassword = "";
@@ -218,52 +218,49 @@ const cartAndWishlistCount = async (req, res) => {
 };
 
 
-// Get Signup Page
 
+//Renders the signup page.
 const getSignup = async (req, res) => {
   try {
     res.render("user/signup");
   } catch (error) {
-    console.log(error.message);
-    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+    console.error("Error loading signup page:", error.message);
   }
 };
 
-
-
-
-// Do Signup
-
 const doSignup = async (req, res) => {
   try {
-    let message = "",
-      message1 = "";
-    hashedPassword = await userHelper.hashPassword(req.body.password);
-    userEmail = req.body.email;
-    userMobile = req.body.phone;
-    userRegData = req.body;
+    const hashedPassword = await userHelper.hashPassword(req.body.password);
+    const userEmail = req.body.email;
+    const userMobile = req.body.phone;
+    const userRegData = req.body;
 
     const userExist = await User.findOne({ email: userEmail }).lean();
     const mobileExist = await User.findOne({ mobile: userMobile }).lean();
+
     if (!userExist && !mobileExist) {
-      otp = await userHelper.verifyEmail(userEmail);
-      res.render("user/referral");
-    } else {
-      if (userExist) {
-        req.session.message = true;
-        message = "!!User Already Exist!!";
+      const { otp, otpTimestamp } = await userHelper.verifyEmail(userEmail);
+
+      if (!otp) {
+        return res.render("user/signup", { message: "Error generating OTP. Try again." });
       }
 
-      if (mobileExist) {
-        req.session.message1 = true;
-        message1 = "!!Mobile Number Already Exist!!";
-      }
+      req.session.userEmail = userEmail;
+      req.session.userRegData = userRegData;
+      req.session.hashedPassword = hashedPassword;
+      req.session.otp = otp;
+      req.session.otpTimestamp = otpTimestamp;
 
-      res.render("user/signup", { message, message1 });
+      return res.render("user/referal");
     }
+
+    res.render("user/signup", {
+      message: userExist ? "!!User Already Exists!!" : "",
+      message1: mobileExist ? "!!Mobile Number Already Exists!!" : "",
+    });
   } catch (error) {
-    console.log(error.message);
-    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+    console.error("Error during signup: ", error);
+    res.render("user/signup", { message: "An error occurred. Please try again." });
   }
 };
 
@@ -279,127 +276,158 @@ const loadReferalPage=async(req,res)=>{
 
 const verifyReferelCode = async (req, res) => {
   try {
-      const referalCode = req.body.referalCode
-      console.log("referalCode  " , referalCode)
-      const Owner = await Referral.findOne({referralCode : referalCode })
-      OwnerId = Owner.userId
+    const referalCode = req.body.referalCode;
+    console.log("referalCode: ", referalCode);
 
-      console.log("Owner----->" , Owner)
-      if (!Owner) {
-          res.json({ message: "Invalid referral code!" })
-          return
-      } else {
-          referalAmount = 200;
-          redeemAmount = 100;
-          res.json({ message: "Referral code verified successfully!" })
-          return
-      }
+    const Owner = await Referral.findOne({ referralCode: referalCode });
+    
+    if (!Owner) {
+      return res.json({ message: "Invalid referral code!" });
+    }
 
+    console.log("Owner: ", Owner);
+    const OwnerId = Owner.userId;
+    const referalAmount = 200;
+    const redeemAmount = 100;
+
+    req.session.redeemAmount = redeemAmount;
+    req.session.OwnerId = OwnerId;
+    req.session.referalAmount = referalAmount;
+    
+    res.json({ message: "Referral code verified successfully!" });
   } catch (error) {
-      console.log(error.message);
+    console.error("Error verifying referral code: ", error.message);
+    res.status(500).json({ message: "An error occurred while verifying the referral code." });
   }
-}
+};
 
 
 
 
-
-// Get otp page
-
+//Renders the OTP submission page
 const getOtp = (req, res) => {
   try {
     res.render("user/submitOtp");
   } catch (error) {
-    console.log(error.message);
-    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+    console.error("Error loading OTP page:", error.message);
   }
 };
 
-
-
-
-// Submit Otp
-
+// Handles OTP submission and user registration.
 const submitOtp = async (req, res) => {
   try {
-    userOtp = req.body.otp;
+    let userOtp = req.body.otp;
+    if (!req.session.otp || !req.session.otpTimestamp) {
+      return res.status(400).json({ error: "Session expired. Please request a new OTP." });
+    }
 
-    if (userOtp == otp) {
-      const user = new User({
-        name: userRegData.name,
-        email: userRegData.email,
-        mobile: userRegData.phone,
-        password: hashedPassword,
+    if (Date.now() - req.session.otpTimestamp > 60000) {
+      req.session.otp = null;
+      req.session.otpTimestamp = null;
+      return res.status(400).json({ error: "OTP expired. Please request a new OTP." });
+    }
+
+    userOtp = Array.isArray(userOtp) ? userOtp.join("") : userOtp.toString().trim();
+
+    if (userOtp === req.session.otp.toString().trim()) {
+      if (!req.session.userRegData) {
+        return res.status(400).json({ error: "Session expired. Please start the registration process again." });
+      }
+
+      const newUser = await User.create({
+        name: req.session.userRegData.name,
+        email: req.session.userRegData.email,
+        mobile: req.session.userRegData.phone,
+        password: req.session.hashedPassword,
         isVerified: true,
         isBlocked: false,
       });
-      await user.save();
+      
+      const userId = newUser._id;
+      const { redeemAmount, referalAmount, OwnerId } = req.session;
 
-      if(redeemAmount){
+      if (redeemAmount) {
         await User.updateOne(
-          {_id:user._id},
+          { _id: userId },
           {
-            $inc:{wallet:redeemAmount},
-            $push:{
-              history:{
-                amount:redeemAmount,
-                status:'Referred',
-                date:Date.now()
-              }
-            }
+            $inc: { wallet: redeemAmount },
+            $push: {
+              history: {
+                amount: redeemAmount,
+                status: 'Referred',
+                date: Date.now(),
+              },
+            },
           }
-        )
+        );
       }
-      const generateReferalCode=uuidv4()
-      const referalCollection=new Referral({
-        userId:user._id,
-        referralCode:generateReferalCode
-      })
-      await referalCollection.save()
 
-      if(referalAmount && OwnerId){
+      const generateReferalCode = uuidv4();
+      await new Referral({
+        userId: userId,
+        referralCode: generateReferalCode,
+      }).save();
+
+      if (referalAmount && OwnerId) {
         await User.updateOne(
-          {_id:OwnerId},
+          { _id: OwnerId },
           {
-            $inc:{wallet:referalAmount},
-            $push:{
-              history:{
-                amount:referalAmount,
-                status:"Referred",
-                date:Date.now()
-              }
-            }
+            $inc: { wallet: referalAmount },
+            $push: {
+              history: {
+                amount: referalAmount,
+                status: "Referred",
+                date: Date.now(),
+              },
+            },
           }
-        )
+        );
       }
+      
       req.session.regSuccessMsg = true;
-      res.json({ success: true, redirectUrl: "/" });
+      req.session.otp = null;
+      req.session.otpTimestamp = null;
+      req.session.userRegData = null;
+      req.session.hashedPassword = null;
+      req.session.redeemAmount = null;
+      req.session.OwnerId = null;
+      req.session.referalAmount = null;
+
+      return res.status(200).json({ success: true, redirectUrl: "/login" });
     } else {
-      otpError = "incorrect otp";
-      res.json({ error: otpError });
+      return res.status(400).json({ error: "Incorrect OTP" });
     }
   } catch (error) {
-    console.log(error.message);
-    res.json({ error: "An error occurred while submitting the OTP." });
+    console.error("Error submitting OTP: ", error);
+    return res.status(500).json({ error: "An error occurred while submitting the OTP." });
   }
 };
 
-
-
-
-// Resend Otp
-
+// Resends OTP to the user.
 const resendOtp = async (req, res) => {
   try {
-    if (userEmail) otp = await userHelper.verifyEmail(userEmail);
-    console.log("Sending OTP to:", email, otp);
-    res.redirect("/submit_otp");
+    if (!req.session.userRegData || !req.session.userRegData.email) {
+      return res.status(400).json({ error: "User email not found in session." });
+    }
+
+    const userEmail = req.session.userRegData.email.trim();
+    if (!userEmail) {
+      return res.status(400).json({ error: "Invalid email address." });
+    }
+
+    const { otp, otpTimestamp } = await userHelper.verifyEmail(userEmail);
+    if (!otp) {
+      return res.status(500).json({ error: "Failed to generate OTP. Try again." });
+    }
+
+    req.session.otp = otp;
+    req.session.otpTimestamp = otpTimestamp;
+
+    return res.json({ success: true, message: "OTP resent successfully" });
   } catch (error) {
-    console.log(error.message);
-    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+    return res.status(500).json({ error: "Failed to resend OTP" });
   }
 };
-
 
 
 

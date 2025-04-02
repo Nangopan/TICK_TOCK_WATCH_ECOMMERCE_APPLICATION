@@ -17,7 +17,9 @@ const orderSchema = new Schema({
       quantity: { type: Number },
       image: { type: String },
       isCancelled:{type:Boolean , default:false},
-      isReturned:{type:Boolean , default:false}
+      isReturned:{type:Boolean , default:false},
+      cancelReason: { type: String, default: null },  // Store cancel reason
+      returnReason: { type: String, default: null }   // Store return reason
      
     },
   ],
@@ -60,14 +62,16 @@ const orderSchema = new Schema({
 
   status: {
     type: String,
-    enum: ["Pending", "Shipped", "Delivered", 'Cancelled', 'Returned' , 'Payment Failed'],
-    default: "Pending",
+    enum: ["pending", "Shipped", "Delivered", 'Cancelled', 'Returned' , 'Payment Failed'],
+    default: "pending",
   },
 
   date: {
     type: Date,
     default: Date.now,
   },
+  cancelReason: { type: String, default: null },  
+  returnReason: { type: String, default: null } 
 });
 
 const Order = mongoose.model("Order", orderSchema);

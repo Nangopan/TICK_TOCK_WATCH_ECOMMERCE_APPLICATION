@@ -1,5 +1,5 @@
 <main class="main">
-        <div class="page-header breadcrumb-wrap">
+ <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
                     <a href="/" rel="nofollow">Home</a>                    
@@ -7,71 +7,95 @@
                 </div>
             </div>
         </div>
-        <section class="pt-50 pb-150">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-10 m-auto">
-                        <div class="row">
-                            <div class="col-lg-6 m-auto">
-                                <div class="login_wrap widget-taber-content p-30 background-white border-radius-5">
-                                    <div class="padding_eight_all bg-white">
-                                        {{#if message}}
-                  <div class="alert alert-danger mt-3 alert-dismissible fade {{#if message}}show{{/if}}" role="alert">
-                  {{message}}
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                  {{/if}}
-                  {{#if message1}}
-                  <div class="alert alert-danger mt-3 alert-dismissible fade {{#if message1}}show{{/if}}" role="alert">
-                  {{message1}}
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>
-                  {{/if}}
+    <section class="pt-50 pb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 m-auto">
+                    <div class="row">
+                        <div class="col-lg-6 m-auto">
+                            <div class="login_wrap widget-taber-content p-30 background-white border-radius-5">
+                                <div class="padding_eight_all bg-white">
+                                    <!-- Display error messages if any -->
+                                    {{#if message}}
+                                    <div class="alert alert-danger mt-3 alert-dismissible fade show" role="alert">
+                                        {{message}}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    {{/if}}
+                                    {{#if message1}}
+                                    <div class="alert alert-danger mt-3 alert-dismissible fade show" role="alert">
+                                        {{message1}}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    {{/if}}
+                                    
                                     <h3 class="mb-30">Create an Account</h3>
-                                        <form action="/signup" method="post" id="signupForm" >    
-                                            <div class="form-floating mb-3 input-control">
-                                                <input type="text" class="form-control" id="name" name="name" onchange="validateUsername()" required autofocus>
-                                                <label for="floatingInputUsername">Username</label>
-                                                <p style="color: red;" id="usernameError"></p>
+                                    <form action="/signup" method="post" id="signupForm">    
+                                        <!-- Username input -->
+                                        <div class="form-floating mb-3 input-control">
+                                            <input type="text" class="form-control" id="name" name="name" onchange="validateUsername()" required autofocus>
+                                            <label for="name">Username</label>
+                                            <p class="text-danger" id="usernameError"></p>
+                                        </div>
+                                        <!-- Email input -->
+                                        <div class="form-floating mb-3 input-control">
+                                            <input type="email" class="form-control" id="email" name="email" onchange="validateEmail()" required>
+                                            <label for="email">Email</label>
+                                            <p class="text-danger" id="emailError"></p>
+                                        </div>    
+                                        <!-- Mobile number input -->
+                                        <div class="form-floating mb-3 input-control">
+                                            <input type="tel" class="form-control" id="phone" name="phone" onchange="validatePhoneNumber()" required>
+                                            <label for="phone">Mobile Number</label>
+                                            <p class="text-danger" id="phoneError"></p>
+                                        </div>
+                                        <!-- Password input -->
+                                        <div class="form-floating mb-3 input-control">
+                                            <input type="password" class="form-control" id="password" name="password" onchange="validatePassword()" required>
+                                            <label for="password">Password</label>
+                                            <p class="text-danger" id="passwordError"></p>
+                                        </div>
+                                        <!-- Show password toggle -->
+                                        <div class="login_footer form-group">
+                                            <div class="custome-checkbox">
+                                                   <input class="form-check-input" type="checkbox" id="showPasswordCheckbox" onchange="togglePasswordVisibility()">
+                                                   <label class="form-check-label" for="showPasswordCheckbox">Show Password</label>
+                                              </div>
+                                        </div>    
+                                        <!-- Confirm password input -->
+                                        <div class="form-floating mb-3 input-control">
+                                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" onchange="validateConfirmPassword()" required>
+                                            <label for="confirmPassword">Confirm Password</label>
+                                            <p class="text-danger" id="confirmPasswordError"></p>
+                                        </div>
+                                        <!-- Show confirm password toggle -->
+                                        <div class="login_footer form-group">
+                                            <div class="custome-checkbox">
+                                                <input class="form-check-input" type="checkbox" id="showPasswordCheckbox2" onchange="togglePasswordVisibility2()">
+                                                <label class="form-check-label" for="showPasswordCheckbox2">Show Password</label>
                                             </div>
-                                            <div class="form-floating mb-3 input-control">
-                                                <input type="email" class="form-control" id="email" name="email" onchange="validateEmail()" required>
-                                                <label for="email">Email</label>
-                                                <p style="color: red;" id="emailError"></p>
-                                            </div>    
-                                            <div class="form-floating mb-3 input-control">
-                                                <input type="tel" class="form-control" id="phone" placeholder="Phone" name="phone" onchange="validatePhoneNumber()" required>
-                                                <label for="phone">Mobile Number</label>
-                                                <p style="color: red;" id="phoneError"></p>
-                                            </div>
- <div class="form-floating mb-3 input-control" style="position: relative;">
-    <input type="password" class="form-control" id="password" placeholder="Password" name="password" onchange="validatePassword()" required>
-    <label for="password">Password</label>
-    <span class="toggle-password" onclick="togglePasswordVisibility('password', 'togglePasswordIcon')" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;">
-        <i id="togglePasswordIcon" class="fa fa-eye"></i>
-    </span>
-    <p style="color: red;" id="passwordError"></p>
-</div>                                    
-<div class="form-floating mb-3 input-control" style="position: relative;">
-    <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" name="confirmPassword" onchange="validateConfirmPassword()" required>
-    <label for="confirmPassword">Confirm Password</label>
-    <span class="toggle-password" onclick="togglePasswordVisibility('confirmPassword', 'toggleConfirmPasswordIcon')" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;">
-        <i id="toggleConfirmPasswordIcon" class="fa fa-eye"></i>
-    </span>
-    <p style="color: red;" id="confirmPasswordError"></p>
-</div>  
-      
-                                         
-                                            <div class="login_footer form-group">
-                                                <div class="chek-form">
-                                                   
-                                                </div>    
-                                            </div>
-                                            <div class="form-group text-center">
-                                                <button type="submit" class="btn btn-fill-out btn-block hover-up" name="login">Submit &amp; Register</button>
-                                                <div id="error-message" style="color: red;"></div>
-                                            </div>
-                                        </form>
+                                        </div>
+                                        <!-- Submit button -->
+                                        <div class="form-group text-center">
+                                            <button type="submit" class="btn btn-fill-out btn-block hover-up ">Submit & Register</button>
+                                            <div id="error-message" class="text-danger"></div>
+                                        </div>
+                                    </form>
+                                    <!-- Google login button -->
+                                    <div>
+                                      <ul class="text-center" style="padding: 1px;">
+                                        <li>
+                                          <a href="/auth/google" class="btn btn-fill-out m-auto btn-block hover-up" style="width: 40%;">
+                                            <svg aria-hidden="true" class="icon-svg" width="20" height="20" viewBox="0 0 20 20">
+                                              <path d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 002.38-5.88c0-.57-.05-.66-.15-1.18z" fill="#4285F4"></path>
+                                              <path d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 01-7.18-2.54H1.83v2.07A8 8 0 008.98 17z" fill="#34A853"></path>
+                                              <path d="M4.5 10.52a4.8 4.8 0 010-3.04V5.41H1.83a8 8 0 000 7.18l2.67-2.07z" fill="#FBBC05"></path>
+                                              <path d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 001.83 5.4L4.5 7.49a4.77 4.77 0 014.48-3.3z" fill="#EA4335"></path>
+                                            </svg>
+                                            Signup With Google Account
+                                          </a>
+                                        </li>
+                                      </ul>
                                     </div>
                                 </div>
                             </div>
@@ -79,112 +103,95 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 </main>
 
 
 
-   
 <script>
-    const usernameInput = document.getElementById("name");
-    const emailInput = document.getElementById("email");
-    const phoneInput = document.getElementById("phone");
-    const passwordInput = document.getElementById("password");
-    const confirmPasswordInput = document.getElementById("confirmPassword");
-
-    const usernameError = document.getElementById("usernameError");
-    const emailError = document.getElementById("emailError");
-    const phoneError = document.getElementById("phoneError");
-    const passwordError = document.getElementById("passwordError");
-    const confirmPasswordError = document.getElementById("confirmPasswordError");
-
-   function validateUsername() {
-    const usernamePattern = /^[A-Za-z]{4,}$/; // Allows only alphabets, no spaces, minimum 4 characters
-    const userNameInput = usernameInput.value.trim();
+    // Form validation functions
+function validateUsername() {
+    const username = document.getElementById("name").value.trim();
+    const usernamePattern = /^(?!.*([a-zA-Z])\1{3})(?=[^a-zA-Z]*[a-zA-Z][^a-zA-Z]*[a-zA-Z][^a-zA-Z]*[a-zA-Z][^a-zA-Z]*).+$/;
     
-    if (userNameInput === "") {
-        usernameError.textContent = "Username cannot be blank"; 
-    } else if (!usernamePattern.test(userNameInput)) {
-        usernameError.textContent = "Username must be at least 4 letters and contain only alphabets (no spaces or numbers)";
+    document.getElementById("usernameError").textContent = 
+        usernamePattern.test(username) ? "" : "Username must be at least 4 different letters and not repeat the same letter (e.g., 'aaaa')";
+}
+
+function validateEmail() {
+    const email = document.getElementById("email").value.trim();
+    const emailPattern = /^[a-zA-Z][a-zA-Z0-9._-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    document.getElementById("emailError").textContent = 
+        emailPattern.test(email) ? "" : "Invalid email format (should not start with numbers)";
+}
+
+function validatePhoneNumber() {
+    const phone = document.getElementById("phone").value.trim();
+    const phonePattern = /^\d{10}$/;
+    const allSameDigits = /^(\d)\1{9}$/;
+    
+    if (!phonePattern.test(phone)) {
+        document.getElementById("phoneError").textContent = "Phone number must be 10 digits";
+    } else if (allSameDigits.test(phone)) {
+        document.getElementById("phoneError").textContent = "Invalid phone number (digits cannot be all the same)";
     } else {
-        usernameError.textContent = "";
+        document.getElementById("phoneError").textContent = "";
     }
 }
 
-    function validateEmail() {
-        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        if (!emailPattern.test(emailInput.value.trim())) {
-            emailError.textContent = "Invalid email address";
-        } else {
-            emailError.textContent = "";
-        }
-    }
-
-    function validatePhoneNumber() {
-        const phonePattern = /^\d{10}$/; // Assuming a 10-digit phone number
-        if (!phonePattern.test(phoneInput.value.trim())) {
-            phoneError.textContent = "Invalid phone number";
-        } else {
-            phoneError.textContent = "";
-        }
-    }
-
-    function validatePassword() {
-    const passwordValue = passwordInput.value.trim();
-    let errors = [];
-
-    if (passwordValue.length < 6) {
-        errors.push("Password must be at least 6 characters long.");
-    }
-    if (!/[A-Z]/.test(passwordValue)) {
-        errors.push("Password must contain at least one uppercase letter.");
-    }
-    if (!/[a-z]/.test(passwordValue)) {
-        errors.push("Password must contain at least one lowercase letter.");
-    }
-    if (!/[\W_]/.test(passwordValue)) {
-        errors.push("Password must contain at least one special character.");
-    }
-
-    passwordError.innerHTML = errors.length ? errors.join("<br>") : "";
+function validatePassword() {
+    const password = document.getElementById("password").value.trim();
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    
+    document.getElementById("passwordError").textContent = 
+        passwordPattern.test(password) ? "" : 
+        "Password must be at least 8 characters long, contain one uppercase, one lowercase, one number, and one special character.";
 }
 
-    function validateConfirmPassword() {
-        if (confirmPasswordInput.value.trim() !== passwordInput.value.trim()) {
-            confirmPasswordError.textContent = "Passwords do not match";
-        } else {
-            confirmPasswordError.textContent = "";
-        }
+function validateConfirmPassword() {
+    const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById("confirmPassword").value.trim();
+    
+    document.getElementById("confirmPasswordError").textContent = 
+        password === confirmPassword ? "" : "Passwords do not match";
+}
+
+// Disable copy-paste on confirm password field
+document.getElementById("confirmPassword").addEventListener("paste", function(event) {
+    event.preventDefault();
+});
+
+document.getElementById("confirmPassword").addEventListener("copy", function(event) {
+    event.preventDefault();
+});
+
+document.getElementById("confirmPassword").addEventListener("cut", function(event) {
+    event.preventDefault();
+});
+
+// Toggle password visibility
+function togglePasswordVisibility() {
+    const password = document.getElementById("password");
+    password.type = password.type === "password" ? "text" : "password";
+}
+
+function togglePasswordVisibility2() {
+    const confirmPassword = document.getElementById("confirmPassword");
+    confirmPassword.type = confirmPassword.type === "password" ? "text" : "password";
+}
+
+// Prevent form submission if validation fails
+document.getElementById("signupForm").addEventListener("submit", function(event) {
+    validateUsername();
+    validateEmail();
+    validatePhoneNumber();
+    validatePassword();
+    validateConfirmPassword();
+    
+    if (document.querySelectorAll(".text-danger").some(error => error.textContent !== "")) {
+        event.preventDefault();
     }
+});
 
-    function togglePasswordVisibility(inputId, iconId) {
-        const passwordInput = document.getElementById(inputId);
-        const icon = document.getElementById(iconId);
-
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            icon.classList.remove("fa-eye");
-            icon.classList.add("fa-eye-slash");
-        } else {
-            passwordInput.type = "password";
-            icon.classList.remove("fa-eye-slash");
-            icon.classList.add("fa-eye");
-        }
-    }
-
-    // Event listener for form submission
-    const signupForm = document.getElementById("signupForm");
-    signupForm.addEventListener("submit", function (event) {
-        validateUsername();
-        validateEmail();
-        validatePhoneNumber();
-        validatePassword();
-        validateConfirmPassword();
-
-        // Prevent form submission if any field is invalid
-        if (usernameError.textContent || emailError.textContent || phoneError.textContent || passwordError.textContent || confirmPasswordError.textContent) {
-            event.preventDefault();
-        }
-    });
 </script>
-

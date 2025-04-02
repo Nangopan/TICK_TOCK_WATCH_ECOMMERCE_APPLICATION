@@ -1,4 +1,5 @@
 <main class="main">
+    <!-- Breadcrumb navigation for user navigation -->
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
@@ -8,271 +9,192 @@
             </div>
         </div>
     </div>
-    <section class="pt-50 pb-150">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 m-auto">
-                    <div class="row">
-                        {{> profileHeader}}
-                        
-                        <div class="col-md-9">
-                            <section class="content-body p-xl-4">
-                                <div class="content-header">
-                                    <div>
-                                        <h2 class="content-title card-title">Order detail</h2>
-                                        <p>Details for Order ID: {{myOrderDetails._id}}</p>
+    
+<section class="pt-50 pb-150 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="row shadow-lg bg-white p-4 rounded-3">
+                    <!-- Profile Header -->
+                    {{> profileHeader}}
+                    
+                    <div class="col-md-9">
+                        <section class="content-body p-4">
+                            <div class="content-header d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="content-title">Order Details</h2>
+                                <span class="badge bg-info text-white">Order ID: {{myOrderDetails._id}}</span>
+                            </div>
+                            
+                            <div class="card border-0 shadow-sm">
+                                <header class="card-header  text-black p-3 rounded-top">
+                                    <div class="row align-items-center">
+                                        <div class="col-lg-6 col-md-6">
+                                            <i class="material-icons md-calendar_today"></i>
+                                            <b>{{myOrderDetails.date}}</b>
+                                            <br>
+                                            <small>Order ID: {{myOrderDetails._id}}</small>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="card">
-                                    <header class="card-header">
-                                        <div class="row align-items-center">
-                                            <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
-                                                <span>
-                                                    <i class="material-icons md-calendar_today"></i>
-                                                    <b>{{myOrderDetails.date}}</b>
-                                                </span> <br>
-                                                <small class="text-muted">Order ID: {{myOrderDetails._id}}</small>
-                                            </div>
-                                            <div class="col-lg-6 col-md-6 ms-auto text-md-end">
-                                                <a onclick="getInvoice('{{myOrderDetails._id}}')"
-                                                    class="btn btn-secondary print ms-2" href="#"><i
-                                                        class="fa fa-print" style="font-size: 1rem;"></i></a>
-                                            </div>
-                                        </div>
-                                    </header>
-                                    <div class="card-body">
-                                        <div class="row mb-50 mt-20 order-info-wrap">
-                                            <div class="col-md-4">
-                                                <article class="icontext align-items-start">
-                                                    <span class="icon icon-sm rounded-circle bg-primary-light">
-                                                        <i class="text-primary material-icons md-person"></i>
-                                                    </span>
-                                                    <div class="text">
-                                                        <h6 class="mb-1">Customer</h6>
-                                                        <p class="mb-1">
-                                                            {{address.name}} <br> {{address.mobile}}
-                                                        </p>
-                                                    </div>
-                                                </article>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <article class="icontext align-items-start">
-                                                    <span class="icon icon-sm rounded-circle bg-primary-light">
-                                                        <i class="text-primary material-icons md-local_shipping"></i>
-                                                    </span>
-                                                    <div class="text">
-                                                        <h6 class="mb-1">Order info</h6>
-                                                        <p class="mb-1">
-                                                            Shipping: Fargo express <br> Pay method:
-                                                            {{myOrderDetails.paymentMethod}} <br> Status:
-                                                            {{myOrderDetails.status}}
-                                                        </p>
-                                                    </div>
-                                                </article>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <article class="icontext align-items-start">
-                                                    <span class="icon icon-sm rounded-circle bg-primary-light">
-                                                        <i class="text-primary material-icons md-place"></i>
-                                                    </span>
-                                                    <div class="text">
-                                                        <h6 class="mb-1">Deliver to</h6>
-                                                        <p class="mb-1">
-                                                            City: {{address.city}}, {{address.state}}
-                                                            <br>{{address.addressLine1}} 
-                                                            <br>Pin: {{address.pin}}
-                                                        </p>
-                                                    </div>
-                                                </article>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-lg-8">
-                                                <div class="table-responsive">
-                                                    <table class="table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th width="40%">Product</th>
-                                                                <th width="20%">Unit Price</th>
-                                                                <th width="20%">Quantity</th>
-                                                                <th width="20%">Total</th>
-                                                                <th width="80%">Cancel/Return</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                         
-{{#each orderedProDet}}
-<tr>
-    <td>
-        <a class="itemside" href="#">
-            <div class="left">
-                <img src="/assets/imgs/products/{{this.product.image}}" width="40" height="40" class="img-xs" alt="Item">
-            </div>
-            <div class="info">{{this.product.name}}</div>
-        </a>
-    </td>
-    <td>
-        ₹{{#ifeq this.product.discountPrice undefined}}{{this.product.price}}{{else}}{{this.product.discountPrice}}{{/ifeq}}
-    </td>
-    <td>{{this.product.quantity}}</td>
-    <td>
-        ₹{{#if this.product.discountPrice}}
-                                                                        {{multiply this.product.quantity this.product.discountPrice}}
-                                                                    {{else}}
-                                                                        {{multiply this.product.quantity this.product.price}}
-                                                                    {{/if}}
-    </td>
-    <td class="text-end">
-
-        {{#ifeq this.product.isCancelled true}}
-            <!-- Product is cancelled, show only "Cancelled" button -->
-            <button class="btn btn-primary btn-sm cancel-btn" 
-                    style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" 
-                    disabled>
-                Cancelled
-            </button>
-        {{else}}
-
-            {{#ifeq this.product.isReturned true}}
-                <!-- Product is returned, show only "Returned" button -->
-                <button class="btn btn-primary btn-sm return-btn" 
-                        style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" 
-                        disabled>
-                    Returned
-                </button>
-            {{else}}
-
-                {{#ifeq ../myOrderDetails.status 'Delivered'}}
-                    <!-- Order is delivered: show "Return" button -->
-                    <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" 
-                            data-order-id="{{../myOrderDetails._id}}" 
-                            data-prod-id="{{this.product._id}}">
-                        Return
-                    </button>
-                {{else}}
-                    <!-- Order is NOT delivered: show "Cancel" button -->
-                    <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" 
-                            data-order-id="{{../myOrderDetails._id}}" 
-                            data-prod-id="{{this.product._id}}">
-                        Cancel
-                    </button>
-                {{/ifeq}}
-
-            {{/ifeq}}
-        {{/ifeq}}
-
-    </td>
-</tr>
-{{/each}}
-
-
-
-
-
-
-                                                            <tr>
-    <td colspan="5">
-        <!-- Order Summary Card -->
-        <div class="card mt-3 mb-3 shadow-sm">
-            <div class="card-header bg-light">
-                <h5 class="mb-0">Order Summary</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <!-- Order tracking or other info could go here -->
-                    </div>
-                    <div class="col-md-6">
-                        <div class="d-flex justify-content-end">
-                            <article class="text-end w-100">
-                                <table class="table table-borderless table-sm">
-                                    <tbody>
-
-                                        <tr>
-                                            <td class="text-end pe-3">Delivery:</td>
-                                            <td class="text-end text-danger">+₹ 50</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-end pe-3">Discount:</td>
-                                            <td class="text-end text-success">
-                                                {{#if myOrderDetails.discountAmt}}
-                                                    -₹ {{myOrderDetails.discountAmt}}
-                                                {{else}}
-                                                    -₹ 0
-                                                {{/if}}
-                                            </td>
-                                        </tr>
-                                        <tr class="border-top">
-                                            <td class="text-end pe-3 pt-2">
-                                                <span class="h6">Grand Total:</span>
-                                            </td>
-                                            <td class="text-end pt-2">
-                                                {{#if myOrderDetails.discountAmt}}
-                                                    <b id="grandTotal" class="h5">₹{{myOrderDetails.amountAfterDscnt}}</b>
-                                                {{else}}
-                                                    <b id="grandTotal" class="h5">₹{{add myOrderDetails.total 0}}</b>
-                                                {{/if}}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-end pe-3">Status:</td>
-                                            <td class="text-end">
-                                                <span class="badge rounded-pill alert-success text-success">{{myOrderDetails.status}}</span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                </header>
                                 
-                                {{#statuchecker myOrderDetails}}
-                                {{else}}
-                                {{/statuchecker}}
-                            </article>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </td>
-</tr>
+                                 <div class="table-responsive mt-3">
+                                        <table class="table table-striped">
+                                            <thead class=" text-black">
+                                                <tr>
+                                                    <th>Product</th>
+                                                    <th>Unit Price</th>
+                                                    <th>Quantity</th>
+                                                    <th>Total</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                             <tbody>
+                                                            {{#each orderedProDet}}
+                                                            <tr>
+                                                                <td>
+                                                                    <a class="itemside" href="#">
+                                                                        <div class="left">
+                                                                            <img src="/assets/imgs/products/{{this.product.image}}"
+                                                                                width="40" height="40" class="img-xs"
+                                                                                alt="Item">
+                                                                        </div>
+                                                                        <div class="info">{{this.product.name}}</div>
+                                                                    </a>
+                                                                </td>
+                                                                <td> ₹{{this.product.price}} </td>
+                                                                <td>{{this.product.quantity}} </td>
+                                                                <td>₹{{multiply this.product.quantity
+                                                                    this.product.price }}</td>
+                                                                
+
+                                                                <td class="text-end">                                                                    
+                                                                    {{#singlestatuchecker this.product}}
+                                                                        {{#ifCond ../myOrderDetails.status '==' 'Delivered'}}
+                                                                            <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}">Return</button>
+                                                                        {{else ifCond ../myOrderDetails.status '==' 'Payment Failed'}}
+                                                                            <button id="retryPayment" class="btn btn-primary btn-sm retry-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}" style="background-color: #d6d6d6; border-color: #c0c0c0; color: #808080; cursor: not-allowed;" disabled>Retry Payment</button>
+                                                                            
+                                                                        {{else}}
+                                                                            <button id="cancel-btn" class="btn btn-primary btn-sm cancel-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product._id}}">Cancel</button>
+                                                                        {{/ifCond}}
+                                                                    {{/singlestatuchecker}}
+                                                                </td>
+                                                            </tr>
+                                                            {{/each}}
+                                                          
                                                         </tbody>
-                                                    </table>
-                                                </div>
+                                        </table>
+                                        <tbody>
+    <tr>
+        <td colspan="5">
+            <article class="float-center">
+                <dl class="dlist text-center">
+                    <dt>Delivery:</dt>
+                    <dd>
+                        <span class="text-danger">+₹50</span>
+                    </dd>
+                </dl>
+                 <dl class="dlist text-center">
+                    <dt>Discount:</dt>
+                    <dd>
+                        <span class="text-danger">
+                             {{#if myOrderDetails.discountAmt}}
+                                                                                        -₹ {{myOrderDetails.discountAmt}}
+                                                                                    {{else}}
+                                                                                        -₹ 0
+                                                                                    {{/if}}
+                        </span>
+                    </dd>
+                </dl>
+                <dl class="dlist text-center">
+                    <dt>Grand Total:</dt>
+                    <dd>
+                        <b id="grandTotal" class="h5">₹{{add myOrderDetails.total 0}}</b>
+                    </dd>
+                </dl>
+                <dl class="dlist text-center">
+                    <dt class="text-muted">Status:</dt>
+                    <dd>
+                        <span class="badge rounded-pill alert-success text-success">{{myOrderDetails.status}}</span>
+                    </dd>
+                </dl>
+                {{#statuchecker myOrderDetails}}
+                {{else}}
+                {{/statuchecker}}
+                <dl class="dlist text-center">
+    <dt>Payment Method:</dt>
+    <dd>
+        <b class="h5">{{myOrderDetails.paymentMethod}}</b>
+    </dd>
+</dl>
+            </article>
+        </td>
+    </tr>
+</tbody>
+
+                                    </div>
+
+                                <div class="card-body">
+                                    <div class="row mb-4">
+                                        <div class="col-md-4">
+                                            <div class="card p-3 shadow-sm">
+                                                <h6 class="text-muted">Customer</h6>
+                                                <p class="fw-bold">{{address.name}}</p>
+                                                <p>{{address.mobile}}</p>
                                             </div>
-                                            <div class="col-lg-1"></div>
-                                            <div class="col-lg-5">
-                                                <div class="box shadow-sm bg-light">
-                                                    <!-- Optional: any other information you want to show -->
-                                                </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card p-3 shadow-sm">
+                                                <h6 class="text-muted">Order Info</h6>
+                                                <p><b>Shipping:</b> Fargo Express</p>
+                                                <p><b>Payment:</b> {{myOrderDetails.paymentMethod}}</p>
+                                                <p><b>Status:</b> {{myOrderDetails.status}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card p-3 shadow-sm">
+                                                <h6 class="text-muted">Deliver To</h6>
+                                                <p>{{address.city}}, {{address.state}}</p>
+                                                <p>{{address.addressLine1}}</p>
+                                                <p><b>Pin:</b> {{address.pin}}</p>
                                             </div>
                                         </div>
                                     </div>
+                                    
+                                   
                                 </div>
-                            </section>
-                        </div>
+                            </div>
+                           <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+    <a href="#" class="btn btn-secondary print ms-2" onclick="getInvoice('{{myOrderDetails._id}}'); return false;">
+        <i class="fa fa-print" style="font-size: 1rem;"></i> Download Invoice
+    </a>
+</div>
+
+
+                        </section>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 <script>
+    // Extract grand total amount, removing currency symbols and commas
 var grandTotalText = document.getElementById("grandTotal").innerText;
-
-// Remove the ₹ symbol and any commas (if applicable) from the string
 const amount = parseInt(grandTotalText.replace(/[^\d]/g, '')) * 100;
-
-// Log the amount to check if the parsing works
 console.log('Grand Total:', amount);
-
 
     const getInvoice = async (id) => {
   try {
-    const response = await fetch(`/get_invoice?id=${id}`, {
+    const response = await fetch(`/invoice?id=${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/pdf'
@@ -301,301 +223,242 @@ console.log('Grand Total:', amount);
     console.error('Error fetching invoice:', error);    
   }
 };
-    $(document).ready(function () {
-        function areAllProductsCancelled() {
-            let allCancelled = true;
-            $('.product-row').each(function () {
-                if (!$(this).data('is-cancelled')) {
-                    allCancelled = false;
-                    return false; // Exit the loop early if any product is not cancelled
-                }
-            });
-            return allCancelled;
-        }
 
-        // Event listener for canceling individual products
-        $('body').on('click', '.cancel-btn', function () {
-            const orderId = $(this).data('order-id');
-            const productId = $(this).data('prod-id');
 
-            // Disable the button immediately to prevent multiple clicks
-            $(this).prop('disabled', true);
-            // Add visual feedback by changing appearance
-            $(this).css({
-                'opacity': '0.5',
-                'background-color': '#d6d6d6',
-                'border-color': '#c0c0c0',
-                'color': '#808080',
-                'cursor': 'not-allowed',
-                'transition': 'opacity 0.3s ease'
-            });
 
-            if (orderId && productId) {
-                $.ajax({
-                    type: 'PUT',
-                    url: '/cancel-one-product',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ id: orderId, prodId: productId }),
-                    success: function (response) {
-                        if (response.success) {
-                             Swal.fire({
-                            icon: 'success',
-                            title: 'Cancelled product',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(()=>{window.location.reload();})
-                        }
-                    },
-                    error: function (error) {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            } else {
-                alert('Invalid order or product ID.');
-            }
-        });
 
-        // Event listener for canceling the entire order
-        $('#cancelOrder').on('click', function () {
-            const orderId = $(this).data('order-id');
-
-            // Disable the button immediately
-            $(this).prop('disabled', true);
-            // Add visual feedback
-            $(this).css({
-                'opacity': '0.5',
-                'background-color': '#d6d6d6',
-                'border-color': '#c0c0c0',
-                'color': '#808080',
-                'cursor': 'not-allowed',
-                'transition': 'opacity 0.3s ease'
-            });
-
-            if (orderId) {
-                $.ajax({
-                    type: 'PUT',
-                    url: `/cancel-order/${orderId}`,
-                    contentType: 'application/json',
-                    success: function (response) {
-                        if (response.success) {
-                             Swal.fire({
-                            icon: 'success',
-                            title: 'Cancelled Order',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(()=>{window.location.reload();})
-                        } else {
-                            alert(response.message);
-                        }
-                    },
-                    error: function (error) {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            } else {
-                alert('Invalid order ID.');
-            }
-        });
-        
-        // Event listener for returning individual products
-        $('body').on('click', '.return-btn', function () {
-            const orderId = $(this).data('order-id');
-            const productId = $(this).data('prod-id');
-
-            // Disable the button immediately
-            $(this).prop('disabled', true);
-            // Add visual feedback
-            $(this).css({
-                'opacity': '0.5',
-                'background-color': '#d6d6d6',
-                'border-color': '#c0c0c0',
-                'color': '#808080',
-                'cursor': 'not-allowed',
-                'transition': 'opacity 0.3s ease'
-            });
-
-            if (orderId && productId) {
-                $.ajax({
-                    type: 'PUT',
-                    url: '/return-one-product',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ id: orderId, prodId: productId }),
-                    success: function (response) {
-                        if (response.success) {
-                            Swal.fire({
-                            icon: 'success',
-                            title: 'Returned product',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(()=>{window.location.reload();})
-                        }
-                    },
-                    error: function (error) {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            } else {
-                alert('Invalid order or product ID.');
-            }
-        });
-
-        // Event listener for return the entire order
-        $('#returnOrder').on('click', function () {
-            const orderId = $(this).data('order-id');
-
-            // Disable the button immediately
-            $(this).prop('disabled', true);
-            // Add visual feedback
-            $(this).css({
-                'opacity': '0.5',
-                'background-color': '#d6d6d6',
-                'border-color': '#c0c0c0',
-                'color': '#808080',
-                'cursor': 'not-allowed',
-                'transition': 'opacity 0.3s ease'
-            });
-
-            if (orderId) {
-                $.ajax({
-                    type: 'PUT',
-                    url: `/return-order/${orderId}`,
-                    contentType: 'application/json',
-                    success: function (response) {
-                        if (response.success) {
-                             Swal.fire({
-                            icon: 'success',
-                            title: 'Returned Order',
-                            text: response.message,
-                            showConfirmButton: false,
-                            timer: 1500
-                        }).then(()=>{window.location.reload();})
-                        } else {
-                            alert(response.message);
-                        }
-                    },
-                    error: function (error) {
-                        console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
-                    }
-                });
-            } else {
-                alert('Invalid order ID.');
-            }
-        });       
-    });
-
-    // Event listener for retrying payment when the order's status is "Payment Failed"
-    $('body').on('click', '#retryPayment', function () {
-        const orderId = $(this).data('order-id');
-        console.log("orderId ", orderId);
-
-        // Disable the button immediately
-        $(this).prop('disabled', true);
-        // Add visual feedback
-        $(this).css({
-            'opacity': '0.5',
-            'background-color': '#d6d6d6',
-            'border-color': '#c0c0c0',
-            'color': '#808080',
-            'cursor': 'not-allowed',
-            'transition': 'opacity 0.3s ease'
-        });
-
-        if (orderId) {       
-            console.log("amount ", amount);
-            payment(orderId);
-        } else {
-            alert('Invalid order ID.');
-        }
-    });
-
-    // Payment function
-    const payment = (orderId) => {
-        var options = {
-            "key": "rzp_test_OsDtnewxAfAwm0", 
-            "amount": parseInt(amount),
-            "currency": "INR",
-            "name": "Tick Tock",
-            "order_id": undefined,
-            "handler": function (response) {
-                retryPayment(orderId, 'Pending');
+$(document).ready(function () {
+    function showReasonPrompt(action, orderId, productId = null) {
+        Swal.fire({
+            title: `Why do you want to ${action}?`,
+            input: 'textarea',
+            inputPlaceholder: 'Enter your reason...',
+            inputAttributes: {
+                'aria-label': 'Enter your reason'
             },
-            "modal": {
-                "ondismiss": function() {
-                    console.log('Payment modal dismissed');
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            cancelButtonText: 'Cancel',
+            preConfirm: (reason) => {
+                if (!reason) {
+                    Swal.showValidationMessage('Reason is required');
+                }
+                return reason;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const reason = result.value;
+                if (action === 'cancel') {
+                    cancelProductOrOrder(orderId, productId, reason);
+                } else if (action === 'return') {
+                    returnProductOrOrder(orderId, productId, reason);
                 }
             }
-        };
-
-        var rzp1 = new Razorpay(options);
-
-        rzp1.on('payment.failed', function (response) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Payment Failed',
-                text: 'Your payment could not be processed. Please try again later.',
-                confirmButtonText: 'OK'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    location.reload(); // Reload page after payment failure
-                }
-            });
         });
+    }
 
-        rzp1.open();
+    function cancelProductOrOrder(orderId, productId, reason) {
+        let url = productId ? '/cancel-one-product' : `/cancel-order/${orderId}`;
+        let data = productId ? { id: orderId, prodId: productId, reason: reason } : { reason: reason };
+
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: productId ? 'Product Canceled' : 'Order Canceled',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => { window.location.reload(); });
+                }
+            },
+            error: function () {
+                alert('An error occurred. Please try again.');
+            }
+        });
+    }
+
+    function returnProductOrOrder(orderId, productId, reason) {
+        let url = productId ? '/return-one-product' : `/return-order/${orderId}`;
+        let data = productId ? { id: orderId, prodId: productId, reason: reason } : { reason: reason };
+
+        $.ajax({
+            type: 'PUT',
+            url: url,
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: productId ? 'Product Returned' : 'Order Returned',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => { window.location.reload(); });
+                }
+            },
+            error: function () {
+                alert('An error occurred. Please try again.');
+            }
+        });
+    }
+
+    // Cancel a single product
+    $('body').on('click', '.cancel-btn', function () {
+        const orderId = $(this).data('order-id');
+        const productId = $(this).data('prod-id');
+        showReasonPrompt('cancel', orderId, productId);
+    });
+
+    // Cancel the entire order
+    $('#cancelOrder').on('click', function () {
+        const orderId = $(this).data('order-id');
+        showReasonPrompt('cancel', orderId);
+    });
+
+    // Return a single product
+    $('body').on('click', '.return-btn', function () {
+        const orderId = $(this).data('order-id');
+        const productId = $(this).data('prod-id');
+        showReasonPrompt('return', orderId, productId);
+    });
+
+    // Return the entire order
+    $('#returnOrder').on('click', function () {
+        const orderId = $(this).data('order-id');
+        showReasonPrompt('return', orderId);
+    });
+});
+    // Event listener for retrying payment when the order's status is "Payment Failed"
+
+   $('body').on('click', '#retryPayment', function () {
+    const orderId = $(this).data('order-id');
+    console.log("orderId ", orderId);
+
+    if (orderId) {       
+        console.log("amount ", amount);
+        payment(orderId);
+    } else {
+        alert('Invalid order ID.');
+    }
+});
+
+const payment = (orderId) => {
+
+    
+
+    var options = {
+        "key": "rzp_test_FD0qJ5ErJZCdDr", 
+        "amount": amount, 
+        "currency": "INR",
+        "name": "Tick-Tock",
+        "order_id": undefined, 
+        "handler": async function (response) {
+            try{
+                await retryPayment(orderId, 'Pending');
+            }catch (error) {
+            console.error("Error during retryPayment:", error);
+        }
+    },
+            
+    
+        "modal": {
+            "ondismiss": function() {
+                console.log('Payment modal dismissed');
+            }
+        }
     };
 
-    // Retry Payment function (update payment status)
-    const retryPayment = async (orderId, status) => {
-        try {
-            const response = await fetch(`/retry-payment/${orderId}`, {
-                method: 'POST', 
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ status: status }) 
+
+
+
+        var options = {
+      "key": "rzp_test_FD0qJ5ErJZCdDr", 
+      "amount": parseInt(amount),
+      "currency": "INR",
+        
+      "name" : "Tick-Tock",
+      "order_id": undefined,
+      "handler": function (response) {
+        retryPayment(orderId, 'Pending');
+      },
+
+    };
+
+
+
+    var rzp1 = new Razorpay(options);
+
+    rzp1.on('payment.failed', function (response) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Payment Failed',
+            text: 'Your payment could not be processed. Please try again later.',
+            confirmButtonText: 'OK'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                location.reload(); 
+            }
+        });
+    });
+
+    rzp1.open();
+};
+
+// Retry Payment function (update payment status)
+
+const retryPayment = async (orderId, status) => {
+    try {
+        const response = await fetch(`/retry-payment/${orderId}`, {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: status }) 
+        });
+
+        
+        if (!response.ok) {
+            throw new Error('Failed to update payment status');
+        }
+
+        const data = await response.json();
+       
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Payment Retry Successful',
+                text: data.message, 
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                window.location.reload(); 
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to update payment status');
-            }
-
-            const data = await response.json();
-           
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Payment Retry Successful',
-                    text: data.message, 
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then(() => {
-                    window.location.reload(); 
-                });
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Payment Retry Failed',
-                    text: data.message, 
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
-        } catch (error) {
-            console.error('Error:', error);
+        } else {
             Swal.fire({
                 icon: 'error',
-                title: 'Error',
-                text: 'An error occurred while retrying payment. Please try again.',
+                title: 'Payment Retry Failed',
+                text: data.message, 
                 showConfirmButton: false,
                 timer: 1500
             });
         }
-    };
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while retrying payment. Please try again.',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }
+};
+
 </script>

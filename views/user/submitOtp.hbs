@@ -1,33 +1,24 @@
 <main class="main">
-  <div class="page-header breadcrumb-wrap">
-    <div class="container">
-      <div class="breadcrumb">
-        <a href="index.html" rel="nofollow">Home</a>
-        {{!-- <span></span> Pages --}}
-        <span></span> OTP
-      </div>
-    </div>
-  </div>
+
+  <!-- OTP Verification Section -->
   <section class="pt-150 pb-150">
     <div class="container">
       <div class="row">
         <div class="col-lg-10 m-auto">
-          <div class="row ">
-            <div class="col-lg-5 m-auto ">
-              <div
-                class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5">
+          <div class="row">
+            <div class="col-lg-5 m-auto">
+              <div class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5">
                 <div class="padding_eight_all bg-white">
+                  
+                  <!-- OTP Input Heading -->
                   <div class="heading_s1">
                     <h3 class="text-center mb-30">Enter OTP</h3>
                   </div>
-                  <form id="otp-form" action="/submit_otp" method="post">
-
-                    <h6 id="otp-error" style="color: red;" class="text-center mb-5">{{result.error}}</h6>
-
-
-
-
-
+                  
+                  <!-- OTP Form -->
+                  <form id="otp-form" action="/otp/submit" method="post">
+                    
+                    <!-- OTP Input Fields -->
                     <div class="form-floating mb-3 input-control">
                       <div class="otp-field mb-4">
                         <input type="number" name="otp" id="digit1" />
@@ -36,194 +27,187 @@
                         <input type="number" name="otp" id="digit4" disabled />
                       </div>
                     </div>
-                   
 
+                    <h6 id="otp-error" style="color: red;" class="text-center mb-5">{{result.error}}</h6>
+                    
+                    <!-- Submit and Resend OTP Options -->
                     <div class="text-center">
                       <button type="submit" class="btn btn-fill-out btn-block hover-up">Submit</button>
-                      <br>
-                      <br>
-                      <p class="text-primary my-3">Time left: <span id="timer">10</span> seconds</p>
-                      <button type="button" id="resendButton" class="btn hover-up" style="cursor: not-allowed;" onclick="resendOTP()">
-                        <a href="#" style="cursor: not-allowed;" id="resendLink">Resend OTP</a>
-</button>
-
-
-   
-
-
-                          
-
+                      <br><br>
+                      <p class="text-primary my-3">Time left: <span id="timer">60</span> seconds</p>
+                     <button type="button" id="resendButton" class="btn hover-up not-allowed" onclick="resendOTP()">
+                        Resend OTP
+                    </button>
                     </div>
+                  </form>
                 </div>
-
-
-                </form>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
-    </div>
   </section>
-
-  <style>
-    #resendButton {
-      color: #fff;
-      /* Change text color to white */
-      background-color: #fff;
-    }
-
-    .otp-field {
-      flex-direction: row;
-      column-gap: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .otp-field input {
-      height: 45px;
-      width: 42px;
-      border-radius: 6px;
-      outline: none;
-      font-size: 1.125rem;
-      text-align: center;
-      border: 1px solid #ddd;
-    }
-
-    .otp-field input:focus {
-      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-    }
-
-    .otp-field input::-webkit-inner-spin-button,
-    .otp-field input::-webkit-outer-spin-button {
-      display: none;
-    }
-
-    .not-allowed {
-  cursor: not-allowed;
-}
-    
-  </style>
-
 </main>
 
+<!-- OTP Input Styling -->
+<style>
+  .otp-field {
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+    align-items: center;
+    justify-content: center;
+  }
+  .otp-field input {
+    height: 45px;
+    width: 42px;
+    border-radius: 6px;
+    outline: none;
+    font-size: 1.125rem;
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+  .otp-field input:focus {
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+  }
+  .otp-field input::-webkit-inner-spin-button,
+  .otp-field input::-webkit-outer-spin-button {
+    display: none;
+  }
+  .not-allowed {
+    cursor: not-allowed;
+  }
+</style>
 
-
+<!-- OTP Input Handling Script -->
 <script>
-    const form = document.getElementById('otp-form');
-    const timerElement = document.getElementById('timer');
-    const resendButton = document.getElementById('resendButton');
-    const resendLink = document.getElementById('resendLink');
-    const timerText = document.querySelector('.text-primary.my-3');
-    const inputs = document.querySelectorAll(".otp-field > input");
-    const button = document.querySelector(".btn");
+  // Initialize Elements
+  const form = document.getElementById("otp-form");
+  const timerElement = document.getElementById("timer");
+  const resendButton = document.getElementById("resendButton");
+  const timerText = document.querySelector(".text-primary.my-3");
+  const inputs = document.querySelectorAll(".otp-field > input");
+  const button = document.querySelector(".btn");
 
-    let countdown = 10;
-    let countdownInterval;
+  let countdown = 60;
+  let countdownInterval;
 
-    // Start initial countdown when page loads
+  // Start Countdown Timer on Page Load
+  window.onload = function () {
     startCountdown();
+  };
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const otp = Array.from(inputs).map(input => input.value).join('');
-        console.log(otp);
+  // Start Countdown Function
+  function startCountdown() {
+  clearInterval(countdownInterval);
+  countdown = 60;
+  timerElement.textContent = countdown;
+  timerText.style.display = "block";
+  disableResendButton();
 
-        try {
-            const response = await fetch('/submit_otp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ otp }),
-            });
+  countdownInterval = setInterval(() => {
+    countdown--;
+    timerElement.textContent = countdown;
+    
+    if (countdown <= 0) {
+      clearInterval(countdownInterval);
+      timerText.style.display = "none";
+      enableResendButton();
 
-            const result = await response.json();
-            if (result.error) {
-                document.getElementById('otp-error').textContent = result.error;
-            } else {
-                window.location.href = '/login';
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    });
-
-    function startCountdown() {
-        countdown = 10;
-        timerElement.textContent = countdown;
-        timerText.style.display = 'block';
-        disableResendButton();
-
-        countdownInterval = setInterval(() => {
-            countdown--;
-            timerElement.textContent = countdown;
-            
-            if (countdown <= 0) {
-                clearInterval(countdownInterval);
-                timerElement.textContent = '';
-                timerText.style.display = 'none';
-                enableResendButton();
-            }
-        }, 1000);
+      // Show OTP expiration message
+      const otpError = document.getElementById("otp-error");
+      otpError.textContent = "OTP expired. Please request a new OTP.";
+      otpError.style.color = "red";
     }
+  }, 1000);
+}
 
-    function resendOTP() {
-        clearInterval(countdownInterval); // Clear any previous countdown
-        startCountdown(); // Restart countdown when Resend OTP is clicked
+  // Disable Resend Button
+  function disableResendButton() {
+    resendButton.disabled = true;
+    resendButton.classList.add("not-allowed");
+  }
+
+  // Enable Resend Button
+  function enableResendButton() {
+    resendButton.disabled = false;
+    resendButton.classList.remove("not-allowed");
+  }
+
+  // Resend OTP Function
+  async function resendOTP() {
+    try {
+      disableResendButton();  
+      console.log("Requesting new OTP...");
+
+      const response = await fetch("/otp/resend", { method: "GET" });
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.error || "Failed to resend OTP");
+
+      console.log("OTP has been resent to your email.");
+      startCountdown();
+    } catch (error) {
+      console.error("Resend OTP Error:", error);
+      enableResendButton();
     }
+  }
 
-    function disableResendButton() {
-        resendButton.disabled = true;
-        resendButton.classList.add('not-allowed');
-        resendButton.style.cursor = 'not-allowed';
-        resendLink.style.pointerEvents = 'none';
-        resendLink.style.cursor = 'not-allowed';
-    }
+  // OTP Input Navigation & Validation
+  window.addEventListener("load", () => inputs[0].focus());
+  button.setAttribute("disabled", "disabled");
 
-    function enableResendButton() {
-        resendButton.disabled = false;
-        resendButton.classList.remove('not-allowed');
-        resendButton.style.cursor = 'pointer';
-        resendLink.style.pointerEvents = 'auto';
-        resendLink.style.cursor = 'pointer';
-    }
+  inputs.forEach((input, index) => {
+    input.addEventListener("keyup", (e) => {
+      const nextInput = input.nextElementSibling;
+      const prevInput = input.previousElementSibling;
 
-    window.addEventListener("load", () => inputs[0].focus());
-    button.setAttribute("disabled", "disabled");
-
-    inputs.forEach((input, index1) => {
-        input.addEventListener("keyup", (e) => {
-            const nextInput = input.nextElementSibling;
-            const prevInput = input.previousElementSibling;
-
-            if (input.value.length > 1) input.value = input.value.charAt(0);
-
-            if (nextInput && input.value !== "") {
-                nextInput.removeAttribute("disabled");
-                nextInput.focus();
-            }
-
-            if (e.key === "Backspace" && prevInput) {
-                inputs.forEach((inp, idx) => {
-                    if (index1 <= idx) inp.value = "";
-                });
-                prevInput.focus();
-            }
-
-            if (Array.from(inputs).every(inp => inp.value)) {
-                button.classList.add("active");
-                button.removeAttribute("disabled");
-            } else {
-                button.classList.remove("active");
-                button.setAttribute("disabled", "disabled");
-            }
+      if (input.value.length > 1) input.value = input.value.charAt(0);
+      if (nextInput && input.value !== "") {
+        nextInput.removeAttribute("disabled");
+        nextInput.focus();
+      }
+      if (e.key === "Backspace" && prevInput) {
+        inputs.forEach((inp, idx) => {
+          if (index <= idx) inp.value = "";
         });
+        prevInput.focus();
+      }
+      if (Array.from(inputs).every((inp) => inp.value)) {
+        button.classList.add("active");
+        button.removeAttribute("disabled");
+      } else {
+        button.classList.remove("active");
+        button.setAttribute("disabled", "disabled");
+      }
     });
+  });
+
+  // OTP Form Submission Handling
+  document.getElementById("otp-form").addEventListener("submit", async function (event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const otpInputs = document.querySelectorAll(".otp-field > input");
+    const otp = Array.from(otpInputs).map((input) => input.value).join(""); // Collect OTP values
+    const otpError = document.getElementById("otp-error");
+
+    try {
+      const response = await fetch("/otp/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ otp }),
+      });
+
+      const data = await response.json(); // Parse JSON response
+
+      if (!response.ok) throw new Error(data.error || "An unexpected error occurred");
+
+      // Redirect on success
+      window.location.href = "/login";
+    } catch (error) {
+      otpError.textContent = error.message; // Display the backend error message
+      otpError.style.color = "red";
+    }
+  });
 </script>
-
-
-
-

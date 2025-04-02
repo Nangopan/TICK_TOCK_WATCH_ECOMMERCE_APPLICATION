@@ -1,29 +1,32 @@
-<main class="main">
+<main class="main bg-light py-5">
     <section class="pt-50 pb-150">
         <div class="container">
-            <div class="row justify-content-center"> <!-- Center the content -->
-                <div class="col-lg-8">
-                    <div class="card">
-                        <div class="card-header text-center">
-                            <h5 class="mb-0">Referral Offer</h5>
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card shadow-lg border-0 rounded-3">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h4 class="mb-0">Referral Offer</h4>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body p-4">
                             <div class="row">
-                                <div class="col-lg-8 mx-auto text-center mt-50">
+                                <div class="col-lg-10 mx-auto text-center">
                                     <form onsubmit="verifyReferalCode(event)" method="post">
                                         <div class="form-group">
-                                            <label for="referalCode" class="h4">Enter your referral code</label>
+                                            <label for="referalCode" class="h5 text-dark">Enter Your Referral Code</label>
                                             <br>
-                                            <input class="border-1" id="referalCode" type="text" name="referalCode"
-                                                required style="border: 1px solid #000; width: 200px;">
+                                            <input class="form-control text-center mt-2" id="referalCode" type="text" name="referalCode"
+                                                required style="border: 2px solid #e9ecef; width: 80%; margin: auto; padding: 8px; border-radius: 5px;">
                                         </div>
                                         <div class="mt-4">
-                                            <button type="submit" class="btn btn-primary">Get Reward</button>
-                                            <button type="button" class="btn btn-secondary" onclick="confirmSkip()">Skip</button>
+                                            <button type="submit" class="btn btn-success px-4">Get Reward</button>
+                                            <button type="button" class="btn btn-danger px-4" onclick="confirmSkip()">Skip</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
+                        </div>
+                        <div class="card-footer text-center bg-light">
+                            <small class="text-muted">Invite your friends and earn rewards!</small>
                         </div>
                     </div>
                 </div>
@@ -32,62 +35,62 @@
     </section>
 </main>
 
+
 <script>
     function verifyReferalCode() {
         event.preventDefault();
         let referalCode = document.getElementById("referalCode").value;
+
         $.ajax({
             url: "/verifyReferalCode",
             method: "POST",
             data: { referalCode },
             success: (response) => {
                 console.log(response.message);
-                
-                if (response.message == "Referral code verified successfully!") {
+
+                // Handle different referral code verification responses
+                if (response.message === "Referral code verified successfully!") {
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: 'Referal offer redeemed successfully!',
+                        text: 'Referral offer redeemed successfully!',
                     }).then(() => {
-                        // Redirect to /submit_otp after showing the SweetAlert
-                        window.location.href = "/submit_otp";
+                        window.location.href = "/otp/submit"; // Redirect after success
                     });
-                    
-                } else if (response.message == "You have already used this referral code!") {
+
+                } else if (response.message === "You have already used this referral code!") {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Oops',
                         text: 'You have already used this referral code!',
-                        
                     });
-                    
-                } else if (response.message == "Invalid referral code!") {
+
+                } else if (response.message === "Invalid referral code!") {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Oops',
                         text: 'Invalid referral code!',
                     });
-                    
-                } else if (response.message == "You have already redeemed a referral code before!") {
+
+                } else if (response.message === "You have already redeemed a referral code before!") {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Oops',
                         text: 'You have already redeemed a referral code before!',
                     });
-                    
+
                 } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: '',
+                        text: 'Something went wrong!',
                     });
                 }
             }
         });
     }
 
-
-      function confirmSkip() {
+    function confirmSkip() {
         Swal.fire({
             title: 'Are you sure you want to skip?',
             text: "You won't be able to apply the referral code later.",
@@ -97,7 +100,7 @@
             cancelButtonText: 'No, keep it'
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = '/submit_otp';  // Redirect if confirmed
+                window.location.href = '/otp/submit'; // Redirect if confirmed
             }
         });
     }

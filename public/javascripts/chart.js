@@ -1,15 +1,14 @@
-
-const today = new Date().toISOString().split('T')[0];
+const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
 const tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate());
-const maxDate = tomorrow.toISOString().split('T')[0];
+tomorrow.setDate(tomorrow.getDate()); // Explicitly set today's date
+const maxDate = tomorrow.toISOString().split('T')[0]; // Get max selectable date (tomorrow)
 
-//document.getElementById("start-date").setAttribute("min", today)
-document.getElementById("start-date").setAttribute("max", maxDate);
-document.getElementById("end-date").setAttribute("min", today)
-document.getElementById("end-date").setAttribute("max", maxDate);
+// Set date restrictions for start and end date inputs
+document.getElementById("start-date").setAttribute("max", maxDate); // User can select up to tomorrow
+document.getElementById("end-date").setAttribute("min", today); // End date cannot be before today
+document.getElementById("end-date").setAttribute("max", maxDate); // End date cannot exceed tomorrow
 
-// Ensure end date is greater than start date
+// Ensure end date is always greater than or equal to start date
 var startDateField = document.getElementById("start-date");
 var endDateField = document.getElementById("end-date");
 
@@ -18,137 +17,188 @@ startDateField.addEventListener("change", function () {
 });
 
 endDateField.addEventListener("change", function () {
-    startDateField.setAttribute("max", endDateField.value);
+    startDateField.setAttribute("max", endDateField.value); 
 });
 
+// Function to fetch and render sales data
+const getSalesData = async () => {
+    const startDate = document.getElementById('start-date').value;
+    const endDate = document.getElementById('end-date').value;
+    console.log(startDate, endDate);
 
-const getSalesData = async() => {
-const startDate = document.getElementById('start-date').value
-const endDate =document.getElementById('end-date').value
- console.log(startDate, endDate) 
+    // Custom Handlebars helper for looping
+    Handlebars.registerHelper("for", function(from, to, incr, block) {
+        let accum = '';
+        for(let i = from; i < to; i += incr) {
+            accum += block.fn(i);
+        }
+        return accum;
+    });
 
-
-
- Handlebars.registerHelper("for", function(from, to, incr, block) {
-  var accum = '';
-  for(var i = from; i < to; i += incr)
-      accum += block.fn(i);
-  return accum;
-});
-
-
-
- // Define Handlebars template
-const salesReportTemplate = `
+    Handlebars.registerHelper('formatDate', function (date) {
+      if (!date) return '';
+      return new Date(date).toISOString().split('T')[0]; // Extract YYYY-MM-DD
+  });
+  
+  
+    // Define Handlebars template
+    const salesReportTemplate = `
+   <!-- Sales Report Template -->
 <div class="col-xl-12">
-  <!-- Account details card-->
-  <div class="card mb-4">
-    <div class="card-header" style="font-size: 1.25rem; font-weight: bold;">Sales Report</div>
-
-    <div class="card-body ml-3 p-5">
-      <table id="my-table" class="my-table table table-hover" style="width: 100%; border-top: 2px solid #ddd; border-spacing: 0; border-collapse: collapse;">
-        <thead style="background-color: #f8f9fa; color: #333; text-align: left; font-weight: bold;">
+  <div class="card mb-4 shadow-sm">
+    <div class="card-header bg-primary text-white font-weight-bold">
+      Sales Report
+    </div>
+    <div class="card-body p-4">
+      <table id="my-table" class="table table-striped table-bordered">
+        <thead class="thead-dark">
           <tr>
-            <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Date</th>
-            <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Order id</th>
-             <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Transaction id</th>
-              <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Transaction date</th>
-            <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Payment Method</th>
-            <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Coupon</th>
-            <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Coupon Used</th>
-            <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Product Details</th>
-            <th scope="col" style="padding: 12px 15px; border-bottom: 1px solid #ddd;">Total</th>
+            <th>Date</th>
+            <th>Order ID</th>
+            <th>Payment Method</th>
+            <th>Coupon</th>
+            <th>Coupon Used</th>
+            <th>Product Details</th>
+            <th>Total</th>
           </tr>
         </thead>
-        <tbody style="background-color: #ffffff; color: #555;">
+        <tbody>
           {{#each data.orders}}
-            <tr style="border-bottom: 1px solid #ddd;">
-              <td style="padding: 10px 15px; text-align: center;">{{this.date}}</td>
-              <td style="padding: 10px 15px; text-align: center;">{{this.orderId}}</td>
-              <td style="padding: 10px 15px; text-align: center;">{{this.transactionId}}</td>
-              <td style="padding: 10px 15px; text-align: center;">{{this.transactionDate}}</td>
-              <td style="padding: 10px 15px; text-align: center;">{{this.payMethod}}</td>
-              <td style="padding: 10px 15px; text-align: center;">{{this.coupon}}</td>
-              <td style="padding: 10px 15px; text-align: center;">{{this.couponUsed}}</td>
-              <td style="padding: 10px 15px;">
+          <tr>
+            <td>{{formatDate this.date}}</td>
+            <td>{{this.orderId}}</td>
+            <td>{{this.payMethod}}</td>
+            <td>
+              {{#if this.coupon}} 
+                {{this.coupon}} (₹{{this.discount}})
+              {{else}}
+                No Coupon
+              {{/if}}
+            </td>
+            <td>{{#if this.couponUsed}}Yes{{else}}No{{/if}}</td>
+            <td>
+              <ul class="list-unstyled">
                 {{#each this.proName}}
-                  <p style="margin: 5px 0;">Name: {{this.name}}</p>
-                  <p style="margin: 5px 0;">Quantity: {{this.quantity}}</p>
-                  <p style="margin: 5px 0;">Price: <span>₹</span>{{this.price}}</p>
+                <li><strong>Name:</strong> {{this.name}}</li>
+                <li><strong>Quantity:</strong> {{this.quantity}}</li>
+                <li><strong>Price:</strong> ₹{{this.price}}</li>
+                <li><strong>Delivery Charge:</strong> ₹50</li>
+                <hr>
                 {{/each}}
-              </td>
-              <td style="padding: 10px 15px; text-align: center; font-weight: bold;"><span>₹</span>{{total}}</td>
-            </tr>
+              </ul>
+            </td>
+            <td class="font-weight-bold">₹{{total}}</td>
+          </tr>
           {{/each}}
         </tbody>
       </table>
-
-      <div style="margin-top: 20px; font-size: 1.1rem;">
-        <h5>Total Orders: <strong>{{data.salesCount}}</strong></h5>  <!-- Display sales count -->
-        <h5>Total Revenue: ₹<strong>{{data.grandTotal}}</strong></h5> <!-- Display grand total -->
+      <div class="mt-4">
+        <h5 class="text-primary">Total Revenue: ₹<strong>{{data.grandTotal}}</strong></h5>
+        <h5 class="text-success">Total Sales Count: <strong>{{data.salesCount}}</strong></h5>
       </div>
     </div>
   </div>
 </div>
-
 `;
+  
+    function renderSalesReport(data) {
+      const compiledTemplate = Handlebars.compile(salesReportTemplate);
+      const salesReportHTML = compiledTemplate({ data });
+      document.getElementById('table').innerHTML = salesReportHTML;
+  
+      // Initialize DataTable after rendering
+      $(document).ready(function () {
+          $('#my-table').DataTable({
+              dom: 'Bfrtip',
+              buttons: [
+                  {
+                      extend: 'excelHtml5',
+                      text: 'Export to Excel',
+                      title: 'Tick-Tock',  // ✅ Set title in Excel file
+                      exportOptions: {
+                          columns: ':visible',
+                          format: {
+                              body: function (data, row, column, node) {
+                                  return data.replace(/Name:/g, "\nName:")
+                                             .replace(/Quantity:/g, "\nQuantity:")
+                                             .replace(/Price:/g, "\nPrice:")
+                                             .replace(/Delivery Charge:/g, "\nDelivery Charge:");
+                              }
+                          }
+                      }
+                  },
+                  {
+                      extend: 'pdfHtml5',
+                      text: 'Export to PDF',
+                      title: 'Tick-Tock',  // 
+                     customize: function (doc) {
+    // Remove extra text
+    doc.content[0].text = `Tick-Tock\nSales Report (${startDate} to ${endDate})`; // ✅ Add date range in the title
+    doc.content[0].fontSize = 16;
+    doc.content[0].bold = true;
+    doc.content[0].alignment = 'center';
 
+    // Set table styles
+    doc.content[1].table.widths = ['12%', '12%', '12%', '10%', '8%', '32%', '14%'];
+    doc.styles.tableHeader.fillColor = 'black';
+    doc.styles.tableHeader.color = 'white';
+    doc.styles.tableHeader.alignment = 'center';
+    doc.styles.tableHeader.bold = true;
 
+    // Apply black borders
+    doc.content[1].layout = {
+        hLineWidth: function () { return 1; },
+        vLineWidth: function () { return 1; },
+        hLineColor: function () { return 'black'; },
+        vLineColor: function () { return 'black'; },
+    };
 
-
-
-// Define function to render template with data
-function renderSalesReport(data) {
-  const compiledTemplate = Handlebars.compile(salesReportTemplate);
-  const salesReportHTML = compiledTemplate({ data: data });
-  document.getElementById('table').innerHTML = salesReportHTML
-
-  $(document).ready( function () {
-    $('#my-table').DataTable({
-          dom: 'Bfrtip',      
-          buttons: [
-              'excelHtml5',
-              'pdfHtml5'
-      ]
+    // Remove time part from date values
+    doc.content[1].table.body.forEach((row, index) => {
+        if (index === 0) return; // Skip the header row
+        
+        // Format date column (Assuming date is in column 0)
+        row[0].text = row[0].text.split(' ')[0]; // ✅ Remove time from date
     });
-  });
+
+    // Adjust product details formatting
+    doc.content[1].table.body.forEach((row, index) => {
+        if (index === 0) return;
+        row[5].text = row[5].text.replace(/Name:/g, "\nName:");
+        row[5].text = row[5].text.replace(/Quantity:/g, "\nQuantity:");
+        row[5].text = row[5].text.replace(/Price:/g, "\nPrice:");
+        row[5].text = row[5].text.replace(/Delivery Charge:/g, "\nDelivery Charge:");
+        row[5].alignment = 'left';
+    });
+
+    // Add Total Revenue & Sales Count at the bottom
+    doc.content.push({
+        text: `\nTotal Revenue: ₹${data.grandTotal}\nTotal Sales Count: ${data.salesCount}`,
+        margin: [0, 20, 0, 0],
+        alignment: 'left',
+        bold: true
+    });
+
+    // Adjust default font size
+    doc.defaultStyle.fontSize = 10;
 }
 
-
- const response = await fetch(`/admin/get_sales?stDate=${startDate}&edDate=${endDate}`, {
-    headers: { 'Content-Type': "application/json" },
- })
-
-   const data = await response.json() 
-   console.log(data)
-
-   if (data) {
-    console.log(data.orders);
-    
-    renderSalesReport(data);
+                  }
+              ]
+          });
+      });
   }
-}
+  
+  
+    // Fetch sales data
+    const response = await fetch(`/admin/get_sales?stDate=${startDate}&edDate=${endDate}`, {
+        headers: { 'Content-Type': 'application/json' },
+    });
 
+    const data = await response.json();
+    console.log(data);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    if (data) {
+        renderSalesReport(data); // Render the sales report
+    }
+};

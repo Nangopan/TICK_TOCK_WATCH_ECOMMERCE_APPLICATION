@@ -1,4 +1,5 @@
 <main class="main">
+    <!-- Breadcrumb Navigation -->
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
@@ -7,45 +8,33 @@
             </div>
         </div>
     </div>
+
     <section class="pt-50 pb-150">
         <div class="container">
             <div class="row">
                 <div class="col-lg-10 m-auto">
-                    <div class="row ">
-                        <div class="col-lg-5 m-auto ">
+                    <div class="row">
+                        <div class="col-lg-5 m-auto">
                             <div class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5">
                                 <div class="padding_eight_all bg-white">
+                                    <!-- Form Heading -->
                                     <div class="heading_s1">
                                         <h3 class="mb-30 text-center">Enter your email</h3>
                                     </div>
-                                    <form id="emailForm" action="/forgotPassword" method="post">
-                                        <h6 id="error-message" style="color: red;" class="text-center mb-3"></h6>
 
-                                        <div class="form-floating mb-3 input-control">
-                                            <input type="text" class="form-control" id="email" placeholder="Enter your email" name="email" required>
-                                            <label for="email">Email</label>
-                                        </div>
+                                    <!-- Email Input Form -->
+                                  <form id="emailForm">
+    <h6 style="color: red;" class="text-center mb-5" id="errorMessage"></h6>
 
-                                        <div class="text-center">
-                                            <button type="submit" class="btn btn-fill-out btn-block hover-up">Submit</button>
-                                        </div>
-                                    </form>
+    <div class="form-floating mb-3 input-control">
+        <input type="text" class="form-control" id="email" placeholder="Enter your email" name="email" required>
+        <label for="email">Email</label>
+    </div>
 
-                                    <script>
-                                        document.getElementById("emailForm").addEventListener("submit", function(event) {
-                                            const emailInput = document.getElementById("email");
-                                            const errorMessage = document.getElementById("error-message");
-                                            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-                                            if (!emailPattern.test(emailInput.value.trim())) {
-                                                errorMessage.textContent = "Please enter a valid email address.";
-                                                event.preventDefault(); // Prevent form submission
-                                            } else {
-                                                errorMessage.textContent = ""; // Clear error message
-                                            }
-                                        });
-                                    </script>
-
+    <div class="text-center">
+        <button type="submit" class="btn btn-fill-out btn-block hover-up">Submit</button>
+    </div>
+</form>
                                 </div>
                             </div>
                         </div>
@@ -55,3 +44,31 @@
         </div>
     </section>
 </main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.getElementById("emailForm").addEventListener("submit", async function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const email = document.getElementById("email").value;
+
+        const response = await fetch("/password/forgot", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            window.location.href = result.redirectUrl; // Redirect on success
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: result.message,
+            });
+        }
+    });
+</script>

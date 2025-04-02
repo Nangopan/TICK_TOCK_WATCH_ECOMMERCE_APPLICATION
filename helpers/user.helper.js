@@ -1,66 +1,59 @@
 const nodemailer = require("nodemailer");
 const argon2 = require("argon2");
 
-//Email verification
-
+// Function to send an OTP to the provided email and store it in session
 const verifyEmail = async (email) => {
   try {
+    if (!email) {
+      console.error("Email is required for OTP verification.");
+      return { otp: null, otpTimestamp: null };
+    }
+
     const otp = generateOtp();
-    console.log("Sending OTP to:", email); // Log the recipient email
+    const otpTimestamp = Date.now();
+    console.log("Sending OTP to:", email);
 
     const transporter = nodemailer.createTransport({
-      service:'gmail',
       host: "smtp.gmail.com",
-      port: 587,
-      secure: false,
-      requireTLS: true,
+      port: 465, 
+      secure: true, 
       auth: {
         user: process.env.USER_MAIL,
         pass: process.env.USER_PASS,
       },
       tls: {
-        rejectUnauthorized: false,
+        rejectUnauthorized: false, 
       },
     });
 
-    const mailoptions = {
-      from: "process.env.USER_MAIL",
+    const mailOptions = {
+      from: process.env.USER_MAIL,
       to: email,
-
       subject: "OTP Verification",
-      text: `Welcome to Tick-Tock !!! This is your OTP:  ${otp}`      
+      text: `Your OTP for Floritta is: ${otp}`,
     };
 
-    transporter.sendMail(mailoptions, (error) => {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email has been sent",otp);
-      }
-      
-    });
-    return otp;
-    
+    await transporter.sendMail(mailOptions);
+    console.log("OTP email sent successfully:", otp);
+
+    return { otp, otpTimestamp };
   } catch (error) {
-    console.log(error);
+    console.error("Error in verifyEmail function:", error);
+    return { otp: null, otpTimestamp: null }; 
   }
-}
-
-//gennerate otp
-
-const generateOtp = () => {
-  otp = `${Math.floor(1000 + Math.random() * 9000)}`;
-  return otp;
 };
 
-//password hashing
+// Function to generate a 4-digit OTP
+const generateOtp = () => {
+  return `${Math.floor(1000 + Math.random() * 9000)}`;
+};
 
-const hashPassword = async (pasword) => {
+// Function to hash a password using Argon2
+const hashPassword = async (password) => {
   try {
-    const passwordHash = await argon2.hash(pasword);
-    return passwordHash;
+    return await argon2.hash(password);
   } catch (error) {
-    console.log(error);
+    console.error("Error hashing password:", error);
   }
 };
 

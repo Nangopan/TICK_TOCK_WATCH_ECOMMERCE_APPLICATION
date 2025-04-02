@@ -1,100 +1,167 @@
 <main class="main">
-        <div class="page-header breadcrumb-wrap">
-            <div class="container">
-                <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    {{!-- <span></span> Pages --}}
-                    <span></span> OTP
-                </div>
+    <!-- Breadcrumb Navigation -->
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html" rel="nofollow">Home</a>
+                <span></span> OTP
             </div>
         </div>
-        <section class="pt-50 pb-150">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-10 m-auto">
-                        <div class="row ">
-                            <div class="col-lg-5 m-auto ">
-                                <div class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5">
-                                    <div class="padding_eight_all bg-white">
-                                        <div class="heading_s1">
-                                            <h3 class="text-center mb-30">Enter OTP</h3>
-                                        </div>
-                    <form action="/otp" method="post">
+    </div>
 
-                        <h6 style="color: red;" class="text-center mb-5">{{otpErr}}</h6>
-
-
-                        <div class="form-floating mb-3 input-control">
-                           <input type="text" class="form-control" id="otp" placeholder="Enter otp" name="otp" required>
-                           <label for="otp">Enter otp</label>
-                        </div>
-                        {{!-- <div class="form-group">
-                            
-                            <input type="password" class="form-control" placeholder="Password" required>
-                        </div> --}}
-
-                        <div class="text-center">
-                             <button type="submit" class="btn btn-fill-out btn-block hover-up">Submit</button>
-                           <p class="text-primary my-3">Time left: <span id="timer">60</span> seconds</p>
-                              <button class="btn  hover-up" id="resendButton" onclick="resendOTP()"><a href="/resend_otp">Resend OTP</a></button>
-
-                        </div>
-</div>
-
-                        
-                    </form> 
+    <section class="pt-50 pb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 m-auto">
+                    <div class="row">
+                        <div class="col-lg-5 m-auto">
+                            <div class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5">
+                                <div class="padding_eight_all bg-white">
+                                    <!-- OTP Form Header -->
+                                    <div class="heading_s1">
+                                        <h3 class="text-center mb-30">Enter OTP</h3>
                                     </div>
+
+                                    <!-- OTP Form -->
+                                    <form action="/password/otp" method="post">
+                                        <!-- Error Message Display -->
+
+                                        <!-- OTP Input Field -->
+                                        <div class="form-floating mb-3 input-control">
+                                            <input type="text" class="form-control" id="otp" placeholder="Enter OTP" name="otp" required>
+                                            <label for="otp">Enter OTP</label>
+                                        <h6 style="color: red;" class="text-center mb-3 mt-3">{{otpErr}}</h6>
+
+                                        </div>
+
+                                        <!-- Submit & Resend OTP Options -->
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-fill-out btn-block hover-up">Submit</button>
+                                            <p class="text-primary my-3">Time left: <span id="timer">60</span> seconds</p>
+                                            <button class="btn hover-up" id="resendButton" onclick="resendOTP()">Resend OTP</button>
+                                            <p id="resendMessage" class="text-success mt-2"></p>
+                                        </div>
+                                    </form> 
                                 </div>
                             </div>
-                            
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <style>
-    #resendButton {
-        color: #fff; /* Change text color to white */
-        background-color: #fff;
+    <!-- Button Styling -->
+    <style>
+        #resendButton {
+            color: #fff;
+            background-color: hsl(185, 83%, 26%);
+        }
+    </style>
+
+</main>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const otpForm = document.querySelector("form");
+    const otpInput = document.getElementById("otp");
+    const otpError = document.querySelector(".text-center.mb-3.mt-3");
+    const resendButton = document.getElementById("resendButton");
+    const resendMessage = document.getElementById("resendMessage");
+    const timerElement = document.getElementById("timer");
+
+    let countdown = 60;
+    let countdownInterval;
+
+    // **Start Countdown Timer**
+    function startCountdown() {
+        clearInterval(countdownInterval); // Ensure no duplicate timers
+        countdown = 60;
+        timerElement.textContent = countdown;
+        resendButton.disabled = true;
+        resendButton.classList.add("not-allowed");
+        resendMessage.textContent = "";
+
+        countdownInterval = setInterval(() => {
+            countdown--;
+            timerElement.textContent = countdown;
+
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                resendButton.disabled = false;
+                resendButton.classList.remove("not-allowed");
+            }
+        }, 1000);
     }
-</style>
 
-    </main>
+    // **Start Timer on Page Load**
+    startCountdown();
 
-        <script>
-        let countdown = 60; // Initial countdown value in seconds
-  let timerElement = document.getElementById('timer');
-  let resendButton = document.getElementById('resendButton');
-  let countdownInterval;
+    otpForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-  // Function to update the countdown timer
-  function updateTimer() {
-      timerElement.textContent = countdown;
-      countdown--;
-      resendButton.disabled = true;
-      if (countdown < 0) {
-          clearInterval(countdownInterval);
-          timerElement.textContent = '0 seconds';
-          resendButton.disabled = false;
-      }
-  }
+        const otp = otpInput.value.trim();
 
-  // Function to resend OTP
-  function resendOTP() {
-      // Simulate OTP resend logic here
-      // For example, you can make an API call to send a new OTP
+        if (!otp) {
+            otpError.textContent = "Please enter OTP.";
+            otpError.style.color = "red";
+            return;
+        }
 
-      // Reset the timer
-      countdown = 60;
-      timerElement.textContent = countdown + ' seconds';
-      resendButton.disabled = true;
+        try {
+            const response = await fetch("/password/otp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ otp }),
+            });
 
-      // Start the countdown again
-      countdownInterval = setInterval(updateTimer, 1000);
-  }
+            if (response.redirected) {
+                window.location.href = response.url; // Handle redirect properly
+                return;
+            }
 
-  // Initial countdown start
-  countdownInterval = setInterval(updateTimer, 1000);
+            const data = await response.json();
 
-    </script>
+            if (!response.ok) {
+                throw new Error(data.error || "Invalid OTP. Please try again.");
+            }
+
+            window.location.href = "/password/reset"; // Redirect only on success
+        } catch (error) {
+            otpError.textContent = error.message;
+            otpError.style.color = "red";
+        }
+    });
+
+    // **Resend OTP Function**
+    resendButton.addEventListener("click", async function (event) {
+        event.preventDefault();
+
+        try {
+            resendButton.disabled = true;
+            resendMessage.textContent = "Resending OTP...";
+            resendMessage.style.color = "blue";
+
+            const response = await fetch("/password/otp/resend", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) throw new Error(data.error || "Failed to resend OTP.");
+
+            resendMessage.textContent = "OTP has been resent!";
+            resendMessage.style.color = "green";
+
+            startCountdown(); // Restart countdown
+        } catch (error) {
+            resendMessage.textContent = error.message;
+            resendMessage.style.color = "red";
+            resendButton.disabled = false;
+        }
+    });
+});
+
+</script>

@@ -162,7 +162,6 @@ const getSales = async (req, res) => {
         console.log(formattedOrders);
 
         let salesData = [];
-
         let grandTotal = 0;
 
         formattedOrders.forEach((element) => {
@@ -171,8 +170,9 @@ const getSales = async (req, res) => {
                 orderId: element.orderId,
                 total: element.total,
                 payMethod: element.paymentMethod,
-                coupon: element.coupon,           
+                coupon: element.coupon,
                 couponUsed: element.couponUsed,
+                discount: element.discountAmt,  
                 proName: element.product,
             });
             grandTotal += element.total;
@@ -192,6 +192,7 @@ const getSales = async (req, res) => {
         res.status(HttpStatus.InternalServerError).send('Internal Server Error');
     }
 };
+
 
 
 

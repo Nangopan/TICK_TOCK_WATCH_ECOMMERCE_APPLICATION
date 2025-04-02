@@ -2,7 +2,7 @@ const express = require("express")
 const router = express.Router()
 const { logedout, logedin, isBlocked } = require('../middleware/usersAuth')
 const { getHome, getLogin, getSignup, doSignup, getOtp, verifyReferelCode,  loadReferalPage ,submitOtp, resendOtp, doLogin, doLogout , googleCallback, productDetails, aboutpage, cartAndWishlistCount } = require("../controllers/userController/userController")
-const { submitMail, submitMailPost, forgotOtppage, forgotOtpSubmit, resetPasswordPage, resetPassword } = require('../controllers/userController/forgotPassword')
+const { submitMail, submitMailPost, forgotOtppage, forgotOtpSubmit, resetPasswordPage, resendOTP,resetPassword } = require('../controllers/userController/forgotPassword')
 const { viewUserProfile, EditUserProfile, updateUserProfile, changePassword, updatePassword, myOrders, orderDetails, verify, walletpage, retryPayment } = require('../controllers/userController/profile')
 const { addAddress, addAddressPost, manageAddress, editAddress, editAddressPost, deleteAddress } = require('../controllers/userController/addressManagement')
 const { loadCartPage, addToCart, removeFromCart, updateCart, checkOutOfStock } = require('../controllers/userController/cart')
@@ -10,7 +10,7 @@ const { loadCheckoutPage, placeorder, orderSuccess, validateCoupon, applyCoupon,
 const { getProduct, searchAndSort } = require('../controllers/userController/shopManagement')
 const { showWishlistPage, addToWishList, removeFromWishList } = require('../controllers/userController/wishlistManagement')
 const { addMoneyToWallet , verifyPayment }= require('../controllers/userController/walletManagement')
-const { payment_failed, cancelOrder,returnOrder, cancelOneProduct , returnOneProduct, getInvoice }= require('../controllers/userController/orderManagement')
+const { payment_failed, cancelOrder,returnOrder, cancelOneProduct , returnOneProduct, getInvoice,checkAddressPost }= require('../controllers/userController/orderManagement')
 require('../middleware/googleAuth')
 const passport = require('passport');
 const store = require("../middleware/multer")
@@ -39,30 +39,29 @@ router.get("/cart-wishlist-count",logedin,cartAndWishlistCount)
 
 // Signup
 
-router.get("/signup", logedout, getSignup)
-router.post('/signup', logedout, doSignup)
+// 🔹 Signup
+router.get("/signup", logedout, getSignup);
+router.post('/signup', logedout, doSignup);
 
-
-// Submit Otp & Resend Otp
-
-router.get('/submit_otp', logedout, getOtp)
-router.post('/submit_otp', logedout, submitOtp)
-router.get('/resend_otp', logedout, resendOtp)
+// 🔹 OTP Verification
+router.get('/otp/submit', logedout, getOtp);
+router.post('/otp/submit', logedout, submitOtp);
+router.get('/otp/resend', logedout, resendOtp);
 
 //referals
 
-router.get('/referals',logedout,loadReferalPage)
 router.post('/verifyReferalCode',verifyReferelCode)
 
 
 // Forgot Password
 
-router.get('/forgotPassword', logedout, submitMail)
-router.post('/forgotPassword', logedout, submitMailPost)
-router.get('/otp', logedout, forgotOtppage)
-router.post('/otp', forgotOtpSubmit)
-router.get('/resetPassword', logedout, resetPasswordPage)
-router.post('/resetPassword', resetPassword)
+router.get('/password/forgot', logedout, submitMail);
+router.post('/password/forgot', logedout, submitMailPost);
+router.get('/password/otp', logedout, forgotOtppage);
+router.post('/password/otp', forgotOtpSubmit);
+router.post('/password/otp/resend', resendOTP);
+router.get('/password/reset', logedout, resetPasswordPage);
+router.post('/password/reset', logedout, resetPassword);
 
 
 // Shop Page
@@ -120,6 +119,8 @@ router.get('/cart/checkout', logedin, isBlocked, loadCheckoutPage)
 router.post('/placeOrder', logedin, isBlocked, placeorder)
 router.get('/orderPlaced', logedin, isBlocked, orderSuccess)
 router.get('/payment_failed', logedin , isBlocked , payment_failed)
+router.post('/checkout/add-address', checkAddressPost);
+
 
 router.post('/validate_coupon', logedin, isBlocked, validateCoupon)
 router.post('/apply_coupon',logedin, isBlocked, applyCoupon)

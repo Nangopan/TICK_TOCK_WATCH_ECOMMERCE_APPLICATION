@@ -170,6 +170,13 @@ function eqHelper(Handlebars) {
     });
   }
 
+  
+function addIncludesHelper(hbs) {
+    hbs.registerHelper("includes", function (array, value) {
+      return array && array.includes(value);
+    });
+  }
+
 module.exports = {
   incHelper,
   incrementHelper,
@@ -183,5 +190,6 @@ module.exports = {
   statushelper,
   ifCondition,
   singleIsCancelled,
-  eqHelper
+  eqHelper,
+  addIncludesHelper
 }

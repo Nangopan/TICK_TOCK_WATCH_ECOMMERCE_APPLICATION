@@ -1,113 +1,152 @@
 const userHelper = require("../../helpers/user.helper");
 const User = require("../../model/userSchema");
-const argon = require("argon2");
-const HttpStatus = require('../../httpStatus');
 
 
-let otp;
-let email;
-
-
+// Render Email Submission Page for Forgot Password
 const submitMail = async (req, res) => {
   try {
-    const mailError = "Invalid User";
-    if (req.session.mailError) {
-      res.render("user/forgotPassword/mailSubmit", { mailError });
-      req.session.mailError = false;
-    } else {
-      res.render("user/forgotPassword/mailSubmit");
-    }
+    const mailError = req.session.mailError ? "Invalid User" : null;
+    req.session.mailError = false;
+    res.render("user/forgotPassword/mailSubmit", { mailError });
   } catch (error) {
-    console.log(error.message);
-    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
   }
 };
 
-
-
+// Handle Forgot Password Email Submission
 const submitMailPost = async (req, res) => {
   try {
-    email = req.body.email;
-    const userData = await User.findOne({ email: email }).lean();
-    console.log(userData);
+    const email = req.body.email;
+    const userData = await User.findOne({ email }).lean();
+
     if (userData) {
-      otp = await userHelper.verifyEmail(email);
-      console.log(otp);
-      res.redirect("/otp");
+      const otpResponse = await userHelper.verifyEmail(email);
+      const otp = otpResponse.otp || otpResponse; 
+
+      console.log("Generated OTP:", otp);
+
+      req.session.userResetData = { email };
+      req.session.otp = String(otp); 
+      req.session.otpTimestamp = Date.now() + 60 * 1000; 
+
+      return res.json({ success: true, redirectUrl: "/password/otp" });
     } else {
-      req.session.mailError = true;
-      res.redirect("/forgotPassword");
+      return res.json({ success: false, message: "Invalid Email. Please try again!" });
     }
   } catch (error) {
-    console.log(error.message);
-    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+    console.error(error.message);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
 
-
+// Render OTP Submission Page
 const forgotOtppage = async (req, res) => {
   try {
-    const otpErr = "Incorrect otp..!!";
+    const otpErr = req.session.otpErr ? "Incorrect OTP!" : null;
+    req.session.otpErr = false;
+    res.render("user/forgotPassword/submitOtp", { otpErr });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+};
 
-    if (req.session.otpErr) {
-      console.log("OTP Error:", req.session.otpErr);
-      res.render("user/forgotPassword/submitOtp", { otpErr });
+// Handle OTP Submission
+const forgotOtpSubmit = async (req, res) => {
+  try {
+    const { otp } = req.body;
+    let storedOtp = req.session.otp;
+    const otpTimestamp = req.session.otpTimestamp;
+
+
+    if (!storedOtp || !otpTimestamp) {
+      console.log("Error: OTP session expired or not found.");
+      return res.status(400).json({ error: "Session expired. Please request a new OTP." });
+    }
+
+    if (Date.now() > otpTimestamp) {
+      console.log("Error: OTP expired.");
+      req.session.otp = null;
+      req.session.otpTimestamp = null;
+      return res.status(400).json({ error: "OTP expired. Please request a new one." });
+    }
+
+    storedOtp = String(storedOtp); 
+    if (otp.trim() === storedOtp.trim()) {
+      req.session.otp = null;
+      req.session.otpTimestamp = null;
+      return res.json({ redirect: "/resetPassword" });
     } else {
-      res.render("user/forgotPassword/submitOtp");
+      console.log("Invalid OTP entered");
+      return res.status(400).json({ error: "Invalid OTP. Please try again." });
     }
   } catch (error) {
-    console.log(error.message);
-    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+    console.error("OTP Verification Error:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Resend OTP for Forgot Password
+const resendOTP = async (req, res) => {
+  try {
+    const email = req.session.userResetData?.email;
+    if (!email) {
+      console.log("Error: No email found in session.");
+      return res.status(400).json({ error: "No email found in session. Please submit your email first." });
+    }
+
+    const otpResponse = await userHelper.verifyEmail(email);
+    const otp = otpResponse.otp || otpResponse; 
+
+    console.log("Generated Resend OTP:", otp);
+
+    req.session.otp = String(otp); 
+    req.session.otpTimestamp = Date.now() + 60 * 1000; 
+
+
+    return res.json({ success: true, message: "OTP resent successfully" });
+  } catch (error) {
+    console.error("Error resending OTP:", error);
+    return res.status(500).json({ error: "Error resending OTP. Please try again later." });
   }
 };
 
 
-
-const forgotOtpSubmit = async (req, res) => {
-  let enteredOtp = req.body.otp;
-
-  console.log("Entered OTP:", enteredOtp);
-  console.log("Stored OTP:", otp);
-
-  if (enteredOtp === otp) {
-    res.redirect("/resetPassword");
-  } else {
-    req.session.otpErr = true;
-    console.log("Incorrect OTP. Redirecting to /otp");
-    res.redirect("/otp");
-  }
-};
-
-
-
+// Render Reset Password Page
 const resetPasswordPage = async (req, res) => {
   try {
     res.render("user/forgotPassword/resetPassword");
   } catch (error) {
-    console.log(error.message);
-    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
   }
 };
 
-
-
+// Handle Password Reset Submission
 const resetPassword = async (req, res) => {
   try {
-    hashedPassword = await userHelper.hashPassword(req.body.password);
+    if (!req.session.userResetData?.email) {
+      return res
+        .status(400)
+        .send({ error: "User email not found in session." });
+    }
 
-    await User.updateOne(
-      { email: email },
-      { $set: { password: hashedPassword } }
-    );
+    const email = req.session.userResetData.email;
+    const hashedPassword = await userHelper.hashPassword(req.body.password);
+
+    await User.updateOne({ email }, { $set: { password: hashedPassword } });
+
+    req.session.userResetData = null;
     req.session.successMessage = true;
+
     res.redirect("/login");
   } catch (error) {
-    console.log(error.message);
-    res.status(HttpStatus.InternalServerError).send("Internal Server Error");
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
   }
 };
-
 
 module.exports = {
   submitMail,
@@ -116,4 +155,5 @@ module.exports = {
   forgotOtpSubmit,
   resetPassword,
   resetPasswordPage,
+  resendOTP
 };
