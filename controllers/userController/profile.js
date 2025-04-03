@@ -335,7 +335,9 @@ const walletpage = async (req, res) => {
       const id = user._id;
       const userData = await User.findById(id).lean();
 
-
+      if (userData.wallet) {
+        userData.wallet = Math.floor(userData.wallet); // Convert wallet balance to a whole number
+    }
       console.log(userData);
 
       var page = 1;
