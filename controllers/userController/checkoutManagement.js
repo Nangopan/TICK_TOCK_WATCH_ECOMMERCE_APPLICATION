@@ -20,6 +20,7 @@ const loadCheckoutPage = async (req, res) => {
   try {
     const userId = req.session.user._id;
     let userData = await User.findById(userId).lean();
+    userData.wallet = Math.floor(userData.wallet || 0);
     const ID = new mongoose.Types.ObjectId(userId);
 
     

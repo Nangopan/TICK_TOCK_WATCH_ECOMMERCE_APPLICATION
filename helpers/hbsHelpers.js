@@ -176,6 +176,12 @@ function addIncludesHelper(hbs) {
       return array && array.includes(value);
     });
   }
+function floorHelper(hbs){
+    hbs.registerHelper('floor', function (value) {
+        return Math.floor(value);
+      });
+}
+  
 
 module.exports = {
   incHelper,
@@ -191,5 +197,6 @@ module.exports = {
   ifCondition,
   singleIsCancelled,
   eqHelper,
-  addIncludesHelper
+  addIncludesHelper,
+  floorHelper,
 }
